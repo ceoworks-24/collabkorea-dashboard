@@ -291,8 +291,12 @@ async function autoMaintenance() {
 
 /* ---------- 화면 ---------- */
 const toast = t => { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2500); };
-const isKakao = /KAKAOTALK/i.test(navigator.userAgent);
-const openExternal = () => { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(location.href.split('#')[0]); };
+const UA = navigator.userAgent, isKakao = /KAKAOTALK/i.test(UA), isNaver = /NAVER\(inapp/i.test(UA), isAndroid = /android/i.test(UA), inApp = isKakao || isNaver;
+const openExternal = () => {
+  const u = new URL(location.href);
+  if (isAndroid) location.href = 'intent://' + u.host + u.pathname + u.search + '#Intent;scheme=' + u.protocol.replace(':', '') + ';package=com.android.chrome;end';
+  else if (isKakao) location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(u.href);
+};
 if (isKakao) { let done = false; try { done = sessionStorage.getItem('cd_kx'); sessionStorage.setItem('cd_kx', '1'); } catch (e) { } if (!done) setTimeout(openExternal, 300); }
 let deferredInstall = null;
 const isStandalone = () => (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
@@ -317,7 +321,7 @@ function restoreUi() {
 function render() {
   const app = $('#app'); if (!app) return;
   const y = window.scrollY;
-  app.innerHTML = (isKakao ? '<div class="kbar"><span>카카오톡 안에서는 구글 로그인과 앱 설치가 안 됩니다.</span><button class="btn s" data-act="openExt">기본 브라우저로 열기</button></div>' : '') + (ui.auth === 'in' ? shell() : authScreen());
+  app.innerHTML = (inApp ? `<div class="kbar"><span>${isKakao ? '카카오톡' : '네이버 앱'} 안 브라우저에서는 구글 로그인과 앱 설치가 안 될 수 있습니다.${isAndroid ? '' : ' Safari로 열어 주세요.'}</span>${isAndroid || isKakao ? `<button class="btn s" data-act="openExt">${isAndroid ? 'Chrome으로 열기' : '기본 브라우저로 열기'}</button>` : ''}</div>` : '') + (ui.auth === 'in' ? shell() : authScreen());
   if (ui.auth === 'in') saveUi();
   window.scrollTo(0, y);
 }
@@ -560,7 +564,7 @@ async function saveLec() {
 function settings() {
   const mine = S.members.find(x => x.id === me.email) || {}, cur = animal(me.email), takenBy = a => S.members.find(x => x.animal === a && x.id !== me.email);
   const profile = `<section class="card"><h2 style="font-size:18px">내 프로필</h2><div class="muted" style="margin:4px 0 0">우측 상단에 표시될 동물을 고르세요. 다른 멤버가 쓰는 동물은 선택할 수 없습니다.</div><div class="row" style="gap:10px;margin-top:16px">${ANIMALS.map(a => { const o = takenBy(a), on = a === cur; return `<button class="btn" ${o ? 'disabled' : ''} data-act="pickAnimal" data-v="${a}" title="${o ? esc(o.name || o.id) + ' 님이 사용 중' : ''}" style="width:56px;height:56px;font-size:28px;padding:0;${on ? 'border:2px solid var(--p);background:var(--tint)' : ''}${o ? ';opacity:.3' : ''}">${a}</button>`; }).join('')}</div><div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)"><button class="btn" data-act="logout">로그아웃</button></div></section>`;
-  const install = `<section class="card"><h2 style="font-size:18px">모바일 앱 설치</h2><div class="muted" style="margin:4px 0 0">홈 화면에 추가하면 앱처럼 바로 열 수 있습니다.</div><div style="margin-top:16px">${isStandalone() ? '<div class="muted">이미 앱으로 사용 중입니다.</div>' : `<button class="btn p" data-act="installApp">📲 앱 설치 (홈 화면에 추가)</button><div class="muted" style="margin-top:10px;line-height:1.7">${isIOS ? '아이폰은 <b>Safari</b>에서 하단 공유 버튼(□↑) → <b>"홈 화면에 추가"</b>를 누르세요. 카카오톡 등 앱 안 브라우저에서는 Safari로 열어야 합니다.' : deferredInstall ? '버튼을 누르면 설치 창이 열립니다.' : '버튼이 반응하지 않으면 브라우저 메뉴(⋮) → <b>"앱 설치"</b> 또는 <b>"홈 화면에 추가"</b>를 누르세요. 카카오톡 등 앱 안 브라우저에서는 Chrome으로 열어야 합니다.'}</div>`}</div></section>`;
+  const install = `<section class="card"><h2 style="font-size:18px">모바일 앱 설치</h2><div class="muted" style="margin:4px 0 0">홈 화면에 추가하면 앱처럼 바로 열 수 있습니다.</div><div style="margin-top:16px">${isStandalone() ? '<div class="muted">이미 앱으로 사용 중입니다.</div>' : `<button class="btn p" data-act="installApp">📲 앱 설치 (홈 화면에 추가)</button><div class="muted" style="margin-top:10px;line-height:1.7">${isIOS ? '아이폰은 <b>Safari</b>에서 하단 공유 버튼(□↑) → <b>"홈 화면에 추가"</b>를 누르세요. 카카오톡 등 앱 안 브라우저에서는 Safari로 열어야 합니다.' : deferredInstall ? '버튼을 누르면 설치 창이 열립니다.' : '이 브라우저에서는 설치 창이 바로 뜨지 않습니다. <b>Chrome</b> 또는 <b>삼성 인터넷</b>으로 이 주소를 열고, 메뉴(⋮ 또는 ≡) → <b>"앱 설치"</b> 또는 <b>"홈 화면에 추가"</b>를 누르세요. 네이버 앱·카카오톡 안 브라우저에서는 설치가 안 됩니다.'}</div>`}</div></section>`;
   if (me.role !== 'admin') return `<div class="row"><h1 style="font-size:26px">설정</h1></div>${profile}${install}`;
   const mem = S.members.slice().sort((a, b) => (a.role === 'admin' ? 0 : 1) - (b.role === 'admin' ? 0 : 1));
   const trash = [...S.ads.filter(a => a.deleted).map(a => ({ c: 'ads', id: a.id, t: '광고영업', n: a.name, at: a.deletedAt })), ...S.lectures.filter(l => l.deleted).map(l => ({ c: 'lectures', id: l.id, t: '강의', n: l.name, at: l.deletedAt }))].sort((a, b) => b.at - a.at);
@@ -594,7 +598,7 @@ const H = {
   logout: () => B.logout(),
   saveName: async () => { const n = $('#nm').elements.name.value.trim(); if (!n) return toast('이름을 입력해 주세요'); const { u, m } = ui.pend; const nm = { ...m, name: n, joined: true, named: true, animal: m.animal || await freeAnimal(u.email) }; try { await B.put('members', u.email, JSON.parse(JSON.stringify(nm))); } catch (e) { return toast('저장하지 못했습니다: ' + e.message); } ui.pend = null; finishLogin(u, nm); },
   pickAnimal: async v => { const o = S.members.find(x => x.animal === v && x.id !== me.email); if (o) return toast('다른 멤버가 쓰는 동물입니다'); const m = S.members.find(x => x.id === me.email); if (!m) return; await put('members', m.id, { ...m, animal: v }); toast('동물을 바꿨습니다'); },
-  installApp: async () => { if (deferredInstall) { const d = deferredInstall; deferredInstall = null; d.prompt(); try { await d.userChoice; } catch (e) { } render(); } else toast(isIOS ? '공유 버튼 → "홈 화면에 추가"를 눌러주세요' : '브라우저 메뉴에서 "앱 설치" 또는 "홈 화면에 추가"를 눌러주세요'); },
+  installApp: async () => { if (deferredInstall) { const d = deferredInstall; deferredInstall = null; d.prompt(); try { await d.userChoice; } catch (e) { } render(); } else { if (inApp && isAndroid) openExternal(); else toast(isIOS ? '공유 버튼 → "홈 화면에 추가"를 눌러주세요' : 'Chrome이나 삼성 인터넷에서 열고 메뉴의 "앱 설치"를 눌러주세요'); } },
   openExt: () => openExternal(),
   renameMember: async v => { const m = S.members.find(x => x.id === v), inp = document.querySelector(`input[data-nm="${CSS.escape(v)}"]`), n = inp ? inp.value.trim() : ''; if (!n) return toast('이름을 입력해 주세요'); if (n === m.name) return; await put('members', m.id, { ...m, name: n, named: m.named || false }); await log(`${m.email} 이름 → ${n}`, '', '설정'); toast('이름을 바꿨습니다'); },
   filter: v => { ui.filter = v; render(); },
