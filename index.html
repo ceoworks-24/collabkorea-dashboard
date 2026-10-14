@@ -321,7 +321,7 @@ function restoreUi() {
 function render() {
   const app = $('#app'); if (!app) return;
   const y = window.scrollY;
-  app.innerHTML = (inApp ? `<div class="kbar"><span>${isKakao ? '카카오톡' : '네이버 앱'} 안 브라우저에서는 구글 로그인과 앱 설치가 안 될 수 있습니다.${isAndroid ? '' : ' Safari로 열어 주세요.'}</span>${isAndroid || isKakao ? `<button class="btn s" data-act="openExt">${isAndroid ? 'Chrome으로 열기' : '기본 브라우저로 열기'}</button>` : ''}</div>` : '') + (ui.auth === 'in' ? shell() : authScreen());
+  app.innerHTML = ui.auth === 'in' ? shell() : authScreen();
   if (ui.auth === 'in') saveUi();
   window.scrollTo(0, y);
 }
