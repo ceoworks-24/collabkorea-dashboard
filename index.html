@@ -20,7 +20,8 @@ header.top{background:#fff;border-bottom:1px solid var(--line);padding:10px 32px
 nav{display:flex;gap:4px;flex:1}
 nav button{padding:9px 16px;border:0;border-radius:8px;font-size:15px;font-weight:500;color:var(--mut);background:transparent}
 nav button.on{background:var(--tint);color:var(--pd);font-weight:700}
-.userbox{display:flex;align-items:center;gap:10px}
+.ttl{font-size:22px;padding:0 4px;white-space:nowrap}
+.userbox{display:flex;align-items:center;gap:10px}.wn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
 .who{display:flex;align-items:center;gap:10px;padding:6px 14px 6px 6px;border:1px solid var(--line);border-radius:24px;font-size:14px}
 .av{width:32px;height:32px;border-radius:16px;background:var(--tint);font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;font-weight:700}
 .icon{width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:#fff;color:var(--mut);display:flex;align-items:center;justify-content:center}
@@ -70,7 +71,7 @@ button.chip:hover{filter:brightness(.95);text-decoration:underline}
 .modal{position:fixed;inset:0;background:rgba(23,20,43,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
 .mbox{position:relative;background:#fff;border-radius:16px;border-top:4px solid var(--p);width:min(480px,100%);max-height:92vh;overflow:auto;padding:52px 24px 24px}
 .mx{position:absolute;right:12px;top:10px;width:36px;height:36px;font-size:18px;border-radius:18px}
-@media(max-width:700px){table.rt thead{display:none}table.rt,table.rt tbody{display:block}table.rt tr{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;padding:14px 4px;border-bottom:1px solid var(--line)}table.rt td{display:block;border:0;padding:0;white-space:normal;text-align:left!important}table.rt td::before{content:attr(data-l);display:block;font-size:11px;color:var(--mut);font-weight:400}table.rt td.full,table.rt td[colspan]{grid-column:1/-1}table.rt tr.sel{background:var(--tint2)}}
+@media(max-width:700px){.hd .nav{width:36px;height:36px}.hd .btn{height:40px}table.rt thead{display:none}table.rt,table.rt tbody{display:block}table.rt tr{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;padding:14px 4px;border-bottom:1px solid var(--line)}table.rt td{display:block;border:0;padding:0;white-space:normal;text-align:left!important}table.rt td::before{content:attr(data-l);display:block;font-size:11px;color:var(--mut);font-weight:400}table.rt td.full,table.rt td[colspan]{grid-column:1/-1}table.rt tr.sel{background:var(--tint2)}}
 @keyframes hl{0%,45%{background:#FFE27A}100%{background:transparent}}
 tr.hl td{animation:hl 1s ease-out}
 tr.clk{cursor:pointer}tr.clk:hover td{background:#FAF9FF}
@@ -107,6 +108,7 @@ input,select,textarea{height:44px;border:1px solid #B9B4D6;border-radius:10px;pa
 .loginbox{width:100%;max-width:440px;display:flex;flex-direction:column;gap:20px}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;z-index:9}
 .tag{font-size:13px;color:#7A5A00;background:#FFF4D6;border-radius:8px;padding:7px 12px}
+@media(max-width:700px){.brand{flex:0 0 100%}header.top{gap:8px 8px;flex-wrap:wrap}nav{flex:1 1 auto;min-width:0;gap:0}nav button{padding:9px 10px;font-size:14px;white-space:nowrap}.userbox{gap:6px;flex:0 0 auto}.who{padding:4px 10px 4px 4px;gap:6px;font-size:13px}.wn{max-width:64px}.av{width:30px;height:30px}.icon{width:40px;height:40px}}
 @media(max-width:960px){.gs{grid-template-columns:1fr}.split{grid-template-columns:1fr}.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:1fr}main{padding:20px 16px}header.top{padding:10px 16px}.card{padding:20px 16px}.kpi{font-size:32px}}
 @media(max-width:560px){.g2,.g4{grid-template-columns:1fr}.bar .pair i{width:8px}}
 </style>
@@ -134,7 +136,7 @@ const ymLabel = ym => ym.slice(0, 4) + '년 ' + Number(ym.slice(5)) + '월';
 const sum = (a, k) => (a || []).reduce((s, x) => s + num(x[k]), 0);
 
 const STATUS = ['문의', '미팅/상담', '계약완료', '진행중', '종료', '중단'];
-const LSTATUS = ['모집중', '진행중', '종료'];
+const LSTATUS = ['진행중', '종료'];
 const COUNTED = ['계약완료', '진행중', '종료', '중단'];
 const CH = { '문의': ['#FFF0C9', '#7A4B00'], '미팅/상담': ['#EFE3FB', '#5A2A8A'], '계약완료': ['#DCE8FF', '#1B3F9E'], '진행중': ['#D6F1E5', '#0B5A40'], '종료': ['#E7EBF0', '#3C4856'], '중단': ['#FBE0DC', '#8A2A1D'], '모집중': ['#FFF0C9', '#7A4B00'] };
 const chip = s => `<span class="chip" style="background:${CH[s][0]};color:${CH[s][1]}">${esc(s)}</span>`;
@@ -148,7 +150,7 @@ const products = () => (S.config.find(c => c.id === 'main') || {}).products || D
 const liveAds = () => S.ads.filter(a => !a.deleted);
 const gN = g => (g.students && g.students.length) ? g.students.length : num(g.n);
 const normLec = l => l.groups ? l : { ...l, groups: [{ name: '수강', price: l.price, students: [], n: l.n }] };
-const liveLec = () => S.lectures.filter(l => !l.deleted).map(normLec);
+const liveLec = () => S.lectures.filter(l => !l.deleted).map(normLec).map(l => l.status === '모집중' ? { ...l, status: '진행중' } : l);
 const adBudget = a => num(a.contract);
 const adRev = a => Math.round(adBudget(a) * num(a.rate) / 100);
 const refundsIn = p => liveAds().filter(a => num(a.refund) > 0 && (a.refundMonth || a.month).startsWith(p));
@@ -163,7 +165,7 @@ const lecC = l => {
   return { groups, gross, trAll, trIn, disc, refund, costs, cost, rev, profit: rev - refund - cost, n: groups.reduce((a, g) => a + g.n, 0) + (l.transfers || []).length };
 };
 const lecMonth = p => {
-  const ls = liveLec().filter(l => (l.date || '').startsWith(p) && l.status !== '모집중');
+  const ls = liveLec().filter(l => (l.date || '').startsWith(p));
   let rev = 0, cost = 0, n = 0; ls.forEach(l => { const c = lecC(l); rev += c.rev; cost += c.cost; n += c.n; });
   const refund = liveLec().reduce((a, l) => a + (l.refunds || []).filter(r => (r.month || (l.date || '').slice(0, 7)).startsWith(p)).reduce((b, r) => b + num(r.amt), 0), 0);
   return { rows: ls, rev, refund, cost, n, net: rev - refund, profit: rev - refund - cost };
@@ -205,7 +207,7 @@ function seed() {
     transfers: [{ name: '최재경', from: '블로그', amt: 990000, group: '자유수강반', }, { name: '강재이', from: '광고영업반', amt: 1120000, group: '챌린지반', }],
     refunds: [{ name: '박서아', amt: 0, month: mo, memo: '2/3' }, { name: '강재이', amt: 0, month: mo, memo: '1/2' }],
     costs: [{ name: '후기왕 2명', unit: 198000, qty: 2, note: '로지텍 마우스' }, { name: '성장장려금', unit: 0, qty: 0, note: '' }, { name: '오프라인 모임 커피값', unit: 0, qty: 0, note: '' }] });
-  lec({ name: '강의 C', date: shift(mo, 1) + '-05', status: '모집중', groups: [grp('수강반', 200000, ['신청자1', '신청자2', '신청자3', '신청자4', '신청자5', '신청자6', '신청자7', '신청자8'])], costs: [{ name: '장소비', unit: 100000, qty: 1, note: '' }] });
+  lec({ name: '강의 C', date: shift(mo, 1) + '-05', status: '진행중', groups: [grp('수강반', 200000, ['신청자1', '신청자2', '신청자3', '신청자4', '신청자5', '신청자6', '신청자7', '신청자8'])], costs: [{ name: '장소비', unit: 100000, qty: 1, note: '' }] });
   lec({ name: '강의 D (4주 과정)', date: shift(mo, -1) + '-28', status: '진행중', groups: [grp('수강반', 250000, ['수강생1', '수강생2', '수강생3', '수강생4', '수강생5', '수강생6', '수강생7', '수강생8', '수강생9', '수강생10', '수강생11', '수강생12'])], costs: [{ name: '강사료', unit: 500000, qty: 1, note: '' }] });
   return { ads, lectures, config: [{ id: 'main', products: DEFAULT_PRODUCTS }], logs: [], backups: [], members: [{ id: 'demo-admin@example.com', email: 'demo-admin@example.com', name: '관리자(나)', role: 'admin', joined: true }, { id: 'demo-team@example.com', email: 'demo-team@example.com', name: '멤버 이름', role: 'member', joined: true }] };
 }
@@ -312,9 +314,9 @@ function shell() {
   const body = t === 'home' ? home() : t === 'ads' ? ads() : t === 'lectures' ? lectures() : settings();
   return `<header class="top"><div class="brand" data-act="tab" data-v="home" role="link" tabindex="0" style="cursor:pointer"><img src="${TILE}" alt="로고"><span>㈜콜라브코리아 운영 대시보드</span></div>
 <nav>${nb('home', '홈')}${nb('ads', '광고영업')}${nb('lectures', '강의')}</nav>
-<div class="userbox"><div class="who"><span class="av">${animal(me.email)}</span><span>${esc(me.name)} · ${me.role === 'admin' ? '관리자' : '멤버'}</span></div>
+<div class="userbox"><div class="who"><span class="av">${animal(me.email)}</span><span class="wn">${esc(me.name)}</span></div>
 ${true ? `<button class="icon ${t === 'settings' ? 'on' : ''}" aria-label="설정" data-act="tab" data-v="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>` : ''}
-<button class="lnk" data-act="logout">로그아웃</button></div></header><main>${body}</main>${ui.confirm ? `<div class="modal" style="z-index:40" data-act="confirmNo"><div class="mbox" style="width:min(380px,100%);padding:28px 24px 24px"><h2 style="font-size:19px">${esc(ui.confirm.msg)}</h2>${ui.confirm.sub ? `<p class="muted" style="margin:8px 0 0;line-height:1.6">${esc(ui.confirm.sub)}</p>` : ''}<div class="row" style="gap:8px;margin-top:20px"><button class="btn grow" data-act="confirmYes">예</button><button class="btn p grow" data-act="confirmNo">아니오</button></div></div></div>` : ''}`;
+</div></header><main>${body}</main>${ui.confirm ? `<div class="modal" style="z-index:40" data-act="confirmNo"><div class="mbox" style="width:min(380px,100%);padding:28px 24px 24px"><h2 style="font-size:19px">${esc(ui.confirm.msg)}</h2>${ui.confirm.sub ? `<p class="muted" style="margin:8px 0 0;line-height:1.6">${esc(ui.confirm.sub)}</p>` : ''}<div class="row" style="gap:8px;margin-top:20px"><button class="btn grow" data-act="confirmYes">예</button><button class="btn p grow" data-act="confirmNo">아니오</button></div></div></div>` : ''}`;
 }
 
 /* ----- 홈 ----- */
@@ -385,14 +387,14 @@ function ads() {
   const allSum = all.reduce((s, a) => s + net(a), 0);
   const sh = (t, sub) => `<div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:6px"><h2 style="font-size:22px">${t}</h2>${sub ? `<span class="muted">${sub}</span>` : ''}</div>`;
   const modal = ui.modal ? `<div class="modal" data-act="closeModal"><div class="mbox"><button class="nav mx" data-act="closeModal" aria-label="닫기">×</button>${adPanel(cur)}</div></div>` : '';
-  return `<div class="row"><div class="row" style="gap:8px"><button class="nav" data-act="adprev" aria-label="이전 달">‹</button><h1 style="font-size:26px;padding:0 8px">광고영업 · ${ymLabel(ui.adM)}</h1><button class="nav" data-act="adnext" aria-label="다음 달">›</button></div><div class="grow"></div><button class="btn p" data-act="openAdd">+ 광고영업 건 추가</button></div>
+  return `<div class="row hd"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="adprev" aria-label="이전 달">‹</button><h1 class="ttl">광고영업 · ${ymLabel(ui.adM)}</h1><button class="nav" data-act="adnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto" data-act="openAdd">+ 광고영업 건 추가</button></div>
 <section class="grid g4">${card('이번 달 계약', list.length + '건')}${card('이번 달 광고예산', fmt(bud) + '원')}${card('이번 달 매출', fmt(tot) + '원' + (rf.length ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">환불 -${fmt(refundSum(ui.adM))} 반영</div>` : ''), 'var(--lvt)')}${card('이번 달 수익', fmt(tot) + '원', 'var(--pd)')}</section>
 <section>${sh('이번 달 신규 계약 건', '행을 누르면 세부 내역이 팝업으로 열립니다')}<div class="card">
 <table class="rt"><thead><tr><th>업체명</th><th>업종</th><th>광고상품</th><th class="r">광고예산</th><th class="r">수수료율</th><th class="r">매출</th><th class="r">수익</th></tr></thead><tbody>${list.map(rowNew).join('') || '<tr><td colspan="7" class="muted">이 달에 계약된 건이 없습니다.</td></tr>'}</tbody></table>
 ${rf.length ? `<div class="note" style="margin-top:12px"><b>이번 달 환불 (매출에서 차감)</b><br>${rf.map(a => `${esc(a.name)} -${fmt(a.refund)}원 · 계약월 ${esc(a.month)}`).join('<br>')}</div>` : ''}</div></section>
 <hr style="margin:4px 0">
-<section>${sh('살아있는 광고영업 건', alive.length + '건')}<div class="muted" style="margin-bottom:12px">행을 누르면 세부 내역이 팝업으로 열립니다.</div><div class="card">
-<table class="rt">${head(false)}<tbody>${alive.map(a => rowAll(a, 'alive', false)).join('') || '<tr><td colspan="8" class="muted">살아있는 건이 없습니다.</td></tr>'}</tbody></table></div></section>
+<section>${sh('현재 집행중인 광고영업 건', alive.length + '건')}<div class="muted" style="margin-bottom:12px">행을 누르면 세부 내역이 팝업으로 열립니다.</div><div class="card">
+<table class="rt">${head(false)}<tbody>${alive.map(a => rowAll(a, 'alive', false)).join('') || '<tr><td colspan="8" class="muted">집행중인 건이 없습니다.</td></tr>'}</tbody></table></div></section>
 <section>${sh('전체 누적 현황', all.length + '건 · 누적 매출 ' + fmt(allSum) + '원 (환불 반영)')}<div class="muted" style="margin-bottom:12px">실제 계약이 성사된 건(계약완료 · 진행중 · 종료)의 누적입니다. (${cnt})</div><div class="card">
 <table class="rt">${head(true)}<tbody>${all.map(a => rowAll(a, 'all', true)).join('') || '<tr><td colspan="9" class="muted">계약이 성사된 건이 없습니다.</td></tr>'}</tbody></table></div></section>${modal}`;
 }
@@ -445,19 +447,21 @@ const ongoingLec = () => liveLec().filter(l => l.status !== '종료').sort((a, b
 const selLec = () => liveLec().find(l => l.id === ui.selLec) || null;
 const dstr = d => (d || '').slice(5).replace('-', '/');
 function lectures() {
-  const lm = lecMonth(ui.lecM), list = lm.rows.slice().sort((a, b) => a.date.localeCompare(b.date)), ong = ongoingLec(), cur = selLec();
+  const lm = lecMonth(ui.lecM), list = lm.rows.slice().sort((a, b) => a.date.localeCompare(b.date)), ong = ongoingLec(), cur = selLec(), allL = liveLec().sort((a, b) => b.date.localeCompare(a.date)), allRev = allL.reduce((s, l) => { const c = lecC(l); return s + c.rev - c.refund; }, 0), allProfit = allL.reduce((s, l) => s + lecC(l).profit, 0), lcnt = LSTATUS.map(st => st + ' ' + allL.filter(l => l.status === st).length).join(' · ');
   const card = (l, v, c) => `<div class="card sm"><div class="lbl">${l}</div><div class="big" ${c ? `style="color:${c}"` : ''}>${v}</div></div>`;
   const sh = (t, sub) => `<div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:6px"><h2 style="font-size:22px">${t}</h2>${sub ? `<span class="muted">${sub}</span>` : ''}</div>`;
   const rows = list.map(l => { const c = lecC(l); return `<tr class="clk" data-act="sellec" data-v="${l.id}"><td data-l="강의명" class="full"><b>${esc(l.name)}</b></td><td data-l="시작일">${esc(dstr(l.date))}</td><td data-l="수강생" class="r">${c.n}명</td><td data-l="매출 (환불 전)" class="r">${fmt(c.rev)}</td><td data-l="환불" class="r">${c.refund ? '-' + fmt(c.refund) : '0'}</td><td data-l="지출" class="r">${fmt(c.cost)}</td><td data-l="수익" class="r"><b>${fmt(c.profit)}</b></td></tr>`; }).join('');
   const modal = ui.modal ? `<div class="modal" data-act="closeModal"><div class="mbox wide"><button class="nav mx" data-act="closeModal" aria-label="닫기">×</button>${lecPanel(cur)}</div></div>` : '';
-  return `<div class="row"><div class="row" style="gap:8px"><button class="nav" data-act="lecprev" aria-label="이전 달">‹</button><h1 style="font-size:26px;padding:0 8px">강의 · ${ymLabel(ui.lecM)}</h1><button class="nav" data-act="lecnext" aria-label="다음 달">›</button></div><div class="grow"></div><button class="btn p" data-act="openAdd">+ 강의 추가</button></div>
+  return `<div class="row hd"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="lecprev" aria-label="이전 달">‹</button><h1 class="ttl">강의 · ${ymLabel(ui.lecM)}</h1><button class="nav" data-act="lecnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto" data-act="openAdd">+ 강의 추가</button></div>
 <section class="grid g3">${card('이번 달 강의 / 수강생', list.length + '건 · ' + lm.n + '명')}${card('이번 달 매출', fmt(lm.net) + '원' + (lm.refund ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">환불 -${fmt(lm.refund)} 반영</div>` : ''), 'var(--lvt)')}${card('이번 달 수익', fmt(lm.profit) + '원', 'var(--pd)')}</section>
 <section>${sh('이번 달 신규 강의 건', '행을 누르면 세부 내역이 팝업으로 열립니다')}<div class="card">
 <table class="rt"><thead><tr><th>강의명</th><th>시작일</th><th class="r">수강생</th><th class="r">매출 (환불 전)</th><th class="r">환불</th><th class="r">지출</th><th class="r">수익</th></tr></thead><tbody>${rows || '<tr><td colspan="7" class="muted">이 달 강의가 없습니다.</td></tr>'}
 ${list.length ? `<tr class="tot"><td data-l="합계" class="full"><b>합계</b></td><td></td><td data-l="수강생" class="r"><b>${lm.n}명</b></td><td data-l="매출" class="r"><b>${fmt(lm.rev)}</b></td><td data-l="환불" class="r"><b>${lm.refund ? '-' + fmt(lm.refund) : '0'}</b></td><td data-l="지출" class="r"><b>${fmt(lm.cost)}</b></td><td data-l="수익" class="r"><b style="color:var(--pd)">${fmt(lm.profit)}</b></td></tr>` : ''}</tbody></table></div></section>
 <hr style="margin:4px 0">
-<section>${sh('현재 진행 중인 강의 건', ong.length + '건')}<div class="muted" style="margin-bottom:12px">모집중 · 진행중인 강의입니다. 어느 달을 보고 있어도 항상 표시됩니다.</div><div class="card">
-<table class="rt"><thead><tr><th>강의명</th><th>시작일</th><th class="r">수강생</th><th class="r">매출 (환불 전)</th><th>진행상태</th></tr></thead><tbody>${ong.map(l => { const c = lecC(l); return `<tr class="clk" data-act="sellec" data-v="${l.id}"><td data-l="강의명" class="full"><b>${esc(l.name)}</b></td><td data-l="시작일">${esc(l.date)}</td><td data-l="수강생" class="r">${c.n}명</td><td data-l="매출 (환불 전)" class="r">${fmt(c.rev)}</td><td data-l="진행상태">${chip(l.status)}</td></tr>`; }).join('') || '<tr><td colspan="5" class="muted">진행 중인 강의가 없습니다.</td></tr>'}</tbody></table></div></section>${modal}`;
+<section>${sh('현재 진행 중인 강의 건', ong.length + '건')}<div class="muted" style="margin-bottom:12px">행을 누르면 세부 내역이 팝업으로 열립니다.</div><div class="card">
+<table class="rt"><thead><tr><th>강의명</th><th>시작일</th><th class="r">수강생</th><th class="r">매출 (환불 전)</th><th>진행상태</th></tr></thead><tbody>${ong.map(l => { const c = lecC(l); return `<tr class="clk" data-act="sellec" data-v="${l.id}"><td data-l="강의명" class="full"><b>${esc(l.name)}</b></td><td data-l="시작일">${esc(l.date)}</td><td data-l="수강생" class="r">${c.n}명</td><td data-l="매출 (환불 전)" class="r">${fmt(c.rev)}</td><td data-l="진행상태">${chip(l.status)}</td></tr>`; }).join('') || '<tr><td colspan="5" class="muted">진행 중인 강의가 없습니다.</td></tr>'}</tbody></table></div></section>
+<section>${sh('전체 누적 현황', allL.length + '건 · 누적 매출 ' + fmt(allRev) + '원 (환불 반영) · 누적 수익 ' + fmt(allProfit) + '원')}<div class="muted" style="margin-bottom:12px">등록된 모든 강의의 누적입니다. (${lcnt})</div><div class="card">
+<table class="rt"><thead><tr><th>시작일</th><th>강의명</th><th class="r">수강생</th><th class="r">매출 (환불 반영)</th><th class="r">지출</th><th class="r">수익</th><th>진행상태</th></tr></thead><tbody>${allL.map(l => { const c = lecC(l); return `<tr class="clk" data-act="sellec" data-v="${l.id}"><td data-l="시작일">${esc(dstr(l.date))}</td><td data-l="강의명"><b>${esc(l.name)}</b></td><td data-l="수강생" class="r">${c.n}명</td><td data-l="매출 (환불 반영)" class="r">${fmt(c.rev - c.refund)}</td><td data-l="지출" class="r">${fmt(c.cost)}</td><td data-l="수익" class="r"><b>${fmt(c.profit)}</b></td><td data-l="진행상태">${chip(l.status)}</td></tr>`; }).join('') || '<tr><td colspan="7" class="muted">등록된 강의가 없습니다.</td></tr>'}</tbody></table></div></section>${modal}`;
 }
 function lecPanel(sel) {
   if (ui.panel === 'add' || ui.panel === 'edit') return lecForm(ui.panel === 'edit');
@@ -524,7 +528,7 @@ async function saveLec() {
 /* ----- 설정 ----- */
 function settings() {
   const mine = S.members.find(x => x.id === me.email) || {}, cur = animal(me.email), takenBy = a => S.members.find(x => x.animal === a && x.id !== me.email);
-  const profile = `<section class="card"><h2 style="font-size:18px">내 프로필</h2><div class="muted" style="margin:4px 0 0">우측 상단에 표시될 동물을 고르세요. 다른 멤버가 쓰는 동물은 선택할 수 없습니다.</div><div class="row" style="gap:10px;margin-top:16px">${ANIMALS.map(a => { const o = takenBy(a), on = a === cur; return `<button class="btn" ${o ? 'disabled' : ''} data-act="pickAnimal" data-v="${a}" title="${o ? esc(o.name || o.id) + ' 님이 사용 중' : ''}" style="width:56px;height:56px;font-size:28px;padding:0;${on ? 'border:2px solid var(--p);background:var(--tint)' : ''}${o ? ';opacity:.3' : ''}">${a}</button>`; }).join('')}</div></section>`;
+  const profile = `<section class="card"><h2 style="font-size:18px">내 프로필</h2><div class="muted" style="margin:4px 0 0">우측 상단에 표시될 동물을 고르세요. 다른 멤버가 쓰는 동물은 선택할 수 없습니다.</div><div class="row" style="gap:10px;margin-top:16px">${ANIMALS.map(a => { const o = takenBy(a), on = a === cur; return `<button class="btn" ${o ? 'disabled' : ''} data-act="pickAnimal" data-v="${a}" title="${o ? esc(o.name || o.id) + ' 님이 사용 중' : ''}" style="width:56px;height:56px;font-size:28px;padding:0;${on ? 'border:2px solid var(--p);background:var(--tint)' : ''}${o ? ';opacity:.3' : ''}">${a}</button>`; }).join('')}</div><div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)"><button class="btn" data-act="logout">로그아웃</button></div></section>`;
   if (me.role !== 'admin') return `<div class="row"><h1 style="font-size:26px">설정</h1></div>${profile}`;
   const mem = S.members.slice().sort((a, b) => (a.role === 'admin' ? 0 : 1) - (b.role === 'admin' ? 0 : 1));
   const trash = [...S.ads.filter(a => a.deleted).map(a => ({ c: 'ads', id: a.id, t: '광고영업', n: a.name, at: a.deletedAt })), ...S.lectures.filter(l => l.deleted).map(l => ({ c: 'lectures', id: l.id, t: '강의', n: l.name, at: l.deletedAt }))].sort((a, b) => b.at - a.at);
