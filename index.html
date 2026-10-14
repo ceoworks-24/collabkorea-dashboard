@@ -265,12 +265,13 @@ async function onUser(u) {
 }
 async function finishLogin(u, m) {
   me = { email: u.email, name: m.name || u.displayName || u.email.split('@')[0], role: m.role };
-  ui.auth = 'in'; ui.tab = 'home';
+  ui.auth = 'in'; restoreUi();
   const cols = ['ads', 'lectures', 'config', 'logs']; cols.push('members'); if (me.role === 'admin') cols.push('backups');
   cols.forEach(c => subs.push(B.sub(c, rows => { S[c] = rows; onData(); })));
   render();
 }
 function onData() {
+  if (ui.modalPending && (ui.tab === 'ads' ? selAd() : ui.tab === 'lectures' ? selLec() : null)) { ui.modalPending = false; ui.modal = true; ui.panel = 'detail'; }
   if (ui.panel === 'add' || ui.panel === 'edit' || ui.tab === 'settings' && ui.prod) { ui.dirty = true; } else render();
   if (me && me.role === 'admin' && !backupChecked && S.ads.length + S.lectures.length > 0) { backupChecked = true; setTimeout(autoMaintenance, 2500); }
 }
@@ -284,10 +285,25 @@ async function autoMaintenance() {
 
 /* ---------- 화면 ---------- */
 const toast = t => { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2500); };
+const UIKEYS = ['tab', 'vm', 'selM', 'selY', 'adM', 'lecM', 'selAd', 'selLec'];
+function saveUi() { try { const o = {}; UIKEYS.forEach(k => o[k] = ui[k]); o.modal = !!(ui.modal && ui.panel === 'detail' && !ui.confirm); localStorage.setItem('cd_ui', JSON.stringify(o)); } catch (e) { } }
+function restoreUi() {
+  try {
+    const o = JSON.parse(localStorage.getItem('cd_ui') || 'null'); if (!o) return;
+    const ym = v => typeof v === 'string' && /^\d{4}-\d{2}$/.test(v) && v <= CUR;
+    if (['home', 'ads', 'lectures', 'settings'].includes(o.tab)) ui.tab = o.tab;
+    if (o.vm === 'month' || o.vm === 'year') ui.vm = o.vm;
+    if (Number.isInteger(o.selM) && o.selM >= 1 && o.selM <= CM) ui.selM = o.selM; if (ym(o.adM)) ui.adM = o.adM; if (ym(o.lecM)) ui.lecM = o.lecM;
+    if (Number.isInteger(o.selY) && o.selY >= 2000 && o.selY <= CY) ui.selY = o.selY;
+    if (typeof o.selAd === 'string') ui.selAd = o.selAd; if (typeof o.selLec === 'string') ui.selLec = o.selLec;
+    ui.modalPending = !!o.modal && (o.tab === 'ads' || o.tab === 'lectures');
+  } catch (e) { }
+}
 function render() {
   const app = $('#app'); if (!app) return;
   const y = window.scrollY;
   app.innerHTML = ui.auth === 'in' ? shell() : authScreen();
+  if (ui.auth === 'in') saveUi();
   window.scrollTo(0, y);
 }
 const ANIMALS = ['🐶', '🐱', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🐸', '🐵', '🐧', '🐥', '🦁', '🐹', '🐮', '🐷', '🐙', '🦄', '🐢', '🦉'];
@@ -603,7 +619,7 @@ const H = {
 const csv = rows => '﻿' + rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
 function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: (type || 'text/csv') + ';charset=utf-8' })); a.download = name; a.click(); }
 const readProd = () => { const n = [...document.querySelectorAll('[name=pn]')], r = [...document.querySelectorAll('[name=pr]')]; return n.map((el, i) => ({ name: el.value.trim(), rate: num(r[i].value) })); };
-document.addEventListener('click', e => { const t = e.target.closest('[data-act]'); if (!t || !H[t.dataset.act]) return; H[t.dataset.act](t.dataset.v, t, e); });
+document.addEventListener('click', e => { const t = e.target.closest('[data-act]'); if (!t || !H[t.dataset.act]) return; ui.modalPending = false; H[t.dataset.act](t.dataset.v, t, e); });
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (ui.confirm) { confirmFn = null; ui.confirm = null; render(); } else if (ui.modal) closeModalNow(); });
 document.addEventListener('input', e => { if (e.target.closest('#form')) { const k = $('#form').dataset.kind; k === 'ad' ? calcAd() : calcLec(); } });
 document.addEventListener('change', async e => {
