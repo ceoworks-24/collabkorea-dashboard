@@ -621,9 +621,11 @@ function keepNote() { const f = $('#ntf'); if (!f) return; const e = f.elements;
 function keepMsg() { const f = $('#msgf'); if (!f) return; ui.msg = { ...(ui.msg || { to: [] }), ref: f.elements.ref.value, text: f.elements.text.value }; }
 function inbox() {
   const d = ui.msg || { to: [], ref: '', text: '' }, others = S.members.filter(m => m.id !== me.email && m.name), auto = autoAlerts(), admin = me.role === 'admin';
-  const ins = S.notes.filter(x => x.kind === 'msg' && (x.to || []).includes(me.email)).sort((a, b) => b.at - a.at), outs = S.notes.filter(x => x.kind === 'msg' && x.from === me.email).sort((a, b) => b.at - a.at).slice(0, 20);
+  const insAll = S.notes.filter(x => x.kind === 'msg' && (x.to || []).includes(me.email)).sort((a, b) => b.at - a.at), insUn = insAll.filter(x => !isAcked(x)), insRd = insAll.filter(x => isAcked(x)), nRd = 5 + (ui.inMore || 0);
+  const ins = [...insUn, ...insRd.slice(0, nRd)].sort((a, b) => b.at - a.at), inLeft = Math.max(0, insRd.length - nRd);
+  const pendOf = x => expected(x).some(m => !(x.acks && x.acks[m.id])), outAll = S.notes.filter(x => x.kind === 'msg' && x.from === me.email).sort((a, b) => (pendOf(b) - pendOf(a)) || (b.at - a.at)), nOut = 5 + (ui.outMore || 0), outs = outAll.slice(0, nOut), outLeft = Math.max(0, outAll.length - nOut);
   const un = unreadOf('msg'), ads = aliveAds(), lecs = ongoingLec();
-  const open = x => { if (!x.ref) return ''; if (x.refKind === 'lec') return S.lectures.find(a => a.id === x.ref && !a.deleted) ? `<button class="btn s" data-act="openLec" data-v="${x.ref}">관련 건 보기 · ${esc(x.refName)}</button>` : ''; return S.ads.find(a => a.id === x.ref && !a.deleted) ? `<button class="btn s" data-act="openRef" data-v="${x.ref}">관련 건 보기 · ${esc(x.refName)}</button>` : ''; };
+  const open = x => { if (!x.ref) return ''; if (x.refKind === 'lec') return S.lectures.find(a => a.id === x.ref && !a.deleted) ? `<button class="btn s" data-act="openLec" data-v="${x.ref}">${esc(x.refName)} 이동하기</button>` : ''; return S.ads.find(a => a.id === x.ref && !a.deleted) ? `<button class="btn s" data-act="openRef" data-v="${x.ref}">${esc(x.refName)} 이동하기</button>` : ''; };
   const rowIn = x => `<article class="card nt ${isAcked(x) ? 'done' : 'un'}"><div class="row" style="gap:8px;flex-wrap:nowrap;align-items:flex-start"><span class="av">${animal(x.from)}</span><div style="flex:1;min-width:0"><div><b>${esc(x.fromName)}</b> <span class="muted" style="font-size:13px">${fmtAt(x.at)}${(x.to || []).length > 1 ? ' · 받는 사람 ' + x.to.length + '명' : ''}</span></div><div style="margin-top:4px;line-height:1.6;overflow-wrap:anywhere">${esc(x.text)}</div>${open(x) ? `<div style="margin-top:8px">${open(x)}</div>` : ''}</div></div><div style="margin-top:12px">${ackBlock(x)}</div></article>`;
   const rowOut = x => `<article class="card nt done"><div class="row" style="gap:8px;flex-wrap:nowrap;align-items:flex-start"><div style="flex:1;min-width:0"><div class="muted" style="font-size:13px">${esc((x.toNames || []).join(', '))} 님에게 · ${fmtAt(x.at)}</div><div style="margin-top:4px;line-height:1.6;overflow-wrap:anywhere">${esc(x.text)}</div>${open(x) ? `<div style="margin-top:8px">${open(x)}</div>` : ''}</div><button class="btn s d" data-act="delNote" data-v="${x.id}">삭제</button></div><div style="margin-top:12px">${ackBlock(x)}</div></article>`;
   const rowAuto = x => `<button class="nbox auto" data-act="openAuto" data-v="${x.a.id}"><span class="nd"></span><div class="tx"><div>${esc(x.text)}</div><div class="mt">자동 알림 · 눌러서 해당 건 열기</div></div></button>`;
@@ -642,8 +644,8 @@ function inbox() {
 <button type="button" class="btn p" data-act="sendNote">보내기</button></form></section>
 <div class="stack" style="gap:26px;min-width:0">
 ${auto.length ? `<section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">자동 알림</h2><span class="muted">${admin ? '전체 건' : '내가 담당자인 건'} 중 예정일이 지난 정산</span></div><div class="stack" style="gap:10px">${auto.map(rowAuto).join('')}</div></section>` : ''}
-<section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">받은 알림</h2>${un ? `<span class="chip" style="background:#FDE8E8;color:#B42318">안 읽음 ${un}</span>` : ''}</div><div class="stack" style="gap:12px">${ins.map(rowIn).join('') || '<div class="card muted">받은 알림이 없습니다.</div>'}</div></section>
-<section><button class="sentbar" data-act="sentTog">보낸 알림 ${ui.sentOpen ? '▲' : '▼'} <span class="muted" style="font-size:14px;font-weight:500">${outs.length}</span></button>${ui.sentOpen ? `<div class="stack" style="gap:12px;margin-top:10px">${outs.map(rowOut).join('') || '<div class="card muted">보낸 알림이 없습니다.</div>'}</div>` : ''}</section></div></div>`;
+<section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">받은 알림</h2>${un ? `<span class="chip" style="background:#FDE8E8;color:#B42318">안 읽음 ${un}</span>` : ''}</div><div class="stack" style="gap:12px">${ins.map(rowIn).join('') || '<div class="card muted">받은 알림이 없습니다.</div>'}${inLeft ? `<button class="btn" data-act="inMore">이전 알림 더 보기 (${inLeft}개 남음)</button>` : ''}</div></section>
+<section><button class="sentbar" data-act="sentTog">보낸 알림 ${ui.sentOpen ? '▲' : '▼'} <span class="muted" style="font-size:14px;font-weight:500">${outAll.length}</span></button>${ui.sentOpen ? `<div class="stack" style="gap:12px;margin-top:10px">${outs.map(rowOut).join('') || '<div class="card muted">보낸 알림이 없습니다.</div>'}${outLeft ? `<button class="btn" data-act="outMore">더 보기 (${outLeft}개 남음)</button>` : ''}</div>` : ''}</section></div></div>`;
 }
 /* ----- 홈 ----- */
 function home() {
@@ -966,6 +968,8 @@ const H = {
   ncToggle: () => { if (ui.nc) { ui.nc = false; ui.nd = null; } else { ui.nc = true; ui.nd = { type: '일반', title: '', text: '', ack: true, pin: false, imgs: [] }; } noKeep = true; render(); },
   editNote: v => { const x = S.notes.find(n => n.id === v); if (!x) return; ui.nd = { editId: x.id, type: x.type || '일반', title: x.title, text: x.text, ack: x.ackReq !== false, pin: !!x.pinned, imgs: (x.images || []).slice() }; ui.nc = true; noKeep = true; render(); window.scrollTo(0, 0); },
   pinTog: v => { ui.pinOpen = { ...(ui.pinOpen || {}), [v]: !(ui.pinOpen || {})[v] }; render(); },
+  inMore: () => { ui.inMore = (ui.inMore || 0) + 5; render(); },
+  outMore: () => { ui.outMore = (ui.outMore || 0) + 5; render(); },
   sentTog: () => { ui.sentOpen = !ui.sentOpen; render(); },
   nimgDel: v => { keepNote(); ui.nd.imgs.splice(+v, 1); render(); },
   zoom: v => { const [id, k] = v.split('|'), x = S.notes.find(n => n.id === id); if (x && x.images && x.images[+k]) { ui.zoom = x.images[+k]; render(); } },
