@@ -184,6 +184,7 @@ input,select,textarea{height:44px;border:1px solid #B9B4D6;border-radius:10px;pa
 .kpi{font-size:42px;font-weight:700;margin-top:8px;letter-spacing:-.5px}.kpi small{font-size:20px;font-weight:500;color:var(--mut)}
 .center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 24px}
 .loginbox{width:100%;max-width:440px;display:flex;flex-direction:column;gap:20px}
+.pitem{border:1px solid var(--line);border-radius:12px;padding:12px;background:#FBFAFF}.cl{font-size:16px}.cs{font-size:13.5px;color:var(--mut);padding-left:14px;margin-top:2px}
 .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;z-index:200;max-width:calc(100vw - 32px);text-align:center}
 #form .err,#form .err:focus{border-color:#E5484D!important;background:#FFF6F6!important;box-shadow:0 0 0 3px rgba(229,72,77,.14)}.ermsg{color:#D92D33;font-size:12.5px;margin-top:4px;font-weight:500}
 .tag{font-size:13px;color:#7A5A00;background:#FFF4D6;border-radius:8px;padding:7px 12px}
@@ -234,14 +235,17 @@ const DEFAULT_PRODUCTS = [{ name: '샤오홍슈 광고', rate: 15 }, { name: '�
 const S = { ads: [], lectures: [], members: [], config: [], logs: [], backups: [], partners: [], notes: [] };
 let me = null, B = null, subs = [], backupChecked = false;
 let noKeep = false, histKey = null;
-let ui = { nc: false, nd: null, qedit: null, zoom: null, hl: null, modal: false, confirm: null, hlFn: null, hlSrc: null, auth: 'loading', tab: 'home', vm: 'month', filter: 'all', selM: CM, selY: CY, adM: CUR, lecM: CUR, selAd: null, selLec: null, panel: 'detail', draft: null, dirty: false, prod: null, bkM: CUR, msg: null, sbc: (() => { try { return localStorage.getItem('cd_sbc') === '1'; } catch (e) { return false; } })() };
+let ui = { sub: null, nc: false, nd: null, qedit: null, zoom: null, hl: null, modal: false, confirm: null, hlFn: null, hlSrc: null, auth: 'loading', tab: 'home', vm: 'month', filter: 'all', selM: CM, selY: CY, adM: CUR, lecM: CUR, selAd: null, selLec: null, panel: 'detail', draft: null, dirty: false, prod: null, bkM: CUR, msg: null, sbc: (() => { try { return localStorage.getItem('cd_sbc') === '1'; } catch (e) { return false; } })() };
 const products = () => (S.config.find(c => c.id === 'main') || {}).products || DEFAULT_PRODUCTS;
 const liveAds = () => S.ads.filter(a => !a.deleted);
 const gN = g => (g.students && g.students.length) ? g.students.length : num(g.n);
 const normLec = l => l.groups ? l : { ...l, groups: [{ name: '수강', price: l.price, students: [], n: l.n }] };
 const liveLec = () => S.lectures.filter(l => !l.deleted).map(normLec).map(l => l.status === '모집중' ? { ...l, status: '진행중' } : l);
-const adBudget = a => num(a.contract);
-const adRev = a => Math.round(adBudget(a) * num(a.rate) / 100);
+const DEFAULT_BIZ = ['뷰티', '식품', '의료', '패션', '관광', '교육', 'IT', '기타'];
+const bizList = () => { const c = S.config.find(x => x.id === 'biz'); return c && Array.isArray(c.list) ? c.list : DEFAULT_BIZ; };
+const adItems = a => Array.isArray(a.items) && a.items.length ? a.items : [{ product: a.product || '', budget: num(a.contract), rate: num(a.rate) }];
+const adBudget = a => adItems(a).reduce((s, i) => s + num(i.budget), 0);
+const adRev = a => adItems(a).reduce((s, i) => s + Math.round(num(i.budget) * num(i.rate) / 100), 0);
 const hasPartner = a => !!a.partnerName;
 const adPartner = a => hasPartner(a) ? Math.round(adRev(a) * num(a.sharePct) / 100) : 0;
 const adOurs = a => adRev(a) - adPartner(a);
@@ -331,6 +335,9 @@ function seed() {
   lec({ name: '샤오홍슈 광고 실전 특강', date: mo + '-15', status: '진행중', groups: [grp('일반반', 330000, ['고은솔', '양재현', '서가을', '백지호', '남유진', '허보람', '추다인', '변서아', '탁지훈', '마소연'])], costs: [{ name: '강사료', unit: 400000, qty: 1, note: '' }, { name: '장소비', unit: 150000, qty: 1, note: '' }] });
   lec({ name: '인플루언서 마케팅 기초반', date: shift(mo, 1) + '-05', status: '진행중', groups: [grp('수강반', 200000, ['김하늘', '이수빈', '박지우', '최예린', '정다은', '한서윤', '오민지', '윤채원'])], costs: [{ name: '장소비', unit: 100000, qty: 1, note: '' }] });
   lec({ name: '중국 마케팅 4주 과정', date: shift(mo, -1) + '-28', status: '진행중', groups: [grp('수강반', 250000, ['강민서', '조현우', '신유나', '배서진', '임도현', '문지안', '류하린', '송이준', '권나연', '홍시우', '노아름', '장태오'])], costs: [{ name: '강사료', unit: 500000, qty: 1, note: '' }] });
+  const multi = (nm, extra) => { const a = ads.find(x => x.name === nm && x.month === mo); if (!a) return; a.items = [{ product: a.product, budget: num(a.contract), rate: num(a.rate) }, ...extra]; a.contract = a.items.reduce((t, i) => t + i.budget, 0); a.product = a.items.map(i => i.product).join(', '); const rv = a.items.reduce((t, i) => t + Math.round(i.budget * i.rate / 100), 0); a.rate = +(rv / a.contract * 100).toFixed(2); };
+  multi('로제뷰티', [{ product: '샤오홍슈 인플루언서', budget: 6000000, rate: 20 }]);
+  multi('한입식품', [{ product: '바이두 광고', budget: 4000000, rate: 12 }]);
   return { ads, lectures, partners, config: [{ id: 'main', products: DEFAULT_PRODUCTS }], logs: [], backups: [], members: [
     { id: 'demo-admin@example.com', email: 'demo-admin@example.com', name: '김대표', role: 'admin', joined: true, named: true, animal: '🦊' },
     { id: 'demo-team@example.com', email: 'demo-team@example.com', name: '박서연', role: 'member', joined: true, named: true, animal: '🐰' },
@@ -356,7 +363,7 @@ function seedNotes(ads) {
   ];
 }
 function demoBackend() {
-  const KEY = 'cd_demo_v5'; let db; try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { }
+  const KEY = 'cd_demo_v6'; let db; try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { }
   if (!db) db = seed();
   db.partners = db.partners || []; db.notes = db.notes || [];
   const L = {}; let cb = null;
@@ -463,7 +470,7 @@ async function autoMaintenance() {
 }
 
 /* ---------- 화면 ---------- */
-const toast = t => { const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2500); };
+const toast = t => { document.querySelectorAll('.toast').forEach(x => x.remove()); const d = document.createElement('div'); d.className = 'toast'; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2500); };
 const UA = navigator.userAgent, isKakao = /KAKAOTALK/i.test(UA), isNaver = /NAVER\(inapp/i.test(UA), isAndroid = /android/i.test(UA), inApp = isKakao || isNaver;
 const openExternal = () => {
   const u = new URL(location.href);
@@ -503,9 +510,10 @@ function render() {
   const y = window.scrollY;
   if (ui.auth === 'in' && !noKeep) { try { if ($('#ntf')) keepNote(); if ($('#msgf')) keepMsg(); if ($('#qef')) keepQ(); } catch (e) { } }
   noKeep = false;
+  const mb = document.querySelector('.mbox'), mt = mb ? mb.scrollTop : 0;
   app.innerHTML = ui.auth === 'in' ? shell() : authScreen();
   if (ui.auth === 'in') { saveUi(); updateBadge(); syncHist(); }
-  window.scrollTo(0, y);
+  window.scrollTo(0, y); if (mt) { const nb = document.querySelector('.mbox'); if (nb) nb.scrollTop = mt; }
   if (ui.hl && ui.tab === 'notice') { const el = document.getElementById('nt-' + ui.hl); if (el) { el.classList.add('hl'); el.scrollIntoView({ block: 'center' }); ui.hl = null; } }
 }
 const ANIMALS = ['🐶', '🐱', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🐸', '🐵', '🐧', '🐥', '🦁', '🐹', '🐮', '🐷', '🐙', '🦄', '🐢', '🦉'];
@@ -549,7 +557,7 @@ function shell() {
 <div class="sec">메뉴</div>${it('home', '홈')}${it('ads', '광고영업')}${it('lectures', '강의')}
 <div class="me ${t === 'settings' ? 'on' : ''}" data-act="tab" data-v="settings" role="link" tabindex="0" title="내 프로필 · 설정"><span class="av">${animal(me.email)}</span><div class="tx"><b>${esc(me.name)}</b><span>${esc(me.email)}</span></div><span class="gear">${ico('settings', 20)}</span></div></aside>
 <div class="wrap"><div class="mtop"><h1>${TITLES[t]}</h1><button class="gb" data-act="tab" data-v="settings" aria-label="설정">${ico('settings', 22)}</button></div><main>${t === 'home' ? home() : t === 'ads' ? ads() : t === 'lectures' ? lectures() : t === 'notice' ? notice() : t === 'inbox' ? inbox() : settings()}</main></div>
-<nav class="tabbar" aria-label="메뉴">${tb('home', '홈')}${tb('notice', '공지')}${tb('inbox', '알림함')}${tb('ads', '광고영업')}${tb('lectures', '강의')}</nav></div>${ui.zoom ? `<div class="modal" style="z-index:95;background:rgba(0,0,0,.8)" data-act="zoomClose"><img src="${ui.zoom}" style="max-width:100%;max-height:100%;border-radius:8px"></div>` : ''}${ui.confirm ? `<div class="modal" style="z-index:90" data-act="confirmNo"><div class="mbox" style="width:min(380px,100%);padding:28px 24px 24px"><h2 style="font-size:19px">${esc(ui.confirm.msg)}</h2>${ui.confirm.sub ? `<p class="muted" style="margin:8px 0 0;line-height:1.6">${esc(ui.confirm.sub)}</p>` : ''}<div class="row" style="gap:8px;margin-top:20px"><button class="btn grow" data-act="confirmYes">예</button><button class="btn p grow" data-act="confirmNo">아니오</button></div></div></div>` : ''}`;
+<nav class="tabbar" aria-label="메뉴">${tb('home', '홈')}${tb('notice', '공지')}${tb('inbox', '알림함')}${tb('ads', '광고영업')}${tb('lectures', '강의')}</nav></div>${ui.sub ? subModal() : ''}${ui.zoom ? `<div class="modal" style="z-index:95;background:rgba(0,0,0,.8)" data-act="zoomClose"><img src="${ui.zoom}" style="max-width:100%;max-height:100%;border-radius:8px"></div>` : ''}${ui.confirm ? `<div class="modal" style="z-index:90" data-act="confirmNo"><div class="mbox" style="width:min(380px,100%);padding:28px 24px 24px"><h2 style="font-size:19px">${esc(ui.confirm.msg)}</h2>${ui.confirm.sub ? `<p class="muted" style="margin:8px 0 0;line-height:1.6">${esc(ui.confirm.sub)}</p>` : ''}<div class="row" style="gap:8px;margin-top:20px"><button class="btn grow" data-act="confirmYes">예</button><button class="btn p grow" data-act="confirmNo">아니오</button></div></div></div>` : ''}`;
 }
 
 /* ----- 공지사항 · 알림함 ----- */
@@ -563,8 +571,8 @@ const uc = (name, an, cls, tip) => `<span class="uc ${cls || ''}" ${tip ? `title
 function autoAlerts() {
   const t = today(), mineN = me.name, out = [];
   liveAds().filter(a => me.role === 'admin' || (a.owner || '') === mineN).forEach(a => {
-    if (payable(a) && a.inDone === false && a.inDate && a.inDate < t) out.push({ a, k: 'in', text: `${a.name} 플랫폼 입금 예정일(${mdOf(a.inDate)})이 지났습니다. 입금을 확인하고 완료 처리해 주세요.`, d: a.inDate });
-    if (payOutable(a) && a.outDone === false && a.outDate && a.outDate < t) out.push({ a, k: 'out', text: `${a.name} → ${a.partnerName} 정산 예정일(${mdOf(a.outDate)})이 지났습니다. 정산하고 완료 처리해 주세요.`, d: a.outDate });
+    if (payable(a) && a.inDone === false && a.inDate && a.inDate < t) out.push({ a, k: 'in', text: `${a.name} 1급대행사 → 콜라브코리아 정산 예정일(${mdOf(a.inDate)})이 지났습니다. 정산을 확인하고 완료 처리해 주세요.`, d: a.inDate });
+    if (payOutable(a) && a.outDone === false && a.outDate && a.outDate < t) out.push({ a, k: 'out', text: `${a.name} 콜라브코리아 → ${a.partnerName} 정산 예정일(${mdOf(a.outDate)})이 지났습니다. 정산하고 완료 처리해 주세요.`, d: a.outDate });
   });
   return out.sort((x, y) => x.d.localeCompare(y.d));
 }
@@ -573,7 +581,7 @@ const fmtAt = t => { const d = new Date(t), s = d.getFullYear() + '. ' + pad(d.g
 const fmtD = t => { const d = new Date(t); return d.getFullYear() + '. ' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 const NTYPES = { '일반': ['#EEF0F6', '#33323F'], '중요': ['#FFF1D6', '#8A5A00'], '긴급': ['#FDE8E8', '#B42318'], '일정': ['#E5EEFF', '#1E4FB8'], '정산': ['#E3F5EA', '#14693B'] };
 const quickList = () => { const c = S.config.find(x => x.id === 'main'); return c && Array.isArray(c.quick) && c.quick.length ? c.quick : QUICK; };
-const QUICK = ['신규 건 등록해 주세요', '입금 확인 부탁드려요', '정산 완료 처리해 주세요', '입금 예정일 확인해 주세요'];
+const QUICK = ['신규 건 등록해 주세요', '정산 확인 부탁드려요', '정산 완료 처리해 주세요', '정산 예정일 확인해 주세요'];
 function ackBlock(x) {
   const ex = expected(x), done = ex.filter(m => x.acks && x.acks[m.id]), pend = ex.filter(m => !(x.acks && x.acks[m.id]));
   const mine = needAck(x);
@@ -622,7 +630,7 @@ function inbox() {
 <div><div class="lbl" style="margin-bottom:6px">자주 쓰는 문구 <span class="muted" style="font-size:12px">눌러서 내용에 넣기</span></div>${quick}</div>
 <button type="button" class="btn p" data-act="sendNote">보내기</button></form></section>
 <div class="stack" style="gap:26px;min-width:0">
-${auto.length ? `<section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">자동 알림</h2><span class="muted">${admin ? '전체 건' : '내가 담당자인 건'} 중 예정일이 지난 입금·정산</span></div><div class="stack" style="gap:10px">${auto.map(rowAuto).join('')}</div></section>` : ''}
+${auto.length ? `<section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">자동 알림</h2><span class="muted">${admin ? '전체 건' : '내가 담당자인 건'} 중 예정일이 지난 정산</span></div><div class="stack" style="gap:10px">${auto.map(rowAuto).join('')}</div></section>` : ''}
 <section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">받은 알림</h2>${un ? `<span class="chip" style="background:#FDE8E8;color:#B42318">안 읽음 ${un}</span>` : ''}</div><div class="stack" style="gap:12px">${ins.map(rowIn).join('') || '<div class="card muted">받은 알림이 없습니다.</div>'}</div></section>
 <section><h2 style="font-size:19px;margin-bottom:8px">보낸 알림</h2><div class="stack" style="gap:12px">${outs.map(rowOut).join('') || '<div class="card muted">보낸 알림이 없습니다.</div>'}</div></section></div></div>`;
 }
@@ -687,8 +695,8 @@ function ads() {
   const hit = (a, t) => hf && hf(a, t) ? 'hl' : '';
   const net = a => COUNTED.includes(a.status) ? adRev(a) - num(a.refund) : 0;
   const rowNew = a => `<tr class="clk ${hit(a, 'new')}" data-act="selmodal" data-v="${a.id}"><td data-l="업체명" class="full m1"><b>${esc(a.name)}</b></td><td data-l="업종">${esc(a.biz)}</td><td data-l="광고상품">${esc(a.product)}</td><td data-l="광고예산" class="r">${fmt(adBudget(a))}</td><td data-l="수수료율" class="r">${num(a.rate)}%</td><td data-l="매출" class="r"><b>${fmt(adRev(a))}</b></td><td data-l="수익" class="r m2"><span class="mo">수익 </span><b>${fmt(adOurs(a))}</b></td><td class="mob">${esc(a.biz)} · ${esc(a.product)}<br>예산 ${fmt(adBudget(a))} · 매출 ${fmt(adRev(a))} · ${hasPartner(a) ? esc(a.partnerName) : '자체 영업'}</td></tr>`;
-  const rowAll = (a, t, withRev) => `<tr class="clk ${hit(a, t)}" data-act="selmodal" data-v="${a.id}"><td data-l="계약월">${esc(a.month)}</td><td data-l="업체명" class="m1"><b>${esc(a.name)}</b></td><td data-l="업종">${esc(a.biz)}</td><td data-l="담당자">${esc(a.owner || '-')}</td><td data-l="영업자">${hasPartner(a) ? esc(a.partnerName) : '<span class="muted">자체</span>'}</td><td data-l="광고상품">${esc(a.product)}</td><td data-l="광고예산" class="r">${fmt(adBudget(a))}</td><td data-l="수수료율" class="r">${num(a.rate)}%</td><td data-l="진행상태" class="m2">${chip(a.status)}</td><td data-l="플랫폼 입금">${inChip(a)}</td><td data-l="파트너 정산">${outChip(a)}</td>${withRev ? `<td data-l="누적 매출 (환불 반영)" class="r"><b>${fmt(net(a))}</b></td>` : ''}<td class="mob">${esc(a.month)} · ${esc(a.biz)} · ${hasPartner(a) ? esc(a.partnerName) : '자체 영업'}${withRev ? ` · 누적 매출 <b style="color:var(--ink)">${fmt(net(a))}원</b>` : ''}${payable(a) ? `<div style="margin-top:2px">입금 ${inChip(a)}${hasPartner(a) ? ` &nbsp;정산 ${outChip(a)}` : ''}</div>` : ''}</td></tr>`;
-  const head = withRev => `<thead><tr><th>계약월</th><th>업체명</th><th>업종</th><th>담당자</th><th>영업자</th><th>광고상품</th><th class="r">광고예산</th><th class="r">수수료율</th><th>진행상태</th><th>플랫폼 입금</th><th>파트너 정산</th>${withRev ? '<th class="r">누적 매출 (환불 반영)</th>' : ''}</tr></thead>`;
+  const rowAll = (a, t, withRev) => `<tr class="clk ${hit(a, t)}" data-act="selmodal" data-v="${a.id}"><td data-l="계약월">${esc(a.month)}</td><td data-l="업체명" class="m1"><b>${esc(a.name)}</b></td><td data-l="업종">${esc(a.biz)}</td><td data-l="담당자">${esc(a.owner || '-')}</td><td data-l="영업자">${hasPartner(a) ? esc(a.partnerName) : '<span class="muted">자체</span>'}</td><td data-l="광고상품">${esc(a.product)}</td><td data-l="광고예산" class="r">${fmt(adBudget(a))}</td><td data-l="수수료율" class="r">${num(a.rate)}%</td><td data-l="진행상태" class="m2">${chip(a.status)}</td><td data-l="1급대행사 정산">${inChip(a)}</td><td data-l="파트너 정산">${outChip(a)}</td>${withRev ? `<td data-l="누적 매출 (환불 반영)" class="r"><b>${fmt(net(a))}</b></td>` : ''}<td class="mob">${esc(a.month)} · ${esc(a.biz)} · ${hasPartner(a) ? esc(a.partnerName) : '자체 영업'}${withRev ? ` · 누적 매출 <b style="color:var(--ink)">${fmt(net(a))}원</b>` : ''}${payable(a) ? `<div style="margin-top:2px">대행사 ${inChip(a)}${hasPartner(a) ? ` &nbsp;파트너 ${outChip(a)}` : ''}</div>` : ''}</td></tr>`;
+  const head = withRev => `<thead><tr><th>계약월</th><th>업체명</th><th>업종</th><th>담당자</th><th>영업자</th><th>광고상품</th><th class="r">광고예산</th><th class="r">수수료율</th><th>진행상태</th><th>1급대행사 정산</th><th>파트너 정산</th>${withRev ? '<th class="r">누적 매출 (환불 반영)</th>' : ''}</tr></thead>`;
   const card = (l, v, c) => `<div class="card sm"><div class="lbl">${l}</div><div class="big" ${c ? `style="color:${c}"` : ''}>${v}</div></div>`;
   const cnt = ['계약완료', '진행중', '종료'].map(st => st + ' ' + all.filter(a => a.status === st).length).join(' · ');
   const allSum = all.reduce((s, a) => s + net(a), 0);
@@ -697,38 +705,38 @@ function ads() {
   const pend = liveAds().filter(a => needIn(a) || needOut(a)).map(a => ({ a, k: [needIn(a) ? (a.inDate || '9999') : '9999', needOut(a) ? (a.outDate || '9999') : '9999'].sort()[0] })).sort((x, y) => x.k.localeCompare(y.k)).map(x => x.a);
   const inSum = pend.filter(needIn).reduce((s, a) => s + adRev(a), 0), outSum = pend.filter(needOut).reduce((s, a) => s + adPartner(a), 0);
   const late = pend.filter(a => (needIn(a) && a.inDate && a.inDate < today()) || (needOut(a) && a.outDate && a.outDate < today())).length;
-  const payRow = a => `<tr class="clk" data-act="selmodal" data-v="${a.id}"><td data-l="업체명" class="full m1"><b>${esc(a.name)}</b></td><td data-l="영업자" class="m2">${hasPartner(a) ? esc(a.partnerName) : '<span class="muted">자체</span>'}</td><td data-l="플랫폼 → 우리 입금" class="r">${needIn(a) ? fmt(adRev(a)) + '원' : '<span class="muted">-</span>'}</td><td data-l="입금 상태">${needIn(a) ? inChip(a) + ` <button class="btn s" data-act="payQuick" data-v="${a.id}|in">완료</button>` : (payable(a) ? inChip(a) : '-')}</td><td data-l="우리 → 파트너 정산" class="r">${needOut(a) ? fmt(adPartner(a)) + '원' : '<span class="muted">-</span>'}</td><td data-l="정산 상태">${needOut(a) ? outChip(a) + (a.inDone ? ` <button class="btn s" data-act="payQuick" data-v="${a.id}|out">완료</button>` : '') : (payOutable(a) ? outChip(a) : '-')}</td><td class="mob">${needIn(a) ? `<div class="mrow"><span>입금 <b>${fmt(adRev(a))}원</b></span><span>${inChip(a)} <button class="btn s" data-act="payQuick" data-v="${a.id}|in">완료</button></span></div>` : ''}${needOut(a) ? `<div class="mrow"><span>정산 <b>${fmt(adPartner(a))}원</b></span><span>${outChip(a)}${a.inDone ? ` <button class="btn s" data-act="payQuick" data-v="${a.id}|out">완료</button>` : ''}</span></div>` : ''}</td></tr>`;
+  const payRow = a => `<tr class="clk" data-act="selmodal" data-v="${a.id}"><td data-l="업체명" class="full m1"><b>${esc(a.name)}</b></td><td data-l="영업자" class="m2">${hasPartner(a) ? esc(a.partnerName) : '<span class="muted">자체</span>'}</td><td data-l="1급대행사 → 콜라브코리아" class="r">${needIn(a) ? fmt(adRev(a)) + '원' : '<span class="muted">-</span>'}</td><td data-l="대행사 정산 상태">${needIn(a) ? inChip(a) + ` <button class="btn s" data-act="payQuick" data-v="${a.id}|in">완료</button>` : (payable(a) ? inChip(a) : '-')}</td><td data-l="콜라브코리아 → 파트너" class="r">${needOut(a) ? fmt(adPartner(a)) + '원' : '<span class="muted">-</span>'}</td><td data-l="파트너 정산 상태">${needOut(a) ? outChip(a) + (a.inDone ? ` <button class="btn s" data-act="payQuick" data-v="${a.id}|out">완료</button>` : '') : (payOutable(a) ? outChip(a) : '-')}</td><td class="mob">${needIn(a) ? `<div class="mrow"><span>대행사 <b>${fmt(adRev(a))}원</b></span><span>${inChip(a)} <button class="btn s" data-act="payQuick" data-v="${a.id}|in">완료</button></span></div>` : ''}${needOut(a) ? `<div class="mrow"><span>파트너 <b>${fmt(adPartner(a))}원</b></span><span>${outChip(a)}${a.inDone ? ` <button class="btn s" data-act="payQuick" data-v="${a.id}|out">완료</button>` : ''}</span></div>` : ''}</td></tr>`;
   const modal = ui.modal ? `<div class="modal" data-act="closeModal"><div class="mbox"><button class="nav mx" data-act="closeModal" aria-label="닫기">×</button>${adPanel(cur)}</div></div>` : '';
   return `<div class="row hd" style="flex-wrap:nowrap"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="adprev" aria-label="이전 달">‹</button><h1 class="ttl">${ymLabel(ui.adM)}</h1><button class="nav" data-act="adnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto;flex:none;white-space:nowrap" data-act="openAdd">+ 광고영업 추가</button></div>
 <section class="grid g4">${card('이번 달 계약', list.length + '건')}${card('이번 달 광고예산', fmt(bud) + '원')}${card('이번 달 매출', fmt(tot) + '원' + (rf.length ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">환불 -${fmt(refundSum(ui.adM))} 반영</div>` : ''), 'var(--lvt)')}${card('이번 달 수익', fmt(tot - ptot) + '원' + (ptot ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">파트너 지급 -${fmt(ptot)} 반영</div>` : ''), 'var(--pd)')}</section>
 <section>${sh('이번 달 신규 계약 건', '행을 누르면 세부 내역이 팝업으로 열립니다')}<div class="card">
 <table class="rt cp"><thead><tr><th>업체명</th><th>업종</th><th>광고상품</th><th class="r">광고예산</th><th class="r">수수료율</th><th class="r">매출</th><th class="r">수익</th></tr></thead><tbody>${list.map(rowNew).join('') || '<tr><td colspan="7" class="muted">이 달에 계약된 건이 없습니다.</td></tr>'}</tbody></table>
 ${rf.length ? `<div class="note" style="margin-top:12px"><b>이번 달 환불 (매출에서 차감)</b><br>${rf.map(a => `${esc(a.name)} -${fmt(a.refund)}원 · 계약월 ${esc(a.month)}`).join('<br>')}</div>` : ''}</div></section>
-<section>${sh('입금·정산 일정', `입금 대기 ${pend.filter(needIn).length}건 ${fmt(inSum)}원 · 정산 대기 ${pend.filter(needOut).length}건 ${fmt(outSum)}원${late ? ` · <b style="color:var(--red)">지연 ${late}건</b>` : ''}`)}<div class="muted" style="margin-bottom:12px">아직 완료되지 않은 건만 날짜 순으로 보입니다. ‘완료’ 버튼으로 바로 처리하고, 행을 누르면 예정일도 바꿀 수 있습니다.</div><div class="card">
-<table class="rt cp"><thead><tr><th>업체명</th><th>영업자</th><th class="r">플랫폼 → 우리 입금</th><th>입금 상태</th><th class="r">우리 → 파트너 정산</th><th>정산 상태</th></tr></thead><tbody>${pend.map(payRow).join('') || '<tr><td colspan="6" class="muted">대기 중인 입금·정산이 없습니다.</td></tr>'}</tbody></table></div></section>
+<section>${sh('정산 일정', `1급대행사 정산 대기 ${pend.filter(needIn).length}건 ${fmt(inSum)}원 · 파트너 정산 대기 ${pend.filter(needOut).length}건 ${fmt(outSum)}원${late ? ` · <b style="color:var(--red)">지연 ${late}건</b>` : ''}`)}<div class="muted" style="margin-bottom:12px">아직 완료되지 않은 건만 날짜 순으로 보입니다. ‘완료’ 버튼으로 바로 처리하고, 행을 누르면 예정일도 바꿀 수 있습니다.</div><div class="card">
+<table class="rt cp"><thead><tr><th>업체명</th><th>영업자</th><th class="r">1급대행사 → 콜라브코리아</th><th>상태</th><th class="r">콜라브코리아 → 파트너</th><th>상태</th></tr></thead><tbody>${pend.map(payRow).join('') || '<tr><td colspan="6" class="muted">대기 중인 정산이 없습니다.</td></tr>'}</tbody></table></div></section>
 <hr style="margin:4px 0">
 <section>${sh('현재 집행중인 광고영업 건', alive.length + '건')}<div class="muted" style="margin-bottom:12px">행을 누르면 세부 내역이 팝업으로 열립니다.</div><div class="card">
 <table class="rt cp">${head(false)}<tbody>${alive.map(a => rowAll(a, 'alive', false)).join('') || '<tr><td colspan="11" class="muted">집행중인 건이 없습니다.</td></tr>'}</tbody></table></div></section>
 <section>${sh('전체 누적 현황', all.length + '건 · 누적 매출 ' + fmt(allSum) + '원 (환불 반영)')}<div class="muted" style="margin-bottom:12px">실제 계약이 성사된 건(계약완료 · 진행중 · 종료)의 누적입니다. (${cnt})</div><div class="card">
 <table class="rt cp">${head(true)}<tbody>${all.map(a => rowAll(a, 'all', true)).join('') || '<tr><td colspan="12" class="muted">계약이 성사된 건이 없습니다.</td></tr>'}</tbody></table></div></section>${modal}`;
 }
-function blankAd() { const p = products()[0] || { name: '', rate: 0 }; return { name: '', biz: '', owner: me.name, product: p.name, rate: p.rate, contract: '', refund: '', month: ui.adM, status: '문의', memo: '', partnerId: '', partnerName: '', sharePct: '', inDate: '', inDone: false, outDate: '', outDone: false }; }
+function blankAd() { return { name: '', biz: '', owner: me.name, items: [{ product: '', budget: '', rate: '' }], month: ui.adM, status: '', memo: '', partnerId: '', partnerName: '', sharePct: '', inDate: '', inDone: false, outDate: '', outDone: false }; }
 async function payTog(id, v) {
   const a = S.ads.find(x => x.id === id); if (!a) return;
-  if (v === 'out' && !a.inDone && !a.outDone) return toast('입금 완료 후 정산 완료 처리를 할 수 있습니다');
+  if (v === 'out' && !a.inDone && !a.outDone) return toast('1급대행사 정산을 먼저 완료 처리해 주세요');
   const k = v === 'in' ? 'inDone' : 'outDone', nv = !a[k]; const o = { ...a, [k]: nv, [v === 'in' ? 'inAt' : 'outAt']: nv ? today() : '' };
   if (v === 'in' && !nv && a.outDone) { o.outDone = false; o.outAt = ''; }
   if (v === 'out' && a.inDone === undefined) o.inDone = false; if (v === 'in' && a.outDone === undefined) o.outDone = false;
-  await put('ads', a.id, o); await log(`${v === 'in' ? '플랫폼 입금' : '파트너 정산'} ${nv ? '완료' : '완료 취소'}`, a.id, a.name); toast(nv ? '완료로 표시했습니다' : '완료를 취소했습니다');
+  await put('ads', a.id, o); await log(`${v === 'in' ? '1급대행사 정산' : '파트너 정산'} ${nv ? '완료' : '완료 취소'}`, a.id, a.name); toast(nv ? '완료로 표시했습니다' : '완료를 취소했습니다');
 }
 const pctB = (a, v) => +(num(a.rate) * v / 100).toFixed(2);
 function payBlock(a, ro) {
   const sp = num(a.sharePct), has = hasPartner(a), counted = COUNTED.includes(a.status);
   const step = (k, label, amt, date, done, t1) => `<div class="step"><div class="sh"><div><div class="lbl">${label}</div><div class="amt">${fmt(amt)}원</div></div>${payChip(date, done, true)}</div>${ro ? (date ? `<div class="muted">예정일 ${esc(date)}</div>` : '') : `<label class="muted" style="font-size:13px;flex-direction:row;align-items:center;gap:8px">예정일<input class="pd" type="date" data-chg="payDate" data-k="${k}" value="${esc(date || '')}" style="flex:1;min-width:0"></label>`}${ro ? '' : `<button class="btn wide ${done ? '' : 'p'}" data-act="payToggle" data-v="${k}">${done ? '완료 취소' : t1}</button>`}</div>`;
   const ln = (l, v, c) => `<div class="line"><span class="muted">${l}</span><b ${c ? `style="color:${c}"` : ''}>${v}</b></div>`;
-  const steps = counted ? `<div class="stack" style="gap:10px"><b style="font-size:15px">입금 · 정산</b>${step('in', '플랫폼 → 우리 입금', adRev(a), a.inDate, a.inDone, '입금 완료 처리')}${has ? step('out', '우리 → ' + esc(a.partnerName) + ' 정산', adPartner(a), a.outDate, a.outDone, '정산 완료 처리') : ''}</div>` : '<div class="note">계약완료 이후부터 입금·정산 일정을 관리합니다.</div>';
+  const steps = counted ? `<div class="stack" style="gap:10px"><b style="font-size:15px">정산 일정</b>${step('in', '1급대행사 → 콜라브코리아', adRev(a), a.inDate, a.inDone, '정산 완료 처리')}${has ? step('out', '콜라브코리아 → ' + esc(a.partnerName), adPartner(a), a.outDate, a.outDone, '정산 완료 처리') : ''}</div>` : '<div class="note">계약완료 이후부터 정산 일정을 관리합니다.</div>';
   return `${steps}<div style="border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px"><b style="font-size:15px">수익 배분 · ${has ? esc(a.partnerName) : '자체 영업'}</b>
-${ln('플랫폼 수수료 (매출) ' + num(a.rate) + '%', fmt(adRev(a)) + '원', 'var(--lvt)')}${has ? ln('파트너 지급 ' + sp + '%', '-' + fmt(adPartner(a)) + '원') : ''}${ln('우리 수익 ' + (has ? 100 - sp : 100) + '%', fmt(adOurs(a)) + '원', 'var(--pd)')}</div>`;
+${ln('매출 (수수료율 ' + num(a.rate) + '%)', fmt(adRev(a)) + '원', 'var(--lvt)')}${has ? ln('파트너 정산 ' + sp + '%', '-' + fmt(adPartner(a)) + '원') : ''}${ln('우리 수익 ' + (has ? 100 - sp : 100) + '%', fmt(adOurs(a)) + '원', 'var(--pd)')}</div>`;
 }
 function adPanel(sel, ro) {
   if (!ro && (ui.panel === 'add' || ui.panel === 'edit')) return adForm(ui.panel === 'edit');
@@ -736,8 +744,7 @@ function adPanel(sel, ro) {
   const edits = S.logs.filter(l => l.ref === sel.id).sort((a, b) => b.at - a.at).slice(0, 6);
   return `<div class="stack"><div class="row" style="justify-content:space-between"><h2 style="font-size:20px">${esc(sel.name)}</h2>${chip(sel.status)}</div>
 ${payBlock(sel, ro)}
-<div class="kv"><span>업종</span><span>${esc(sel.biz)}</span><span>담당자</span><span>${esc(sel.owner || '-')}</span><span>광고상품</span><span>${esc(sel.product)} (${num(sel.rate)}%)</span><span>광고 예산</span><span>${fmt(sel.contract)}원</span><span>환불 금액</span><span>${num(sel.refund) ? '-' + fmt(sel.refund) + '원 (' + esc(sel.refundMonth || sel.month) + ' 매출에서 차감)' : '없음'}</span><span>계약월</span><span>${esc(sel.month)}</span></div>
-${sel.status === '중단' ? '<div class="note">환불한 금액은 환불한 달의 매출에서 뺍니다. 환불이 있으면 수정에서 환불 금액과 환불한 달을 입력하세요.</div>' : ''}
+<div class="kv"><span>업종</span><span>${esc(sel.biz)}</span><span>담당자</span><span>${esc(sel.owner || '-')}</span><span>광고상품</span><span>${adItems(sel).map(i => `${esc(i.product)} · ${fmt(i.budget)}원 x ${num(i.rate)}%`).join('<br>')}</span>${adItems(sel).length > 1 ? `<span>광고 예산 합계</span><span>${fmt(adBudget(sel))}원</span>` : ''}${num(sel.refund) ? `<span>환불 금액</span><span>-${fmt(sel.refund)}원 (${esc(sel.refundMonth || sel.month)} 매출에서 차감)</span>` : ''}<span>계약월</span><span>${esc(sel.month)}</span></div>
 ${!COUNTED.includes(sel.status) ? '<div class="note">계약완료 전 단계라 아직 매출에 합산되지 않습니다.</div>' : ''}
 <div><b style="font-size:14px">진행 이력</b><div class="hist" style="margin-top:10px">${(sel.hist || []).map(h => `<div><span>${esc(h.d)}</span><span>${esc(h.t)}</span></div>`).join('')}</div></div>
 <div><b style="font-size:14px">수정 이력</b><div class="logs" style="margin-top:8px">${edits.map(l => `${dt(l.at)} ${esc(l.by)} · ${esc(l.text)}`).join('<br>') || '-'}</div></div>
@@ -746,49 +753,71 @@ ${ro ? '' : '<button class="btn" data-act="msgAd">담당자에게 알림 보내�
 }
 const dt = t => { const d = new Date(t); return pad(d.getMonth() + 1) + '/' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
 function adForm(edit) {
-  const d = ui.draft;
+  const d = ui.draft, items = d.items && d.items.length ? d.items : [{ product: '', budget: '', rate: '' }];
+  const bl = bizList(), pk = n => (n || '').replace(/^\(주\)\s*|^주식회사\s*|^㈜\s*/, ''), partners = S.partners.slice().sort((x, y) => pk(x.name).localeCompare(pk(y.name), 'ko')), prod = products();
+  const row = (it, i) => `<div class="pitem"><div class="row" style="gap:8px;flex-wrap:nowrap"><select name="product${i}" style="flex:1;min-width:0"><option value="">선택</option>${prod.map(p => `<option value="${esc(p.name)}" data-rate="${p.rate}" ${p.name === it.product ? 'selected' : ''}>${esc(p.name)} (${p.rate}%)</option>`).join('')}${it.product && !prod.find(p => p.name === it.product) ? `<option value="${esc(it.product)}" selected>${esc(it.product)}</option>` : ''}</select>${items.length > 1 ? `<button type="button" class="btn s d" data-act="itemDel" data-v="${i}">삭제</button>` : ''}</div>
+<div class="grid g2" style="gap:12px;margin-top:10px"><label>광고 예산 (원)<input name="budget${i}" inputmode="numeric" value="${it.budget === '' || it.budget == null ? '' : fmt(num(it.budget))}" placeholder="0"></label><label>수수료율 (%)<input name="rate${i}" inputmode="decimal" value="${esc(it.rate)}" placeholder="자동 입력"></label></div></div>`;
   return `<form id="form" data-kind="ad" class="stack" style="gap:16px" onsubmit="return false"><h2 style="font-size:20px">${edit ? '광고영업 건 수정 · ' + esc(d.name) : '광고영업 건 추가'}</h2>
 <label>업체명<input name="name" value="${esc(d.name)}" placeholder="업체명"></label>
-<div class="grid g2" style="gap:12px"><label>업종<input name="biz" value="${esc(d.biz)}" placeholder="예: 뷰티"></label><label>담당자<input name="owner" value="${esc(d.owner || '')}" list="owners" placeholder="이름"><datalist id="owners">${[...new Set([me.name, ...S.members.map(m => m.name).filter(Boolean)])].map(n => `<option value="${esc(n)}">`).join('')}</datalist></label></div>
-<label>광고상품<select name="product">${products().map(p => `<option value="${esc(p.name)}" data-rate="${p.rate}" ${p.name === d.product ? 'selected' : ''}>${esc(p.name)} (${p.rate}%)</option>`).join('')}</select></label>
-<div class="grid g2" style="gap:12px"><label>광고 예산 (원)<input name="contract" inputmode="numeric" value="${d.contract === '' ? '' : fmt(d.contract)}" placeholder="0"></label><label>수수료율 (%)<input name="rate" inputmode="decimal" value="${esc(d.rate)}"></label></div>
-<div class="grid g2" style="gap:12px"><label>계약월<input type="month" name="month" value="${esc(d.month)}"></label><label>진행상태<select name="status">${STATUS.map(s => `<option ${s === d.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
-<div class="grid g2" style="gap:12px"><label>환불 금액 (환불한 경우만)<input name="refund" inputmode="numeric" value="${!d.refund ? '' : fmt(d.refund)}" placeholder="0"></label><label>환불한 달 (이 달 매출에서 차감)<input type="month" name="refundMonth" value="${esc(d.refundMonth || ui.adM)}"></label></div>
-<div class="stack" style="gap:12px;border-top:1px solid var(--line);padding-top:16px"><b style="font-size:15px">영업자 · 수익 배분</b>
-<label>영업한 사람 (파트너·프리랜서)<select name="partnerId"><option value="">자체 영업 (파트너 없음)</option>${S.partners.map(p => `<option value="${esc(p.id)}" data-pct="${esc(p.defaultPct)}" ${p.id === d.partnerId ? 'selected' : ''}>${esc(p.name)} (${p.type === 'company' ? '회사' : '개인'} · 기본 ${esc(p.defaultPct)}%)</option>`).join('')}${d.partnerId && !S.partners.find(p => p.id === d.partnerId) ? `<option value="${esc(d.partnerId)}" selected>${esc(d.partnerName)} (삭제된 파트너)</option>` : ''}</select></label>
-<div id="shareBox"><label>파트너 배분율 (플랫폼 수수료의 %)<input name="sharePct" inputmode="decimal" value="${esc(d.sharePct)}" placeholder="예: 30"></label></div>
-<b style="font-size:15px;margin-top:4px">입금·정산 일정</b>
-<div class="grid g2" style="gap:12px;align-items:end"><label>플랫폼 → 우리 입금 예정일<input type="date" name="inDate" value="${esc(d.inDate || '')}"></label><label class="chk" style="height:44px"><input type="checkbox" name="inDone" ${d.inDone ? 'checked' : ''}> 입금 완료</label></div>
-<div id="outBox" class="grid g2" style="gap:12px;align-items:end"><label>우리 → 파트너 정산 예정일<input type="date" name="outDate" value="${esc(d.outDate || '')}"></label><label class="chk" style="height:44px"><input type="checkbox" name="outDone" ${d.outDone ? 'checked' : ''}> 정산 완료</label></div></div>
+<div class="grid g2" style="gap:12px"><label>업종<select name="biz"><option value="">선택</option>${bl.map(b => `<option ${b === d.biz ? 'selected' : ''}>${esc(b)}</option>`).join('')}${d.biz && !bl.includes(d.biz) ? `<option selected>${esc(d.biz)}</option>` : ''}<option value="__new">+ 업종 추가</option></select></label><label>담당자<input name="owner" value="${esc(d.owner || '')}" list="owners" placeholder="이름"><datalist id="owners">${[...new Set([me.name, ...S.members.map(m => m.name).filter(Boolean)])].map(n => `<option value="${esc(n)}">`).join('')}</datalist></label></div>
+<div class="stack" style="gap:10px"><div class="lbl">광고상품 <span class="muted" style="font-size:12px">여러 개를 함께 진행하면 추가해 주세요</span></div>${items.map(row).join('')}<button type="button" class="btn s" style="align-self:flex-start" data-act="itemAdd">+ 광고상품 추가</button></div>
+<div class="grid g2" style="gap:12px"><label>계약월<input type="month" name="month" value="${esc(d.month)}"></label><label>진행상태<select name="status"><option value="">선택</option>${STATUS.map(s => `<option ${s === d.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
+<div class="stack" style="gap:12px;border-top:1px solid var(--line);padding-top:16px"><b style="font-size:15px">영업자</b>
+<select name="partnerId"><option value="">자체 영업</option>${partners.map(p => `<option value="${esc(p.id)}" data-pct="${esc(p.defaultPct)}" ${p.id === d.partnerId ? 'selected' : ''}>${esc(p.name)} (${p.type === 'company' ? '회사' : '개인'} · 기본 ${esc(p.defaultPct)}%)</option>`).join('')}${d.partnerId && !S.partners.find(p => p.id === d.partnerId) ? `<option value="${esc(d.partnerId)}" selected>${esc(d.partnerName)} (삭제된 파트너)</option>` : ''}<option value="__new">+ 파트너 추가</option></select>
+<div id="shareBox"><label>파트너 배분율 (매출의 %)<input name="sharePct" inputmode="decimal" value="${esc(d.sharePct)}" placeholder="예: 30"></label></div>
+<b style="font-size:15px;margin-top:4px">정산 일정</b>
+<label>1급대행사 → 콜라브코리아 예정일<input type="date" name="inDate" value="${esc(d.inDate || '')}"></label>
+<label id="outBox">콜라브코리아 → 파트너 예정일<input type="date" name="outDate" value="${esc(d.outDate || '')}"></label></div>
 <label>메모<input name="memo" value="${esc(d.memo)}" placeholder="특이사항"></label>
 <div class="calc" id="calc"></div>
 <div class="row" style="gap:8px"><button type="button" class="btn grow" data-act="closeForm">취소</button><button type="button" class="btn p grow" data-act="saveAd">저장</button></div></form>`;
 }
-function readAd() { const f = $('#form').elements, g = n => f[n].value; return { name: g('name').trim(), biz: g('biz').trim(), owner: g('owner').trim(), product: g('product'), contract: num(g('contract')), rate: num(g('rate')), month: g('month') || ui.adM, status: g('status'), refund: num(g('refund')), refundMonth: g('refundMonth') || ui.adM, memo: g('memo').trim(), ...readPay() }; }
+function syncDraft() {
+  const form = $('#form'); if (!form || form.dataset.kind !== 'ad') return; const f = form.elements, g = n => f[n] ? f[n].value : '', items = [];
+  for (let i = 0; f['product' + i]; i++) items.push({ product: g('product' + i), budget: g('budget' + i), rate: g('rate' + i) });
+  ui.draft = { ...ui.draft, name: g('name'), biz: g('biz'), owner: g('owner'), items, month: g('month'), status: g('status'), memo: g('memo'), partnerId: g('partnerId'), sharePct: g('sharePct'), inDate: g('inDate'), outDate: g('outDate') };
+}
+function readAd() {
+  syncDraft(); const d = ui.draft, items = d.items.map(i => ({ product: i.product, budget: num(i.budget), rate: num(i.rate) }));
+  const bud = items.reduce((t, i) => t + i.budget, 0), rev = items.reduce((t, i) => t + Math.round(i.budget * i.rate / 100), 0);
+  return { name: d.name.trim(), biz: d.biz, owner: d.owner.trim(), items, product: items.map(i => i.product).filter(Boolean).join(', '), contract: bud, rate: bud ? +(rev / bud * 100).toFixed(2) : 0, month: d.month || ui.adM, status: d.status, memo: d.memo.trim(), ...readPay() };
+}
 function readPay() {
   const f = $('#form').elements, pid = f.partnerId.value, p = S.partners.find(x => x.id === pid);
   const nm = pid ? (p ? p.name : (ui.draft && ui.draft.partnerId === pid ? ui.draft.partnerName : '')) : '';
-  return { partnerId: nm ? pid : '', partnerName: nm, sharePct: nm ? num(f.sharePct.value) : 0, inDate: f.inDate.value, inDone: f.inDone.checked, outDate: nm ? f.outDate.value : '', outDone: nm ? f.outDone.checked : false };
+  return { partnerId: nm ? pid : '', partnerName: nm, sharePct: nm ? num(f.sharePct.value) : 0, inDate: f.inDate.value, outDate: nm ? f.outDate.value : '' };
 }
-function calcAd() { const a = readAd(); const sb = $('#shareBox'), ob = $('#outBox'); if (sb) sb.style.display = a.partnerName ? '' : 'none'; if (ob) ob.style.display = a.partnerName ? '' : 'none'; $('#calc').innerHTML = `<div class="lbl">자동 계산</div><b>매출(플랫폼 수수료) ${fmt(adRev(a))}원</b> <span class="muted">(광고 예산 ${fmt(adBudget(a))} × ${a.rate}%)</span>${a.partnerName ? `<div>파트너 지급 <b>${fmt(adPartner(a))}원</b> <span class="muted">(수수료의 ${a.sharePct}%)</span></div>` : ''}<div>우리 수익 <b style="color:var(--pd)">${fmt(adOurs(a))}원</b> <span class="muted">(수수료의 ${a.partnerName ? Math.max(0, 100 - num(a.sharePct)) : 100}% · 광고 예산의 ${pctB(a, a.partnerName ? Math.max(0, 100 - num(a.sharePct)) : 100)}%)</span></div><span class="muted">${a.refund ? `<div class="muted" style="font-size:13px">환불 -${fmt(a.refund)}원은 ${esc(a.refundMonth)} 매출에서 차감됩니다.</div>` : ''}</span>${COUNTED.includes(a.status) ? '' : '<div class="muted" style="font-size:13px">계약완료 이후부터 매출에 합산됩니다.</div>'}`; }
+function calcAd() {
+  const a = readAd(); const sb = $('#shareBox'), ob = $('#outBox'); if (sb) sb.style.display = a.partnerName ? '' : 'none'; if (ob) ob.style.display = a.partnerName ? '' : 'none';
+  const single = a.items.length === 1;
+  $('#calc').innerHTML = `<div class="cl">매출 <b>${fmt(adRev(a))}원</b></div>${a.items.map(i => `<div class="cs">${single ? '' : `<b>${esc(i.product || '광고상품 미선택')}</b> · `}광고예산 ${fmt(i.budget)}원 x 수수료율 ${i.rate}%</div>`).join('')}<div class="cl" style="margin-top:10px">수익 <b style="color:var(--pd)">${fmt(adOurs(a))}원</b></div>${a.partnerName ? `<div class="cs">매출 ${fmt(adRev(a))}원 - 파트너 정산 ${fmt(adPartner(a))}원</div>` : ''}`;
+}
+function subModal() {
+  const k = ui.sub.k;
+  const body = k === 'biz' ? `<h2 style="font-size:19px">업종 추가</h2><label style="margin-top:14px">업종 이름<input name="sname" maxlength="20" placeholder="예: 뷰티" autocomplete="off"></label>`
+    : `<h2 style="font-size:19px">파트너 추가</h2><div class="stack" style="gap:12px;margin-top:14px"><label>이름<input name="pname" maxlength="30" placeholder="파트너 이름" autocomplete="off"></label><div class="grid g2" style="gap:12px"><label>구분<select name="ptype"><option value="company">회사</option><option value="freelancer">개인(프리랜서)</option></select></label><label>기본 배분율 (%)<input name="ppct" inputmode="decimal" placeholder="예: 30"></label></div></div>`;
+  return `<div class="modal" style="z-index:85" data-act="subCancel"><div class="mbox" style="width:min(400px,100%);padding:28px 24px 24px">${body}<div class="row" style="gap:8px;margin-top:20px"><button class="btn grow" data-act="subCancel">취소</button><button class="btn p grow" data-act="subSave">추가</button></div></div></div>`;
+}
 function checkReq(list) {
   const form = $('#form'); if (!form) return true; form.querySelectorAll('.ermsg').forEach(x => x.remove()); form.querySelectorAll('.err').forEach(x => x.classList.remove('err'));
   const miss = list.filter(([n, , ok]) => !ok); if (!miss.length) return true;
   miss.forEach(([n]) => { const el = form.elements[n]; if (!el) return; el.classList.add('err'); const m = document.createElement('div'); m.className = 'ermsg'; m.textContent = '필수 항목입니다'; el.insertAdjacentElement('afterend', m); });
   const first = form.elements[miss[0][0]]; if (first) { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); try { first.focus({ preventScroll: true }); } catch (e) { } }
-  toast('입력이 필요한 항목: ' + miss.map(x => x[1]).join(', ')); return false;
+  toast('입력이 필요한 항목: ' + [...new Set(miss.map(x => x[1]))].join(', ')); return false;
 }
 async function saveAd() {
-  const f = readAd(); if (!checkReq([['name', '업체명', !!f.name], ['owner', '담당자', !!f.owner], ['contract', '광고 예산', f.contract > 0]])) return;
+  const f = readAd(), req = [['name', '업체명', !!f.name], ['biz', '업종', !!f.biz], ['owner', '담당자', !!f.owner]];
+  f.items.forEach((it, i) => { req.push(['product' + i, '광고상품', !!it.product], ['budget' + i, '광고 예산', it.budget > 0]); });
+  req.push(['status', '진행상태', !!f.status]); if (f.partnerName) req.push(['sharePct', '파트너 배분율', $('#form').elements.sharePct.value.trim() !== '']);
+  if (!checkReq(req)) return;
   if (ui.panel === 'edit') {
     const old = S.ads.find(a => a.id === ui.selAd), hist = [...(old.hist || [])];
-    const L = { name: '업체명', biz: '업종', owner: '담당자', product: '광고상품', contract: '광고 예산', rate: '수수료율', month: '계약월', status: '진행상태', refund: '환불 금액', refundMonth: '환불한 달', memo: '메모', partnerName: '영업자', sharePct: '배분율(%)', inDate: '입금 예정일', outDate: '정산 예정일' };
+    const L = { name: '업체명', biz: '업종', owner: '담당자', product: '광고상품', contract: '광고 예산', rate: '수수료율', month: '계약월', status: '진행상태', memo: '메모', partnerName: '영업자', sharePct: '배분율(%)', inDate: '1급대행사 정산 예정일', outDate: '파트너 정산 예정일' };
     const ch = Object.keys(L).filter(k => String(old[k] ?? '') !== String(f[k] ?? '')).map(k => `${L[k]} ${old[k] === '' || old[k] == null ? '없음' : old[k]} → ${f[k] === '' ? '없음' : f[k]}`);
-    [['inDone', '입금'], ['outDone', '정산']].forEach(([k, t]) => { if (!!old[k] !== !!f[k]) ch.push(`${t} ${f[k] ? '완료' : '완료 취소'}`); });
-    if (old.status !== f.status) hist.push({ d: md(), t: f.status === '중단' && f.refund ? `중단 (환불 ${fmt(f.refund)}원)` : f.status });
+    if (old.status !== f.status) hist.push({ d: md(), t: f.status });
     await put('ads', old.id, { ...old, ...f, hist }); if (ch.length) await log(ch.join(', '), old.id, f.name);
   } else {
-    const id = uid(); await put('ads', id, { ...f, id, hist: [{ d: md(), t: f.status }], createdAt: Date.now() }); await log('광고영업 건 등록', id, f.name); ui.selAd = id; ui.adM = f.month;
+    const id = uid(); await put('ads', id, { ...f, id, inDone: false, outDone: false, hist: [{ d: md(), t: f.status }], createdAt: Date.now() }); await log('광고영업 건 등록', id, f.name); ui.selAd = id; ui.adM = f.month;
   }
   closeForm(); toast('저장했습니다');
 }
@@ -898,6 +927,7 @@ ${sec('백업과 복구', '매일 첫 관리자 접속 때 자동 백업을 만�
 <h3 style="font-size:15px;margin:8px 0">자동 백업 (최근 10개)</h3><table><tbody>${bks.map(b => `<tr><td>${esc(b.id)}</td><td>${dt(b.at)}</td><td class="r"><button class="btn s" data-act="dlBackup" data-v="${b.id}">내려받기</button> <button class="btn s d" data-act="restoreBackup" data-v="${b.id}">이 백업으로 되돌리기</button></td></tr>`).join('') || '<tr><td class="muted">아직 백업이 없습니다.</td></tr>'}</tbody></table>
 <h3 style="font-size:15px;margin:20px 0 8px">휴지통</h3><table><tbody>${trash.map(t => `<tr><td>${t.t}</td><td><b>${esc(t.n)}</b></td><td>${dt(t.at)} 삭제 · ${Math.max(0, 30 - Math.floor((Date.now() - t.at) / 864e5))}일 남음</td><td class="r"><button class="btn s" data-act="restore" data-c="${t.c}" data-v="${t.id}">복구</button></td></tr>`).join('') || '<tr><td class="muted">휴지통이 비어 있습니다.</td></tr>'}</tbody></table>`)}
 ${sec('매출원', '지금은 광고영업과 강의 두 가지입니다. 새 매출원 추가는 다음 단계에서 붙입니다.', `<table><thead><tr><th>매출원</th><th>입력 단위</th><th>계산 방식</th></tr></thead><tbody><tr><td><b>광고영업</b></td><td>광고상품</td><td>예산 × 수수료율</td></tr><tr><td><b>강의</b></td><td>강의명</td><td>수강반별 금액 − 환불 − 지출</td></tr></tbody></table>`)}
+${sec('업종', '광고영업 건 등록 때 고르는 업종 목록입니다. 팀원도 건 등록 화면 맨 아래 "+ 업종 추가"로 추가할 수 있습니다.', `<div class="ucs">${bizList().map((b, i) => `<span class="uc" style="padding:0 6px 0 12px;height:34px">${esc(b)}<button type="button" class="lnk" data-act="delBiz" data-v="${i}" style="margin-left:6px;padding:0 6px" aria-label="삭제">✕</button></span>`).join('') || '<span class="muted">등록된 업종이 없습니다.</span>'}</div><form id="bzf" class="row" style="margin-top:14px;gap:8px" onsubmit="return false"><input name="b" placeholder="새 업종 이름" maxlength="20" style="max-width:220px"><button type="button" class="btn s" data-act="addBiz">추가</button></form>`)}
 ${sec('광고상품과 수수료율', '상품을 고르면 수수료율이 자동으로 들어가고, 건마다 직접 바꿀 수도 있습니다.', `<div class="stack" style="gap:8px;max-width:520px">${prod.map((p, i) => `<div class="row" style="gap:8px;flex-wrap:nowrap"><input name="pn" value="${esc(p.name)}" placeholder="상품명" style="flex:1;min-width:0"><input name="pr" value="${esc(p.rate)}" inputmode="decimal" style="width:90px" aria-label="수수료율"><span class="muted">%</span><button class="nav" style="flex:none" data-act="delProd" data-v="${i}" aria-label="삭제">×</button></div>`).join('')}</div><div class="row" style="gap:8px;margin-top:12px"><button class="btn s" style="border-style:dashed;color:var(--pd)" data-act="addProd">+ 상품 추가</button><button class="btn p s" data-act="saveProd">저장</button></div>`)}
 ${sec('파트너 · 프리랜서', '영업을 해오는 파트너(회사)와 프리랜서(개인)를 등록해 두면 광고영업 건에서 고를 수 있고, 기본 배분율(플랫폼 수수료의 %)이 자동으로 들어갑니다.', `<table><thead><tr><th>이름</th><th>구분</th><th>기본 배분율(%)</th><th>메모</th><th class="r">누적 배분액</th><th class="r">미정산액</th><th></th></tr></thead><tbody>${S.partners.map(p => { const mine = liveAds().filter(a => a.partnerId === p.id && payOutable(a)), tot = mine.reduce((s, a) => s + adPartner(a), 0), pend = mine.filter(a => !a.outDone).reduce((s, a) => s + adPartner(a), 0); return `<tr data-prow="${esc(p.id)}"><td><input name="pname" value="${esc(p.name)}" style="height:36px;width:150px"></td><td><select name="ptype" style="height:36px;width:auto"><option value="company" ${p.type === 'company' ? 'selected' : ''}>회사</option><option value="freelancer" ${p.type !== 'company' ? 'selected' : ''}>개인(프리랜서)</option></select></td><td><input name="ppct" value="${esc(p.defaultPct)}" inputmode="decimal" style="height:36px;width:70px"></td><td><input name="pmemo" value="${esc(p.memo || '')}" style="height:36px;width:140px"></td><td class="r">${fmt(tot)}원</td><td class="r"><b>${fmt(pend)}원</b></td><td class="r" style="white-space:nowrap"><button class="btn s" data-act="savePartner" data-v="${esc(p.id)}">저장</button> <button class="btn s d" data-act="delPartner" data-v="${esc(p.id)}">삭제</button></td></tr>`; }).join('') || '<tr><td colspan="7" class="muted">등록된 파트너가 없습니다.</td></tr>'}</tbody></table>
 <form id="np" class="row" style="margin-top:16px;gap:12px;align-items:flex-end" onsubmit="return false"><label style="width:170px">이름<input name="name" placeholder="파트너 이름"></label><label style="width:150px">구분<select name="type"><option value="company">회사</option><option value="freelancer">개인(프리랜서)</option></select></label><label style="width:130px">기본 배분율(%)<input name="pct" inputmode="decimal" placeholder="예: 30"></label><label class="grow" style="min-width:140px">메모<input name="memo" placeholder="선택"></label><button type="button" class="btn p" data-act="addPartner">추가하기</button></form>`)}
@@ -940,6 +970,17 @@ const H = {
   delNote: v => { const x = S.notes.find(n => n.id === v); if (!x) return; ask('삭제하시겠습니까?', (x.kind === 'notice' ? '이 공지를' : '이 알림을') + ' 모든 멤버 화면에서 지웁니다.', async () => { await B.del('notes', v); toast('삭제했습니다'); }); },
   openRef: v => { ui.tab = 'ads'; ui.selAd = v; ui.panel = 'detail'; ui.modal = true; render(); },
   openLec: v => { ui.tab = 'lectures'; ui.selLec = v; ui.panel = 'detail'; ui.modal = true; render(); },
+  itemAdd: () => { syncDraft(); ui.draft.items.push({ product: '', budget: '', rate: '' }); render(); calcAd(); },
+  itemDel: v => { syncDraft(); ui.draft.items.splice(+v, 1); render(); calcAd(); },
+  subCancel: (v, el, e) => { if (e && e.target !== el) return; ui.sub = null; render(); if (ui.tab === 'ads' && $('#form')) calcAd(); },
+  subSave: async () => {
+    const k = ui.sub.k, q = n => (document.querySelector('.modal [name=' + n + ']') || {}).value || '';
+    if (k === 'biz') { const n = q('sname').trim(); if (!n) return toast('업종 이름을 입력해 주세요'); const list = bizList().slice(); if (!list.includes(n)) list.push(n); await put('config', 'biz', { id: 'biz', list }); ui.draft.biz = n; }
+    else { const name = q('pname').trim(); if (!name) return toast('파트너 이름을 입력해 주세요'); const id = uid(), pct = num(q('ppct')); await put('partners', id, { id, name, type: q('ptype') || 'company', defaultPct: pct, memo: '' }); await log('파트너 추가', '', name); ui.draft.partnerId = id; ui.draft.partnerName = name; ui.draft.sharePct = pct; }
+    ui.sub = null; render(); if ($('#form')) calcAd(); toast(k === 'biz' ? '업종을 추가했습니다' : '파트너를 추가했습니다');
+  },
+  addBiz: async () => { const f = $('#bzf').elements, n = f.b.value.trim(); if (!n) return toast('업종 이름을 입력해 주세요'); const list = bizList().slice(); if (list.includes(n)) return toast('이미 있는 업종입니다'); list.push(n); await put('config', 'biz', { id: 'biz', list }); f.b.value = ''; toast('업종을 추가했습니다'); },
+  delBiz: v => { const list = bizList().slice(), n = list[+v]; ask('삭제하시겠습니까?', `"${n}" 업종을 목록에서 뺍니다. 이미 등록된 건의 업종은 그대로 유지됩니다.`, async () => { list.splice(+v, 1); await put('config', 'biz', { id: 'biz', list }); toast('삭제했습니다'); }); },
   openAuto: v => { ui.tab = 'ads'; ui.selAd = v; ui.panel = 'detail'; ui.modal = true; render(); },
   msgAd: () => { const a = selAd(); if (!a) return; const o = S.members.find(m => m.name && m.name === a.owner && m.id !== me.email); ui.msg = { to: o ? [o.id] : [], ref: 'ad:' + a.id, text: '' }; ui.modal = false; ui.tab = 'inbox'; ui.panel = 'detail'; render(); window.scrollTo(0, 0); },
   pushOn: async () => {
@@ -976,7 +1017,7 @@ const H = {
   sellec: v => { ui.selLec = v; ui.panel = 'detail'; ui.modal = true; render(); },
   closeModal: (v, el, e) => { if (e && e.target !== el) return; closeModalNow(); },
   openAdd: () => { ui.modal = true; ui.panel = 'add'; ui.draft = ui.tab === 'ads' ? blankAd() : blankLec(); render(); ui.tab === 'ads' ? calcAd() : calcLec(); },
-  openEdit: () => { const s = ui.tab === 'ads' ? selAd() : selLec(); if (!s) return; ui.panel = 'edit'; ui.draft = JSON.parse(JSON.stringify(s)); if (ui.tab === 'lectures') { ui.draft.groups = ui.draft.groups.map(g => ({ ...g })); } render(); ui.tab === 'ads' ? calcAd() : calcLec(); },
+  openEdit: () => { const s = ui.tab === 'ads' ? selAd() : selLec(); if (!s) return; ui.panel = 'edit'; ui.draft = JSON.parse(JSON.stringify(s)); if (ui.tab === 'ads') { ui.draft.items = adItems(s).map(i => ({ product: i.product, budget: i.budget, rate: i.rate })); } if (ui.tab === 'lectures') { ui.draft.groups = ui.draft.groups.map(g => ({ ...g })); } render(); ui.tab === 'ads' ? calcAd() : calcLec(); },
   addRow: (v, el) => { const k = el.dataset.k; ui.draft = { ...ui.draft, ...readLec() }; const b = { ...BLANK[k] }; if (k === 'refunds') b.month = ui.draft.date.slice(0, 7); ui.draft[k].push(b); render(); calcLec(); },
   delRow: (v, el) => { ui.draft = { ...ui.draft, ...readLec() }; ui.draft[el.dataset.k].splice(+el.dataset.i, 1); render(); calcLec(); },
   trashAd: () => { const a = selAd(); if (!a) return; ask('삭제하시겠습니까?', a.name + ' 건을 삭제합니다. 삭제한 건은 30일 동안 관리자가 복구할 수 있습니다.', async () => { await put('ads', a.id, { ...a, deleted: true, deletedAt: Date.now() }); await log('삭제', a.id, a.name); ui.selAd = null; ui.modal = false; ui.panel = 'detail'; render(); toast('삭제했습니다'); }); },
@@ -1019,10 +1060,12 @@ document.addEventListener('input', e => { const t = e.target; if (t.classList &&
 const shrink = f => new Promise((ok, no) => { const r = new FileReader(); r.onerror = no; r.onload = () => { const im = new Image(); im.onerror = no; im.onload = () => { const k = Math.min(1, 1000 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .72)); }; im.src = r.result; }; r.readAsDataURL(f); });
 document.addEventListener('change', async e => {
   const t = e.target;
-  if (t.name === 'product' && $('#form')) { const o = t.selectedOptions[0]; $('#form').elements.rate.value = o.dataset.rate; calcAd(); }
+  if (t.name === 'biz' && t.value === '__new' && $('#form')) { t.value = ''; syncDraft(); ui.sub = { k: 'biz' }; render(); return; }
+  if (t.name === 'partnerId' && t.value === '__new' && $('#form')) { t.value = ''; syncDraft(); ui.sub = { k: 'partner' }; render(); return; }
+  { const pm = /^product(\d+)$/.exec(t.name || ''); if (pm && $('#form')) { const o = t.selectedOptions[0], r = $('#form').elements['rate' + pm[1]]; if (r) r.value = o && o.dataset.rate !== undefined ? o.dataset.rate : ''; calcAd(); } }
   if (t.name === 'status' && $('#form') && $('#form').dataset.kind === 'ad') calcAd();
   if (t.name === 'partnerId' && $('#form')) { const o = t.selectedOptions[0]; $('#form').elements.sharePct.value = o && o.dataset.pct !== undefined ? o.dataset.pct : ''; calcAd(); }
-  if (t.dataset && t.dataset.chg === 'payDate') { const a = selAd(); if (!a) return; const k = t.dataset.k === 'in' ? 'inDate' : 'outDate', old = a[k] || ''; if (old === t.value) return; await put('ads', a.id, { ...a, [k]: t.value }); await log(`${t.dataset.k === 'in' ? '플랫폼 입금' : '파트너 정산'} 예정일 ${old || '없음'} → ${t.value || '없음'}`, a.id, a.name); toast('예정일을 바꿨습니다'); }
+  if (t.dataset && t.dataset.chg === 'payDate') { const a = selAd(); if (!a) return; const k = t.dataset.k === 'in' ? 'inDate' : 'outDate', old = a[k] || ''; if (old === t.value) return; await put('ads', a.id, { ...a, [k]: t.value }); await log(`${t.dataset.k === 'in' ? '1급대행사 정산' : '파트너 정산'} 예정일 ${old || '없음'} → ${t.value || '없음'}`, a.id, a.name); toast('예정일을 바꿨습니다'); }
   if (t.dataset && t.dataset.chg === 'nimg') { keepNote(); const imgs = ui.nd.imgs || (ui.nd.imgs = []); for (const f of [...t.files]) { if (imgs.length >= 3) break; try { imgs.push(await shrink(f)); } catch (e) { toast('이미지를 불러오지 못했습니다'); } } render(); }
   if (t.dataset && t.dataset.chg === 'role') { const m = S.members.find(x => x.id === t.dataset.email); await put('members', m.id, { ...m, role: t.value }); await log(`${m.email} 권한 → ${t.value === 'admin' ? '관리자' : '멤버'}`, '', '설정'); toast('권한을 바꿨습니다'); }
 });
