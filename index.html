@@ -184,7 +184,8 @@ input,select,textarea{height:44px;border:1px solid #B9B4D6;border-radius:10px;pa
 .kpi{font-size:42px;font-weight:700;margin-top:8px;letter-spacing:-.5px}.kpi small{font-size:20px;font-weight:500;color:var(--mut)}
 .center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px 24px}
 .loginbox{width:100%;max-width:440px;display:flex;flex-direction:column;gap:20px}
-.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;z-index:9}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:12px 20px;border-radius:10px;font-size:14px;z-index:200;max-width:calc(100vw - 32px);text-align:center}
+#form .err,#form .err:focus{border-color:#E5484D!important;background:#FFF6F6!important;box-shadow:0 0 0 3px rgba(229,72,77,.14)}.ermsg{color:#D92D33;font-size:12.5px;margin-top:4px;font-weight:500}
 .tag{font-size:13px;color:#7A5A00;background:#FFF4D6;border-radius:8px;padding:7px 12px}
 .step{border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px}.step .sh{display:flex;justify-content:space-between;align-items:center;gap:8px}.step .amt{font-size:18px;font-weight:700}.btn.wide{width:100%}
 td.mob,.mo{display:none}
@@ -770,8 +771,15 @@ function readPay() {
   return { partnerId: nm ? pid : '', partnerName: nm, sharePct: nm ? num(f.sharePct.value) : 0, inDate: f.inDate.value, inDone: f.inDone.checked, outDate: nm ? f.outDate.value : '', outDone: nm ? f.outDone.checked : false };
 }
 function calcAd() { const a = readAd(); const sb = $('#shareBox'), ob = $('#outBox'); if (sb) sb.style.display = a.partnerName ? '' : 'none'; if (ob) ob.style.display = a.partnerName ? '' : 'none'; $('#calc').innerHTML = `<div class="lbl">자동 계산</div><b>매출(플랫폼 수수료) ${fmt(adRev(a))}원</b> <span class="muted">(광고 예산 ${fmt(adBudget(a))} × ${a.rate}%)</span>${a.partnerName ? `<div>파트너 지급 <b>${fmt(adPartner(a))}원</b> <span class="muted">(수수료의 ${a.sharePct}%)</span></div>` : ''}<div>우리 수익 <b style="color:var(--pd)">${fmt(adOurs(a))}원</b> <span class="muted">(수수료의 ${a.partnerName ? Math.max(0, 100 - num(a.sharePct)) : 100}% · 광고 예산의 ${pctB(a, a.partnerName ? Math.max(0, 100 - num(a.sharePct)) : 100)}%)</span></div><span class="muted">${a.refund ? `<div class="muted" style="font-size:13px">환불 -${fmt(a.refund)}원은 ${esc(a.refundMonth)} 매출에서 차감됩니다.</div>` : ''}</span>${COUNTED.includes(a.status) ? '' : '<div class="muted" style="font-size:13px">계약완료 이후부터 매출에 합산됩니다.</div>'}`; }
+function checkReq(list) {
+  const form = $('#form'); if (!form) return true; form.querySelectorAll('.ermsg').forEach(x => x.remove()); form.querySelectorAll('.err').forEach(x => x.classList.remove('err'));
+  const miss = list.filter(([n, , ok]) => !ok); if (!miss.length) return true;
+  miss.forEach(([n]) => { const el = form.elements[n]; if (!el) return; el.classList.add('err'); const m = document.createElement('div'); m.className = 'ermsg'; m.textContent = '필수 항목입니다'; el.insertAdjacentElement('afterend', m); });
+  const first = form.elements[miss[0][0]]; if (first) { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); try { first.focus({ preventScroll: true }); } catch (e) { } }
+  toast('입력이 필요한 항목: ' + miss.map(x => x[1]).join(', ')); return false;
+}
 async function saveAd() {
-  const f = readAd(); if (!f.name) return toast('업체명을 입력해 주세요');
+  const f = readAd(); if (!checkReq([['name', '업체명', !!f.name], ['owner', '담당자', !!f.owner], ['contract', '광고 예산', f.contract > 0]])) return;
   if (ui.panel === 'edit') {
     const old = S.ads.find(a => a.id === ui.selAd), hist = [...(old.hist || [])];
     const L = { name: '업체명', biz: '업종', owner: '담당자', product: '광고상품', contract: '광고 예산', rate: '수수료율', month: '계약월', status: '진행상태', refund: '환불 금액', refundMonth: '환불한 달', memo: '메모', partnerName: '영업자', sharePct: '배분율(%)', inDate: '입금 예정일', outDate: '정산 예정일' };
@@ -858,7 +866,7 @@ function readLec() {
 }
 function calcLec() { const l = readLec(), c = lecC(l); $('#calc').innerHTML = `<div class="lbl">자동 계산</div><div>매출 합계 <b>${fmt(c.rev)}원</b> <span class="muted">(총 ${c.n}명)</span></div><div>환불 -${fmt(c.refund)}원 · 지출 -${fmt(c.cost)}원</div><b>수익 ${fmt(c.profit)}원</b>`; }
 async function saveLec() {
-  const f = readLec(); if (!f.name) return toast('강의명을 입력해 주세요'); if (!f.date) return toast('시작일을 입력해 주세요');
+  const f = readLec(); if (!checkReq([['name', '강의명', !!f.name], ['date', '시작일', !!f.date]])) return;
   if (ui.panel === 'edit') {
     const old = normLec(S.lectures.find(l => l.id === ui.selLec)), L = { name: '강의명', date: '시작일', status: '진행상태', memo: '메모' };
     const ch = Object.keys(L).filter(k => String(old[k] ?? '') !== String(f[k] ?? '')).map(k => `${L[k]} ${old[k] || '없음'} → ${f[k] || '없음'}`);
@@ -1007,7 +1015,7 @@ function download(name, text, type) { const a = document.createElement('a'); a.h
 const readProd = () => { const n = [...document.querySelectorAll('[name=pn]')], r = [...document.querySelectorAll('[name=pr]')]; return n.map((el, i) => ({ name: el.value.trim(), rate: num(r[i].value) })); };
 document.addEventListener('click', e => { const t = e.target.closest('[data-act]'); if (!t || !H[t.dataset.act]) return; ui.modalPending = false; H[t.dataset.act](t.dataset.v, t, e); });
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (ui.confirm) { confirmFn = null; ui.confirm = null; render(); } else if (ui.modal) closeModalNow(); });
-document.addEventListener('input', e => { if (e.target.closest('#form')) { const k = $('#form').dataset.kind; k === 'ad' ? calcAd() : calcLec(); } });
+document.addEventListener('input', e => { const t = e.target; if (t.classList && t.classList.contains('err')) { t.classList.remove('err'); const n = t.nextElementSibling; if (n && n.classList.contains('ermsg')) n.remove(); } if (e.target.closest('#form')) { const k = $('#form').dataset.kind; k === 'ad' ? calcAd() : calcLec(); } });
 const shrink = f => new Promise((ok, no) => { const r = new FileReader(); r.onerror = no; r.onload = () => { const im = new Image(); im.onerror = no; im.onload = () => { const k = Math.min(1, 1000 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .72)); }; im.src = r.result; }; r.readAsDataURL(f); });
 document.addEventListener('change', async e => {
   const t = e.target;
