@@ -1,5 +1,5 @@
 // 앱 설치 + 폰 알림용 서비스워커: 항상 최신 화면을 먼저 받고, 오프라인일 때만 저장본을 보여줍니다.
-const C = 'collabkorea-v2';
+const C = 'collabkorea-v3';
 self.addEventListener('install', e => self.skipWaiting());
 self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch', e => {
@@ -13,8 +13,8 @@ self.addEventListener('push', e => {
   const x = d.data || d.notification || d || {};
   const title = x.title || '㈜콜라브코리아';
   e.waitUntil((async () => {
-    await self.registration.showNotification(title, { body: x.body || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: x.tag || undefined, data: { tab: x.tab || '' } });
-    try { if (self.navigator.setAppBadge) await self.navigator.setAppBadge(); } catch (_) { }
+    await self.registration.showNotification(title, { body: x.body || '', icon: 'icon-192.png', badge: 'badge-96.png', tag: x.tag || undefined, data: { tab: x.tab || '' } });
+    try { const n = (await self.registration.getNotifications()).length; if (self.navigator.setAppBadge) await self.navigator.setAppBadge(n || 1); } catch (_) { }
   })());
 });
 self.addEventListener('notificationclick', e => {
