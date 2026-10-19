@@ -113,8 +113,19 @@ body{padding-bottom:96px}
 main{padding:12px 16px 24px}
 .hd{margin-top:-4px}.ttl.pc{display:none}
 }
+/* ---- 2단 레이아웃 · 공지/알림 ---- */
+.cols2{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;align-items:start}
+.cols2 .side{position:sticky;top:20px;min-width:0}
+@media(min-width:961px){.cols2.rside{grid-template-columns:minmax(0,1fr) 400px}.cols2.rside .side{order:2}.cols2.one{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:960px){.cols2,.cols2.rside{grid-template-columns:minmax(0,1fr)}.cols2 .side{position:static}}
+.nimg{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}.nimg img{max-width:100%;max-height:320px;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;display:block}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px}.thumbs .th{position:relative}.thumbs img{width:76px;height:76px;object-fit:cover;border-radius:10px;border:1px solid var(--line);display:block}
+.thumbs button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:11px;border:0;background:#111;color:#fff;font-size:12px;line-height:1}
+.chk{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;font-size:15px;cursor:pointer}.chk input{width:20px;height:20px;flex:none;accent-color:#111}
+.card.hl{box-shadow:0 0 0 3px #CFC8EE}
+.qe{display:flex;gap:6px;align-items:center}.qe input{flex:1;height:38px}
 /* ---- 레퍼런스 톤: 중립 흰색 사이드바/카드 ---- */
-.sb{margin:12px 0 12px 12px;height:calc(100vh - 24px);top:12px;border:1px solid var(--line);border-radius:20px;box-shadow:0 2px 14px rgba(23,20,43,.05)}
+.sb{margin:0;height:100vh;top:0;border:0;border-right:1px solid var(--line);border-radius:0;box-shadow:none}
 .sb .it{color:#33323F;font-weight:500;height:42px}.sb .it:hover{background:#F4F4F7}
 .sb .it.on{background:#F0F0F4;color:#111;font-weight:700}
 .sb .it svg{color:#5A5868}.sb .it.on svg{color:#111}
@@ -221,7 +232,8 @@ const DEFAULT_PRODUCTS = [{ name: '샤오홍슈 광고', rate: 15 }, { name: '�
 /* ---------- 데이터 ---------- */
 const S = { ads: [], lectures: [], members: [], config: [], logs: [], backups: [], partners: [], notes: [] };
 let me = null, B = null, subs = [], backupChecked = false;
-let ui = { modal: false, confirm: null, hlFn: null, hlSrc: null, auth: 'loading', tab: 'home', vm: 'month', filter: 'all', selM: CM, selY: CY, adM: CUR, lecM: CUR, selAd: null, selLec: null, panel: 'detail', draft: null, dirty: false, prod: null, bkM: CUR, msg: null, sbc: (() => { try { return localStorage.getItem('cd_sbc') === '1'; } catch (e) { return false; } })() };
+let noKeep = false, histKey = null;
+let ui = { nc: false, nd: null, qedit: null, zoom: null, hl: null, modal: false, confirm: null, hlFn: null, hlSrc: null, auth: 'loading', tab: 'home', vm: 'month', filter: 'all', selM: CM, selY: CY, adM: CUR, lecM: CUR, selAd: null, selLec: null, panel: 'detail', draft: null, dirty: false, prod: null, bkM: CUR, msg: null, sbc: (() => { try { return localStorage.getItem('cd_sbc') === '1'; } catch (e) { return false; } })() };
 const products = () => (S.config.find(c => c.id === 'main') || {}).products || DEFAULT_PRODUCTS;
 const liveAds = () => S.ads.filter(a => !a.deleted);
 const gN = g => (g.students && g.students.length) ? g.students.length : num(g.n);
@@ -315,8 +327,9 @@ function seed() {
     transfers: [{ name: '최재경', from: '블로그', amt: 990000, group: '자유수강반', }, { name: '강재이', from: '광고영업반', amt: 1120000, group: '챌린지반', }],
     refunds: [{ name: '박서아', amt: 0, month: mo, memo: '2/3' }, { name: '강재이', amt: 0, month: mo, memo: '1/2' }],
     costs: [{ name: '후기왕 2명', unit: 198000, qty: 2, note: '로지텍 마우스' }, { name: '성장장려금', unit: 0, qty: 0, note: '' }, { name: '오프라인 모임 커피값', unit: 0, qty: 0, note: '' }] });
-  lec({ name: '강의 C', date: shift(mo, 1) + '-05', status: '진행중', groups: [grp('수강반', 200000, ['신청자1', '신청자2', '신청자3', '신청자4', '신청자5', '신청자6', '신청자7', '신청자8'])], costs: [{ name: '장소비', unit: 100000, qty: 1, note: '' }] });
-  lec({ name: '강의 D (4주 과정)', date: shift(mo, -1) + '-28', status: '진행중', groups: [grp('수강반', 250000, ['수강생1', '수강생2', '수강생3', '수강생4', '수강생5', '수강생6', '수강생7', '수강생8', '수강생9', '수강생10', '수강생11', '수강생12'])], costs: [{ name: '강사료', unit: 500000, qty: 1, note: '' }] });
+  lec({ name: '샤오홍슈 광고 실전 특강', date: mo + '-15', status: '진행중', groups: [grp('일반반', 330000, ['고은솔', '양재현', '서가을', '백지호', '남유진', '허보람', '추다인', '변서아', '탁지훈', '마소연'])], costs: [{ name: '강사료', unit: 400000, qty: 1, note: '' }, { name: '장소비', unit: 150000, qty: 1, note: '' }] });
+  lec({ name: '인플루언서 마케팅 기초반', date: shift(mo, 1) + '-05', status: '진행중', groups: [grp('수강반', 200000, ['김하늘', '이수빈', '박지우', '최예린', '정다은', '한서윤', '오민지', '윤채원'])], costs: [{ name: '장소비', unit: 100000, qty: 1, note: '' }] });
+  lec({ name: '중국 마케팅 4주 과정', date: shift(mo, -1) + '-28', status: '진행중', groups: [grp('수강반', 250000, ['강민서', '조현우', '신유나', '배서진', '임도현', '문지안', '류하린', '송이준', '권나연', '홍시우', '노아름', '장태오'])], costs: [{ name: '강사료', unit: 500000, qty: 1, note: '' }] });
   return { ads, lectures, partners, config: [{ id: 'main', products: DEFAULT_PRODUCTS }], logs: [], backups: [], members: [
     { id: 'demo-admin@example.com', email: 'demo-admin@example.com', name: '김대표', role: 'admin', joined: true, named: true, animal: '🦊' },
     { id: 'demo-team@example.com', email: 'demo-team@example.com', name: '박서연', role: 'member', joined: true, named: true, animal: '🐰' },
@@ -329,11 +342,12 @@ function seedNotes(ads) {
   const ago = h => Date.now() - h * 36e5, ack = (k, h) => ({ name: M[k][1], animal: M[k][2], at: ago(h) });
   const ad = nm => { const a = ads.find(x => x.name === nm && x.month === CUR) || {}; return { ref: a.id || '', refName: a.name || '' }; };
   const em = ks => ks.map(k => M[k][0]), nm = ks => ks.map(k => M[k][1]);
-  const N = (id, kind, from, to, title, text, h, acks, ref) => ({ id, kind, from: M[from][0], fromName: M[from][1], to: em(to), toNames: nm(to), title, text, ref: (ref || {}).ref || '', refName: (ref || {}).refName || '', at: ago(h), acks });
+  const N = (id, kind, from, to, title, text, h, acks, ref) => ({ id, kind, type: kind === 'notice' ? ({ nt1: '정산', nt2: '중요', nt3: '일정' }[id] || '일반') : undefined, ackReq: true, refKind: 'ad', from: M[from][0], fromName: M[from][1], to: em(to), toNames: nm(to), title, text, ref: (ref || {}).ref || '', refName: (ref || {}).refName || '', at: ago(h), acks });
   return [
     N('nt1', 'notice', 'A', [], '10월 정산 마감 안내', '플랫폼 입금 확인은 매월 25일까지 완료 처리해 주세요.\n지연된 건은 알림함에 자동으로 표시되니, 보이면 바로 확인 부탁드립니다.', 52, { [M.S[0]]: ack('S', 50), [M.D[0]]: ack('D', 47), [M.J[0]]: ack('J', 30) }),
     N('nt2', 'notice', 'A', [], '신규 광고영업 건 등록 규칙', '문의 단계부터 바로 등록해 주세요. 업체명·광고상품·담당자는 필수이고, 영업자가 있는 건은 배분율과 입금·정산 예정일까지 입력합니다.', 170, { [M.S[0]]: ack('S', 168), [M.D[0]]: ack('D', 160), [M.J[0]]: ack('J', 150), [M.N[0]]: ack('N', 120) }),
     N('nt3', 'notice', 'A', [], '국경절 연휴 이후 일정', '중국 플랫폼 담당자 연락이 10/8부터 정상화됩니다. 연휴 중 보류한 광고 건은 이번 주 안에 재개 여부를 확인해 주세요.', 8, {}),
+    { ...N('nt4', 'notice', 'A', [], '11월 근무 일정표', '11월 주요 일정입니다. 참고만 해 주세요.', 3, {}), type: '일정', ackReq: false, images: ["data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360'><rect width='640' height='360' fill='%23F0EEFF'/><rect x='40' y='40' width='560' height='60' rx='12' fill='%236E4AFF'/><text x='64' y='80' font-size='26' font-family='sans-serif' fill='white'>11월 휴무 및 근무 일정</text><g font-family='sans-serif' font-size='22' fill='%2333323F'><text x='64' y='160'>11/3(화)  전체 회의 10:00</text><text x='64' y='205'>11/11(수)  플랫폼 정산 마감</text><text x='64' y='250'>11/26(목)  외부 교육 (오후 반차)</text><text x='64' y='295'>11/30(월)  월말 결산</text></g></svg>"] },
     N('m1', 'msg', 'S', ['A'], '', '모던핏 입금 확인했어요. 완료 처리 부탁드립니다.', 2, {}, ad('모던핏')),
     N('m2', 'msg', 'A', ['D', 'J'], '', '다온푸드 정산 예정일이 지났어요. 확인하고 정산 완료 처리해 주세요.', 5, { [M.D[0]]: ack('D', 4) }, ad('다온푸드')),
     N('m3', 'msg', 'J', ['A', 'S', 'D', 'N'], '', '이번 주 금요일 오후 3시에 주간 미팅 있습니다. 광고 리포트 정리해서 와 주세요.', 26, { [M.S[0]]: ack('S', 25), [M.D[0]]: ack('D', 24) }),
@@ -341,7 +355,7 @@ function seedNotes(ads) {
   ];
 }
 function demoBackend() {
-  const KEY = 'cd_demo_v3'; let db; try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { }
+  const KEY = 'cd_demo_v5'; let db; try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { }
   if (!db) db = seed();
   db.partners = db.partners || []; db.notes = db.notes || [];
   const L = {}; let cb = null;
@@ -402,7 +416,7 @@ async function onUser(u) {
 }
 async function finishLogin(u, m) {
   me = { email: u.email, name: m.name || u.displayName || u.email.split('@')[0], role: m.role };
-  ui.auth = 'in'; restoreUi(); try { const q = new URLSearchParams(location.search).get('tab'); if (['notice', 'inbox'].includes(q)) ui.tab = q; } catch (e) { } notifyArm = false; lastUnread = null; setTimeout(() => { notifyArm = true; }, 3000);
+  ui.auth = 'in'; restoreUi(); try { const q = new URLSearchParams(location.search).get('tab'); if (['notice', 'inbox'].includes(q)) ui.tab = q; const n = new URLSearchParams(location.search).get('n'); if (n) { ui.tab = 'notice'; ui.hl = n; } } catch (e) { } histKey = null; notifyArm = false; lastUnread = null; setTimeout(() => { notifyArm = true; }, 3000);
   const cols = ['ads', 'lectures', 'config', 'logs']; cols.push('members', 'partners'); if (me.role === 'admin') cols.push('backups');
   cols.forEach(c => subs.push(B.sub(c, rows => { S[c] = rows; onData(); })));
   let nIn = [], nOut = []; let mergeN = () => { const m = new Map(); [...nIn, ...nOut].forEach(x => m.set(x.id, x)); S.notes = [...m.values()]; notesChanged(); };
@@ -413,7 +427,8 @@ async function finishLogin(u, m) {
   subs.push(B.sub('notes', rows => { nOut = rows; mergeN(); }, [['from', '==', me.email]]));
   render();
 }
-let lastUnread = null, notifyArm = false; async function pushNotify(id) { if (DEMO || !PUSH.relayUrl) return; try { const idToken = await B.idToken(); fetch(PUSH.relayUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ idToken, noteId: id }) }); } catch (e) { } }
+let lastUnread = null, notifyArm = false; async function pushCall(extra) { const idToken = await B.idToken(); const r = await fetch(PUSH.relayUrl, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idToken, ...extra }) }); return (await r.text()).slice(0, 200); }
+async function pushNotify(id) { if (DEMO || !PUSH.relayUrl) return; try { const t = await pushCall({ noteId: id }); if (!/^sent/.test(t)) toast('폰 알림 전송 실패: ' + t.slice(0, 70)); else if (/devices=0\b/.test(t)) toast('받는 사람의 폰이 아직 알림을 켜지 않았습니다'); } catch (e) { } }
 const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 const devId = () => { try { let d = localStorage.getItem('cd_dev'); if (!d) { d = uid(); localStorage.setItem('cd_dev', d); } return d; } catch (e) { return 'dev'; } };
 const pushOn = () => { try { return localStorage.getItem('cd_push') === '1'; } catch (e) { return false; } };
@@ -423,7 +438,7 @@ function pushCard() {
   if (!ready) body = '<div class="note">알림 서버를 아직 연결하지 않았습니다. 관리자가 연결하면 여기서 켤 수 있습니다.</div>';
   else if (!DEMO && !pushSupported()) body = `<div class="note">${isIOS ? '아이폰은 Safari 공유 버튼 → "홈 화면에 추가"로 앱을 설치한 뒤, 설치한 앱에서 켤 수 있습니다.' : inApp ? '카카오톡·네이버 앱 안의 브라우저에서는 켤 수 없습니다. Chrome이나 삼성 인터넷으로 열어 주세요.' : '이 브라우저는 폰 알림을 지원하지 않습니다. Chrome이나 삼성 인터넷을 사용해 주세요.'}</div>`;
   else if (!DEMO && window.Notification && Notification.permission === 'denied') body = '<div class="note">이 기기에서 알림이 차단되어 있습니다. 브라우저(또는 폰) 설정의 사이트 알림에서 허용으로 바꾼 뒤 다시 시도해 주세요.</div>';
-  else body = pushOn() ? `<div class="row" style="gap:12px"><span class="chip" style="background:#E3F5EA;color:#14693B">이 기기에서 켜짐</span><button class="btn s" data-act="pushOff">끄기</button></div>` : `<button class="btn p" data-act="pushOn">이 기기에서 알림 받기</button>`;
+  else body = pushOn() ? `<div class="row" style="gap:12px"><span class="chip" style="background:#E3F5EA;color:#14693B">이 기기에서 켜짐</span><button class="btn s" data-act="pushOff">끄기</button><button class="btn s" data-act="pushTest">테스트 알림 받기</button></div>` : `<button class="btn p" data-act="pushOn">이 기기에서 알림 받기</button>`;
   return `<section class="card"><h2 style="font-size:18px">폰 알림</h2><div class="muted" style="margin:4px 0 14px">앱이 꺼져 있어도 새 공지·알림이 오면 폰 상단에 알림이 옵니다. 쓰는 기기마다 한 번씩 켜 주세요.</div>${body}${DEMO ? '<div class="muted" style="margin-top:10px;font-size:13px">체험 모드에서는 실제 알림이 오지 않고 화면만 확인할 수 있습니다.</div>' : ''}</section>`;
 }
 function notesChanged() {
@@ -475,12 +490,22 @@ function restoreUi() {
     ui.modalPending = !!o.modal && (o.tab === 'ads' || o.tab === 'lectures');
   } catch (e) { }
 }
+const navKey = () => ui.tab + (ui.modal ? '|m' : '');
+function syncHist() { try { const k = navKey(); if (histKey === null) { history.replaceState({ k }, ''); histKey = k; return; } if (k !== histKey) { histKey = k; history.pushState({ k }, ''); } } catch (e) { } }
+window.addEventListener('popstate', e => {
+  if (!me || ui.auth !== 'in') return; const k = (e.state || {}).k; if (!k) return;
+  const t = k.split('|')[0]; ui.tab = t; ui.modal = false; ui.panel = 'detail'; ui.confirm = null; ui.draft = null; ui.zoom = null; histKey = t;
+  try { history.replaceState({ k: t }, ''); } catch (e2) { } render();
+});
 function render() {
   const app = $('#app'); if (!app) return;
   const y = window.scrollY;
+  if (ui.auth === 'in' && !noKeep) { try { if ($('#ntf')) keepNote(); if ($('#msgf')) keepMsg(); if ($('#qef')) keepQ(); } catch (e) { } }
+  noKeep = false;
   app.innerHTML = ui.auth === 'in' ? shell() : authScreen();
-  if (ui.auth === 'in') { saveUi(); updateBadge(); }
+  if (ui.auth === 'in') { saveUi(); updateBadge(); syncHist(); }
   window.scrollTo(0, y);
+  if (ui.hl && ui.tab === 'notice') { const el = document.getElementById('nt-' + ui.hl); if (el) { el.classList.add('hl'); el.scrollIntoView({ block: 'center' }); ui.hl = null; } }
 }
 const ANIMALS = ['🐶', '🐱', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🐸', '🐵', '🐧', '🐥', '🦁', '🐹', '🐮', '🐷', '🐙', '🦄', '🐢', '🦉'];
 const animal = k => { const m = S.members.find(x => x.id === k); if (m && m.animal) return m.animal; let h = 0; for (const c of String(k)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return ANIMALS[h % ANIMALS.length]; };
@@ -523,11 +548,11 @@ function shell() {
 <div class="sec">메뉴</div>${it('home', '홈')}${it('ads', '광고영업')}${it('lectures', '강의')}
 <div class="me ${t === 'settings' ? 'on' : ''}" data-act="tab" data-v="settings" role="link" tabindex="0" title="내 프로필 · 설정"><span class="av">${animal(me.email)}</span><div class="tx"><b>${esc(me.name)}</b><span>${esc(me.email)}</span></div><span class="gear">${ico('settings', 20)}</span></div></aside>
 <div class="wrap"><div class="mtop"><h1>${TITLES[t]}</h1><button class="gb" data-act="tab" data-v="settings" aria-label="설정">${ico('settings', 22)}</button></div><main>${t === 'home' ? home() : t === 'ads' ? ads() : t === 'lectures' ? lectures() : t === 'notice' ? notice() : t === 'inbox' ? inbox() : settings()}</main></div>
-<nav class="tabbar" aria-label="메뉴">${tb('home', '홈')}${tb('ads', '광고영업')}${tb('lectures', '강의')}${tb('notice', '공지')}${tb('inbox', '알림함')}</nav></div>${ui.confirm ? `<div class="modal" style="z-index:90" data-act="confirmNo"><div class="mbox" style="width:min(380px,100%);padding:28px 24px 24px"><h2 style="font-size:19px">${esc(ui.confirm.msg)}</h2>${ui.confirm.sub ? `<p class="muted" style="margin:8px 0 0;line-height:1.6">${esc(ui.confirm.sub)}</p>` : ''}<div class="row" style="gap:8px;margin-top:20px"><button class="btn grow" data-act="confirmYes">예</button><button class="btn p grow" data-act="confirmNo">아니오</button></div></div></div>` : ''}`;
+<nav class="tabbar" aria-label="메뉴">${tb('home', '홈')}${tb('notice', '공지')}${tb('inbox', '알림함')}${tb('ads', '광고영업')}${tb('lectures', '강의')}</nav></div>${ui.zoom ? `<div class="modal" style="z-index:95;background:rgba(0,0,0,.8)" data-act="zoomClose"><img src="${ui.zoom}" style="max-width:100%;max-height:100%;border-radius:8px"></div>` : ''}${ui.confirm ? `<div class="modal" style="z-index:90" data-act="confirmNo"><div class="mbox" style="width:min(380px,100%);padding:28px 24px 24px"><h2 style="font-size:19px">${esc(ui.confirm.msg)}</h2>${ui.confirm.sub ? `<p class="muted" style="margin:8px 0 0;line-height:1.6">${esc(ui.confirm.sub)}</p>` : ''}<div class="row" style="gap:8px;margin-top:20px"><button class="btn grow" data-act="confirmYes">예</button><button class="btn p grow" data-act="confirmNo">아니오</button></div></div></div>` : ''}`;
 }
 
 /* ----- 공지사항 · 알림함 ----- */
-const needAck = x => x.from !== me.email && (x.kind === 'notice' || (x.to || []).includes(me.email));
+const needAck = x => x.from !== me.email && (x.kind === 'notice' ? x.ackReq !== false : (x.to || []).includes(me.email));
 const isAcked = x => !!(x.acks && x.acks[me.email]);
 const unreadOf = k => S.notes.filter(x => x.kind === k && needAck(x) && !isAcked(x)).length;
 const badgeCount = () => unreadOf('notice') + unreadOf('msg') + autoAlerts().length;
@@ -543,6 +568,10 @@ function autoAlerts() {
   return out.sort((x, y) => x.d.localeCompare(y.d));
 }
 const ago = t => { const m = Math.floor((Date.now() - t) / 60000); if (m < 1) return '방금'; if (m < 60) return m + '분 전'; const h = Math.floor(m / 60); if (h < 24) return h + '시간 전'; if (h < 24 * 7) return Math.floor(h / 24) + '일 전'; return dt(t); };
+const fmtAt = t => { const d = new Date(t), s = d.getFullYear() + '. ' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()), m = Math.floor((Date.now() - t) / 60000); return m < 360 ? s + ' (' + (m < 1 ? '방금' : m < 60 ? m + '분 전' : Math.floor(m / 60) + '시간 전') + ')' : s; };
+const fmtD = t => { const d = new Date(t); return d.getFullYear() + '. ' + pad(d.getMonth() + 1) + '.' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const NTYPES = { '일반': ['#EEF0F6', '#33323F'], '중요': ['#FFF1D6', '#8A5A00'], '긴급': ['#FDE8E8', '#B42318'], '일정': ['#E5EEFF', '#1E4FB8'], '정산': ['#E3F5EA', '#14693B'] };
+const quickList = () => { const c = S.config.find(x => x.id === 'main'); return c && Array.isArray(c.quick) && c.quick.length ? c.quick : QUICK; };
 const QUICK = ['신규 건 등록해 주세요', '입금 확인 부탁드려요', '정산 완료 처리해 주세요', '입금 예정일 확인해 주세요'];
 function ackBlock(x) {
   const ex = expected(x), done = ex.filter(m => x.acks && x.acks[m.id]), pend = ex.filter(m => !(x.acks && x.acks[m.id]));
@@ -551,34 +580,50 @@ function ackBlock(x) {
   return `<div class="ackb"><div class="row" style="gap:8px;justify-content:space-between;flex-wrap:nowrap"><b style="font-size:13px">확인 ${done.length}/${ex.length}${pend.length === 0 && ex.length ? ' · 모두 확인' : ''}</b>${act}</div>
 <div class="ucs">${done.map(m => { const a = x.acks[m.id]; return uc(a.name || m.name, a.animal || animal(m.id), 'ok', ago(a.at) + ' 확인'); }).join('')}${pend.map(m => uc(m.name, animal(m.id), 'no', '아직 확인 안 함')).join('')}</div></div>`;
 }
+function keepNote() { const f = $('#ntf'); if (!f) return; const e = f.elements; ui.nd = { ...(ui.nd || { imgs: [] }), type: e.type.value, title: e.title.value, text: e.text.value, ack: e.ack.checked }; }
+function keepQ() { const f = $('#qef'); if (!f) return; ui.qedit = [...f.querySelectorAll('[name=qk]')].map(x => x.value); }
 function notice() {
-  const list = S.notes.filter(x => x.kind === 'notice').sort((a, b) => b.at - a.at), un = unreadOf('notice');
-  const compose = me.role === 'admin' ? `<section class="card"><h2 style="font-size:17px">공지 올리기</h2><div class="muted" style="margin:4px 0 14px">모든 멤버에게 보이고, 멤버마다 확인 버튼을 눌러야 확인한 사람으로 표시됩니다.</div><form id="ntf" class="stack" style="gap:12px" onsubmit="return false"><label>제목<input name="title" maxlength="60" placeholder="예: 10월 정산 마감 안내"></label><label>내용<textarea name="text" maxlength="1000" placeholder="공지 내용을 입력하세요"></textarea></label><button type="button" class="btn p" data-act="postNotice">공지 올리기</button></form></section>` : '';
-  const card = x => `<article class="card nt ${needAck(x) && !isAcked(x) ? 'un' : ''}"><div class="row" style="gap:8px;flex-wrap:nowrap;align-items:flex-start"><div style="flex:1;min-width:0"><div class="row" style="gap:8px"><span class="chip" style="background:#FDE8E8;color:#B42318">공지</span>${needAck(x) && !isAcked(x) ? '<span class="chip" style="background:#E5484D;color:#fff">NEW</span>' : ''}</div><h3 style="font-size:18px;margin-top:8px;overflow-wrap:anywhere">${esc(x.title)}</h3><div class="muted" style="font-size:13px;margin-top:2px">${esc(x.fromName)} · ${ago(x.at)}</div></div>${me.role === 'admin' || x.from === me.email ? `<button class="btn s d" data-act="delNote" data-v="${x.id}">삭제</button>` : ''}</div>
-<div style="margin:12px 0 14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.text)}</div>${ackBlock(x)}<div style="margin-top:10px"><button class="btn s" data-act="shareNote" data-v="${x.id}">카카오톡 등으로 공유</button></div></article>`;
-  return `<div class="row hd" style="flex-wrap:nowrap"><h1 class="ttl pc">공지사항</h1>${un ? `<span class="chip" style="margin-left:auto;background:#FDE8E8;color:#B42318">안 읽은 공지 ${un}</span>` : ''}</div>${compose}<div class="stack" style="gap:14px">${list.map(card).join('') || '<div class="card muted">등록된 공지가 없습니다.</div>'}</div>`;
+  const list = S.notes.filter(x => x.kind === 'notice').sort((a, b) => b.at - a.at), un = unreadOf('notice'), admin = me.role === 'admin';
+  const d = ui.nd || { type: '일반', title: '', text: '', ack: true, imgs: [] };
+  const compose = admin && ui.nc ? `<section class="card side"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h2 style="font-size:18px">공지 올리기</h2><button class="btn s" data-act="ncToggle">닫기</button></div><form id="ntf" class="stack" style="gap:14px;margin-top:14px" onsubmit="return false">
+<label>공지 유형<select name="type">${Object.keys(NTYPES).map(t => `<option ${t === d.type ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+<label>제목<input name="title" maxlength="60" value="${esc(d.title)}" placeholder="예: 10월 정산 마감 안내"></label>
+<label>내용<textarea name="text" maxlength="1000" style="min-height:140px" placeholder="공지 내용을 입력하세요">${esc(d.text)}</textarea></label>
+<label class="chk"><input type="checkbox" name="ack" ${d.ack ? 'checked' : ''}><span>멤버가 확인 버튼을 눌러야 하는 공지</span></label>
+<div><div class="lbl" style="margin-bottom:6px">이미지 첨부 <span class="muted" style="font-size:12px">(최대 3장)</span></div><div class="thumbs">${(d.imgs || []).map((m, k) => `<div class="th"><img src="${m}" alt=""><button type="button" data-act="nimgDel" data-v="${k}" aria-label="삭제">✕</button></div>`).join('')}${(d.imgs || []).length < 3 ? `<label class="btn s" style="height:76px;width:76px;flex-direction:column;gap:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px"><span style="font-size:22px;line-height:1">＋</span>추가<input id="nimg" type="file" accept="image/*" multiple data-chg="nimg" style="display:none"></label>` : ''}</div></div>
+<button type="button" class="btn p" data-act="postNotice">공지 올리기</button></form></section>` : '';
+  const card = x => { const t = NTYPES[x.type] || NTYPES['일반'], needs = x.ackReq !== false;
+    return `<article id="nt-${x.id}" class="card nt ${needAck(x) && !isAcked(x) ? 'un' : ''}"><div class="row" style="gap:8px;flex-wrap:nowrap;align-items:flex-start"><div style="flex:1;min-width:0"><div class="row" style="gap:6px"><span class="chip" style="background:${t[0]};color:${t[1]}">${esc(x.type || '일반')}</span>${needAck(x) && !isAcked(x) ? '<span class="chip" style="background:#E5484D;color:#fff">NEW</span>' : ''}</div><h3 style="font-size:18px;margin-top:8px;overflow-wrap:anywhere">${esc(x.title)}</h3><div class="muted" style="font-size:13px;margin-top:2px">${esc(x.fromName)} · ${fmtAt(x.at)}</div></div><div class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn s" data-act="shareNote" data-v="${x.id}">공유</button>${admin || x.from === me.email ? `<button class="btn s d" data-act="delNote" data-v="${x.id}">삭제</button>` : ''}</div></div>
+<div style="margin:12px 0 14px;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.text)}</div>${(x.images || []).length ? `<div class="nimg">${x.images.map((m, k) => `<img src="${m}" alt="첨부 이미지" data-act="zoom" data-v="${x.id}|${k}">`).join('')}</div>` : ''}${needs ? ackBlock(x) : ''}</article>`; };
+  return `<div class="row hd" style="flex-wrap:nowrap"><h1 class="ttl pc">공지사항</h1>${un ? `<span class="chip" style="background:#FDE8E8;color:#B42318">안 읽은 공지 ${un}</span>` : ''}<div class="grow"></div>${admin && !ui.nc ? '<button class="btn p" data-act="ncToggle">공지하기</button>' : ''}</div>
+<div class="cols2 rside ${compose ? '' : 'one'}">${compose}<div class="stack" style="gap:14px;min-width:0">${list.map(card).join('') || '<div class="card muted">등록된 공지가 없습니다.</div>'}</div></div>`;
 }
 function keepMsg() { const f = $('#msgf'); if (!f) return; ui.msg = { ...(ui.msg || { to: [] }), ref: f.elements.ref.value, text: f.elements.text.value }; }
 function inbox() {
-  const d = ui.msg || { to: [], ref: '', text: '' }, others = S.members.filter(m => m.id !== me.email && m.name), auto = autoAlerts();
+  const d = ui.msg || { to: [], ref: '', text: '' }, others = S.members.filter(m => m.id !== me.email && m.name), auto = autoAlerts(), admin = me.role === 'admin';
   const ins = S.notes.filter(x => x.kind === 'msg' && (x.to || []).includes(me.email)).sort((a, b) => b.at - a.at), outs = S.notes.filter(x => x.kind === 'msg' && x.from === me.email).sort((a, b) => b.at - a.at).slice(0, 20);
-  const un = unreadOf('msg'), ads = sortAds(liveAds());
-  const open = x => x.ref && S.ads.find(a => a.id === x.ref && !a.deleted) ? `<button class="btn s" data-act="openRef" data-v="${x.ref}">관련 건 보기 · ${esc(x.refName)}</button>` : '';
-  const rowIn = x => `<article class="card nt ${isAcked(x) ? '' : 'un'}"><div class="row" style="gap:8px;flex-wrap:nowrap;align-items:flex-start"><span class="av">${animal(x.from)}</span><div style="flex:1;min-width:0"><div><b>${esc(x.fromName)}</b> <span class="muted" style="font-size:13px">${ago(x.at)}${(x.to || []).length > 1 ? ' · 받는 사람 ' + x.to.length + '명' : ''}</span></div><div style="margin-top:4px;line-height:1.6;overflow-wrap:anywhere">${esc(x.text)}</div>${open(x) ? `<div style="margin-top:8px">${open(x)}</div>` : ''}</div></div><div style="margin-top:12px">${ackBlock(x)}</div></article>`;
-  const rowOut = x => `<article class="card nt"><div class="row" style="gap:8px;flex-wrap:nowrap;align-items:flex-start"><div style="flex:1;min-width:0"><div class="muted" style="font-size:13px">${esc((x.toNames || []).join(', '))} 님에게 · ${ago(x.at)}</div><div style="margin-top:4px;line-height:1.6;overflow-wrap:anywhere">${esc(x.text)}</div>${open(x) ? `<div style="margin-top:8px">${open(x)}</div>` : ''}</div><button class="btn s d" data-act="delNote" data-v="${x.id}">삭제</button></div><div style="margin-top:12px">${ackBlock(x)}</div></article>`;
+  const un = unreadOf('msg'), ads = aliveAds(), lecs = ongoingLec();
+  const open = x => { if (!x.ref) return ''; if (x.refKind === 'lec') return S.lectures.find(a => a.id === x.ref && !a.deleted) ? `<button class="btn s" data-act="openLec" data-v="${x.ref}">관련 건 보기 · ${esc(x.refName)}</button>` : ''; return S.ads.find(a => a.id === x.ref && !a.deleted) ? `<button class="btn s" data-act="openRef" data-v="${x.ref}">관련 건 보기 · ${esc(x.refName)}</button>` : ''; };
+  const rowIn = x => `<article class="card nt ${isAcked(x) ? '' : 'un'}"><div class="row" style="gap:8px;flex-wrap:nowrap;align-items:flex-start"><span class="av">${animal(x.from)}</span><div style="flex:1;min-width:0"><div><b>${esc(x.fromName)}</b> <span class="muted" style="font-size:13px">${fmtAt(x.at)}${(x.to || []).length > 1 ? ' · 받는 사람 ' + x.to.length + '명' : ''}</span></div><div style="margin-top:4px;line-height:1.6;overflow-wrap:anywhere">${esc(x.text)}</div>${open(x) ? `<div style="margin-top:8px">${open(x)}</div>` : ''}</div></div><div style="margin-top:12px">${ackBlock(x)}</div></article>`;
+  const rowOut = x => `<article class="card nt"><div class="row" style="gap:8px;flex-wrap:nowrap;align-items:flex-start"><div style="flex:1;min-width:0"><div class="muted" style="font-size:13px">${esc((x.toNames || []).join(', '))} 님에게 · ${fmtAt(x.at)}</div><div style="margin-top:4px;line-height:1.6;overflow-wrap:anywhere">${esc(x.text)}</div>${open(x) ? `<div style="margin-top:8px">${open(x)}</div>` : ''}</div><button class="btn s d" data-act="delNote" data-v="${x.id}">삭제</button></div><div style="margin-top:12px">${ackBlock(x)}</div></article>`;
   const rowAuto = x => `<button class="nbox un" data-act="openAuto" data-v="${x.a.id}"><span class="nd"></span><div class="tx"><div>${esc(x.text)}</div><div class="mt">자동 알림 · 눌러서 해당 건 열기</div></div></button>`;
-  const pick = others.map(m => `<button type="button" class="uc pk ${d.to.includes(m.id) ? 'on' : ''}" data-act="togTo" data-v="${esc(m.id)}"><i>${animal(m.id)}</i>${esc(m.name)}</button>`).join('');
+  const allOn = others.length > 0 && d.to.length === others.length;
+  const pick = `<button type="button" class="uc pk ${allOn ? 'on' : ''}" data-act="toAll"><i>👥</i>모두</button>` + others.map(m => `<button type="button" class="uc pk ${d.to.includes(m.id) ? 'on' : ''}" data-act="togTo" data-v="${esc(m.id)}"><i>${animal(m.id)}</i>${esc(m.name)}</button>`).join('');
+  const ql = quickList();
+  const quick = ui.qedit ? `<div id="qef" class="stack" style="gap:8px">${ui.qedit.map((q, i) => `<div class="qe"><input name="qk" maxlength="40" value="${esc(q)}"><button type="button" class="btn s d" data-act="qDel" data-v="${i}">삭제</button></div>`).join('')}<div class="row" style="gap:8px"><button type="button" class="btn s" data-act="qAdd">+ 문구 추가</button><div class="grow"></div><button type="button" class="btn s" data-act="qCancel">취소</button><button type="button" class="btn p s" data-act="qSave">저장</button></div></div>`
+    : `<div class="qk">${ql.map((q, i) => `<button type="button" data-act="quick" data-v="${i}">${esc(q)}</button>`).join('')}${admin ? '<button type="button" class="lnk" style="height:36px" data-act="qEdit">문구 편집</button>' : ''}</div>`;
   return `<div class="row hd" style="flex-wrap:nowrap"><h1 class="ttl pc">알림함</h1></div>
-<section class="card"><h2 style="font-size:17px">팀원에게 알림 보내기</h2><div class="muted" style="margin:4px 0 14px">할 일을 알리면 받는 사람 화면에 빨간 숫자가 뜨고, 확인 버튼을 누르면 누가 확인했는지 여기서 보입니다.</div>
-<form id="msgf" class="stack" style="gap:12px" onsubmit="return false">
-<div><div class="lbl" style="margin-bottom:6px;display:flex;justify-content:space-between"><span>받는 사람 (여러 명 선택 가능)</span><button type="button" class="lnk" data-act="toAll">${d.to.length === others.length && others.length ? '전체 해제' : '전체 선택'}</button></div><div class="ucs">${pick || '<span class="muted">보낼 수 있는 멤버가 없습니다</span>'}</div></div>
-<label>관련 광고영업 건 (선택)<select name="ref"><option value="">없음</option>${ads.map(a => `<option value="${a.id}" ${a.id === d.ref ? 'selected' : ''}>${esc(a.name)} · ${esc(a.month)} · ${esc(a.status)}</option>`).join('')}</select></label>
-<div class="qk">${QUICK.map((q, i) => `<button type="button" data-act="quick" data-v="${i}">${q}</button>`).join('')}</div>
+<div class="cols2"><section class="card side"><h2 style="font-size:18px">알림 보내기</h2><div class="muted" style="margin:4px 0 14px">할 일을 알리면 받는 사람 화면에 빨간 숫자가 뜨고, 확인 버튼을 누르면 누가 확인했는지 여기서 보입니다.</div>
+<form id="msgf" class="stack" style="gap:14px" onsubmit="return false">
+<div><div class="lbl" style="margin-bottom:6px">받는 사람</div><div class="ucs">${pick}${others.length ? '' : '<span class="muted">보낼 수 있는 멤버가 없습니다</span>'}</div></div>
+<label>확인이 필요한 건<select name="ref"><option value="">건을 선택하세요</option><optgroup label="광고영업 (진행 중)">${ads.map(a => `<option value="ad:${a.id}" ${'ad:' + a.id === d.ref ? 'selected' : ''}>${esc(a.name)} · ${esc(a.month)} · ${esc(a.status)}</option>`).join('')}</optgroup><optgroup label="강의 (진행 중)">${lecs.map(l => `<option value="lec:${l.id}" ${'lec:' + l.id === d.ref ? 'selected' : ''}>${esc(l.name)} · ${esc(l.date)} · ${esc(l.status)}</option>`).join('')}</optgroup></select></label>
 <label>내용<textarea name="text" maxlength="300" placeholder="예: 모던핏 입금 확인하고 완료 처리해 주세요">${esc(d.text)}</textarea></label>
+<div><div class="lbl" style="margin-bottom:6px">자주 쓰는 문구 <span class="muted" style="font-size:12px">눌러서 내용에 넣기</span></div>${quick}</div>
 <button type="button" class="btn p" data-act="sendNote">보내기</button></form></section>
-${auto.length ? `<section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">자동 알림</h2><span class="muted">${me.role === 'admin' ? '전체 건' : '내가 담당자인 건'} 중 예정일이 지난 입금·정산</span></div><div class="stack" style="gap:10px">${auto.map(rowAuto).join('')}</div></section>` : ''}
+<div class="stack" style="gap:26px;min-width:0">
+${auto.length ? `<section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">자동 알림</h2><span class="muted">${admin ? '전체 건' : '내가 담당자인 건'} 중 예정일이 지난 입금·정산</span></div><div class="stack" style="gap:10px">${auto.map(rowAuto).join('')}</div></section>` : ''}
 <section><div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:8px"><h2 style="font-size:19px">받은 알림</h2>${un ? `<span class="chip" style="background:#FDE8E8;color:#B42318">안 읽음 ${un}</span>` : ''}</div><div class="stack" style="gap:12px">${ins.map(rowIn).join('') || '<div class="card muted">받은 알림이 없습니다.</div>'}</div></section>
-<section><h2 style="font-size:19px;margin-bottom:8px">보낸 알림</h2><div class="stack" style="gap:12px">${outs.map(rowOut).join('') || '<div class="card muted">보낸 알림이 없습니다.</div>'}</div></section>`;
+<section><h2 style="font-size:19px;margin-bottom:8px">보낸 알림</h2><div class="stack" style="gap:12px">${outs.map(rowOut).join('') || '<div class="card muted">보낸 알림이 없습니다.</div>'}</div></section></div></div>`;
 }
 /* ----- 홈 ----- */
 function home() {
@@ -602,7 +647,7 @@ function home() {
   const sg = (k, n, c) => `<button class="${c ? 'on' : ''}" data-act="${k}" data-v="${n[0]}">${n[1]}</button>`;
   return `<section><div class="row" style="gap:12px;margin-bottom:14px;align-items:baseline"><h2 style="font-size:22px">이번 달 현황</h2><span class="muted">${CY}년 ${CM}월</span></div>
 <div class="grid g3">
-<button data-act="goAdsNew" style="text-align:left;border:0;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(23,20,43,.05);border-radius:16px;padding:22px 26px"><div class="row" style="justify-content:space-between;gap:8px"><span class="lbl">이번 달 계약</span><span style="font-size:13px;color:var(--pd);font-weight:700">광고영업 →</span></div><div style="font-size:26px;font-weight:700;margin-top:6px">${now.contracts}건</div></button>
+<button data-act="goAdsNew" style="text-align:left;border:0;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(23,20,43,.05);border-radius:16px;padding:22px 26px"><div class="row" style="justify-content:space-between;gap:8px"><span class="lbl">이번 달 계약 (광고영업)</span><span style="font-size:13px;color:var(--pd);font-weight:700">등록하기 →</span></div><div style="font-size:26px;font-weight:700;margin-top:6px">${now.contracts}건</div></button>
 <button data-act="goSrc" data-v="rev" style="text-align:left;display:block;width:100%;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(23,20,43,.05);border-radius:16px;padding:22px 26px"><div class="row" style="justify-content:space-between;gap:8px"><span class="lbl">이번 달 매출 <span style="font-size:12px">(광고영업 + 강의)</span></span><span style="font-size:13px;color:var(--pd);font-weight:700">상세내역 →</span></div><div style="font-size:26px;font-weight:700;margin-top:6px;color:var(--lvt)">${fmt(now.ad + now.lecRev)}원</div></button>
 <button data-act="goSrc" data-v="profit" style="text-align:left;display:block;width:100%;background:#fff;border:1px solid var(--line);box-shadow:0 1px 3px rgba(23,20,43,.05);border-radius:16px;padding:22px 26px"><div class="row" style="justify-content:space-between;gap:8px"><span class="lbl">이번 달 수익 <span style="font-size:12px">(광고영업 + 강의)</span></span><span style="font-size:13px;color:var(--pd);font-weight:700">상세내역 →</span></div><div style="font-size:26px;font-weight:700;margin-top:6px;color:#5B3BEA">${fmt(now.adP + now.lecProfit)}원</div></button></div></section>
 <section><div class="row" style="gap:12px;margin-bottom:14px;align-items:baseline"><h2 style="font-size:22px">${isM ? '월별' : '연별'} 현황</h2><span class="muted">단위 : 만 원</span></div><div class="card"><div class="row"><div class="grow"></div>
@@ -826,16 +871,17 @@ async function saveLec() {
 /* ----- 설정 ----- */
 function settings() {
   const mine = S.members.find(x => x.id === me.email) || {}, cur = animal(me.email), takenBy = a => S.members.find(x => x.animal === a && x.id !== me.email);
-  const profile = `<section class="card"><h2 style="font-size:18px">내 프로필</h2><div class="muted" style="margin:4px 0 0">우측 상단에 표시될 동물을 고르세요. 다른 멤버가 쓰는 동물은 선택할 수 없습니다.</div><div class="row" style="gap:10px;margin-top:16px">${ANIMALS.map(a => { const o = takenBy(a), on = a === cur; return `<button class="btn" ${o ? 'disabled' : ''} data-act="pickAnimal" data-v="${a}" title="${o ? esc(o.name || o.id) + ' 님이 사용 중' : ''}" style="width:56px;height:56px;font-size:28px;padding:0;${on ? 'border:2px solid var(--p);background:var(--tint)' : ''}${o ? ';opacity:.3' : ''}">${a}</button>`; }).join('')}</div><div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--line)"><button class="btn" data-act="logout">로그아웃</button></div></section>`;
+  const profile = `<section class="card"><h2 style="font-size:18px">내 프로필</h2><div class="muted" style="margin:4px 0 0">우측 상단에 표시될 동물을 고르세요. 다른 멤버가 쓰는 동물은 선택할 수 없습니다.</div><div class="row" style="gap:10px;margin-top:16px">${ANIMALS.map(a => { const o = takenBy(a), on = a === cur; return `<button class="btn" ${o ? 'disabled' : ''} data-act="pickAnimal" data-v="${a}" title="${o ? esc(o.name || o.id) + ' 님이 사용 중' : ''}" style="width:56px;height:56px;font-size:28px;padding:0;${on ? 'border:2px solid var(--p);background:var(--tint)' : ''}${o ? ';opacity:.3' : ''}">${a}</button>`; }).join('')}</div></section>`;
+  const acct = `<section class="card"><div class="row" style="gap:14px;flex-wrap:nowrap"><span class="av" style="width:52px;height:52px;border-radius:26px;font-size:30px;flex:none">${cur}</span><div style="flex:1;min-width:0"><div class="muted" style="font-size:12px">로그인한 계정</div><div style="margin-top:2px"><b style="font-size:18px">${esc(me.name)}</b> <span class="chip" style="margin-left:4px;background:#F0F0F4">${me.role === 'admin' ? '관리자' : '멤버'}</span></div><div class="muted" style="overflow-wrap:anywhere;font-size:14px">${esc(me.email)}</div></div><button class="btn s" data-act="logout">로그아웃</button></div></section>`;
   const install = `<section class="card"><h2 style="font-size:18px">모바일 앱 설치</h2><div class="muted" style="margin:4px 0 0">홈 화면에 추가하면 앱처럼 바로 열 수 있습니다.</div><div style="margin-top:16px">${isStandalone() ? '<div class="muted">이미 앱으로 사용 중입니다.</div>' : `<button class="btn p" data-act="installApp">📲 앱 설치 (홈 화면에 추가)</button><div class="muted" style="margin-top:10px;line-height:1.7">${isIOS ? '아이폰은 <b>Safari</b>에서 하단 공유 버튼(□↑) → <b>"홈 화면에 추가"</b>를 누르세요. 카카오톡 등 앱 안 브라우저에서는 Safari로 열어야 합니다.' : deferredInstall ? '버튼을 누르면 설치 창이 열립니다.' : '이 브라우저에서는 설치 창이 바로 뜨지 않습니다. <b>Chrome</b> 또는 <b>삼성 인터넷</b>으로 이 주소를 열고, 메뉴(⋮ 또는 ≡) → <b>"앱 설치"</b> 또는 <b>"홈 화면에 추가"</b>를 누르세요. 네이버 앱·카카오톡 안 브라우저에서는 설치가 안 됩니다.'}</div>`}</div></section>`;
-  if (me.role !== 'admin') return `<div class="row"><h1 style="font-size:26px" class="pc">설정</h1></div>${profile}${pushCard()}${install}`;
+  if (me.role !== 'admin') return `<div class="row"><h1 style="font-size:26px" class="pc">설정</h1></div>${acct}${profile}${pushCard()}${install}`;
   const mem = S.members.slice().sort((a, b) => (a.role === 'admin' ? 0 : 1) - (b.role === 'admin' ? 0 : 1));
   const trash = [...S.ads.filter(a => a.deleted).map(a => ({ c: 'ads', id: a.id, t: '광고영업', n: a.name, at: a.deletedAt })), ...S.lectures.filter(l => l.deleted).map(l => ({ c: 'lectures', id: l.id, t: '강의', n: l.name, at: l.deletedAt }))].sort((a, b) => b.at - a.at);
   const prod = ui.prod || products().map(p => ({ ...p }));
   const logs = S.logs.slice().sort((a, b) => b.at - a.at).slice(0, 40);
   const bks = S.backups.slice().sort((a, b) => b.id.localeCompare(a.id)).slice(0, 10);
   const sec = (t, d, b) => `<section class="card"><h2 style="font-size:18px">${t}</h2>${d ? `<div class="muted" style="margin:4px 0 0">${d}</div>` : ''}<div style="margin-top:16px;overflow-x:auto">${b}</div></section>`;
-  return `<div class="row"><h1 style="font-size:26px" class="pc">설정</h1></div>${profile}${pushCard()}${install}
+  return `<div class="row"><h1 style="font-size:26px" class="pc">설정</h1></div>${acct}${profile}${pushCard()}${install}
 ${sec('멤버 관리', '구글 계정 이메일을 초대하면 그 계정만 로그인할 수 있습니다.', `<table><thead><tr><th>이름</th><th>이메일</th><th>역할</th><th>상태</th><th></th></tr></thead><tbody>${mem.map(m => `<tr><td><div class="row" style="gap:6px;flex-wrap:nowrap"><input data-nm="${esc(m.id)}" value="${esc(m.name || '')}" placeholder="(미입력)" style="height:36px;width:130px;font-weight:700" maxlength="20">${m.email === me.email ? '<span class="muted">(나)</span>' : ''}<button class="btn s" data-act="renameMember" data-v="${esc(m.id)}">변경</button></div></td><td>${esc(m.email || m.id)}</td><td>${m.email === me.email ? '관리자' : `<select data-chg="role" data-email="${esc(m.id)}" style="height:36px;width:auto"><option value="admin" ${m.role === 'admin' ? 'selected' : ''}>관리자</option><option value="member" ${m.role !== 'admin' ? 'selected' : ''}>멤버</option></select>`}</td><td>${m.joined ? '사용 중' : '초대 대기'}</td><td class="r">${m.email === me.email ? '' : `<button class="btn s d" data-act="rmMember" data-v="${esc(m.id)}">제거</button>`}</td></tr>`).join('')}</tbody></table>
 <form id="inv" class="row" style="margin-top:16px;gap:12px;align-items:flex-end" onsubmit="return false"><label class="grow" style="min-width:220px">초대할 구글 이메일<input name="email" type="email" placeholder="name@gmail.com"></label><label style="width:140px">역할<select name="role"><option value="member">멤버</option><option value="admin">관리자</option></select></label><button type="button" class="btn p" data-act="invite">초대하기</button><button type="button" class="btn" data-act="copyLink">앱 주소 복사</button></form>`)}
 ${sec('역할별 권한', '', `<table><thead><tr><th>기능</th><th style="text-align:center">관리자</th><th style="text-align:center">멤버</th></tr></thead><tbody>${[['현황 보기', 1, 1], ['광고영업·강의 입력과 수정', 1, 1], ['삭제 (30일 휴지통 보관)', 1, 1], ['휴지통 복구·백업', 1, 0], ['멤버 초대·권한 변경', 1, 0], ['광고상품·수수료율 설정', 1, 0]].map(r => `<tr><td>${r[0]}</td><td style="text-align:center;color:#0B6B4D;font-weight:700">가능</td><td style="text-align:center;${r[2] ? 'color:#0B6B4D;font-weight:700' : 'color:#8A8799'}">${r[2] ? '가능' : '불가'}</td></tr>`).join('')}</tbody></table>`)}
@@ -858,26 +904,36 @@ function closeForm() { if (ui.panel === 'add') { ui.modal = false; } ui.panel = 
 const mon = (k, d) => { ui[k] = shift(ui[k], d); if (ui[k] > CUR) ui[k] = CUR; ui.selAd = null; ui.selLec = null; };
 const H = {
   sbToggle: () => { ui.sbc = !ui.sbc; try { localStorage.setItem('cd_sbc', ui.sbc ? '1' : '0'); } catch (e) { } render(); },
-  quick: v => { const f = $('#msgf'); if (!f) return; f.elements.text.value = QUICK[+v]; f.elements.text.focus(); },
+  quick: v => { const f = $('#msgf'); if (!f) return; f.elements.text.value = quickList()[+v] || ''; f.elements.text.focus(); },
   togTo: v => { keepMsg(); const d = ui.msg || (ui.msg = { to: [], ref: '', text: '' }); d.to = d.to.includes(v) ? d.to.filter(x => x !== v) : [...d.to, v]; render(); },
   toAll: () => { keepMsg(); const d = ui.msg || (ui.msg = { to: [], ref: '', text: '' }), all = S.members.filter(m => m.id !== me.email && m.name).map(m => m.id); d.to = d.to.length === all.length ? [] : all; render(); },
   sendNote: async () => {
     keepMsg(); const d = ui.msg || { to: [], text: '' }, text = (d.text || '').trim();
-    if (!d.to.length) return toast('받는 사람을 골라 주세요'); if (!text) return toast('내용을 입력해 주세요');
-    const ad = S.ads.find(a => a.id === d.ref), id = uid(), tos = d.to.map(e => S.members.find(m => m.id === e)).filter(Boolean);
-    await put('notes', id, { kind: 'msg', to: tos.map(m => m.id), toNames: tos.map(m => m.name), from: me.email, fromName: me.name, title: '', text, ref: ad ? ad.id : '', refName: ad ? ad.name : '', at: Date.now(), acks: {} });
-    pushNotify(id); ui.msg = null; render(); toast(tos.map(m => m.name).join(', ') + ' 님에게 보냈습니다');
+    if (!d.to.length) return toast('받는 사람을 골라 주세요'); if (!d.ref) return toast('확인이 필요한 건을 선택해 주세요'); if (!text) return toast('내용을 입력해 주세요');
+    const [kind, rid] = d.ref.split(':'), it = kind === 'lec' ? S.lectures.find(a => a.id === rid) : S.ads.find(a => a.id === rid), id = uid(), tos = d.to.map(e => S.members.find(m => m.id === e)).filter(Boolean);
+    await put('notes', id, { kind: 'msg', to: tos.map(m => m.id), toNames: tos.map(m => m.name), from: me.email, fromName: me.name, title: '', text, ref: it ? it.id : '', refKind: kind, refName: it ? it.name : '', at: Date.now(), acks: {} });
+    pushNotify(id); ui.msg = null; noKeep = true; render(); toast(tos.map(m => m.name).join(', ') + ' 님에게 보냈습니다');
   },
+  ncToggle: () => { keepNote(); ui.nc = !ui.nc; if (ui.nc && !ui.nd) ui.nd = { type: '일반', title: '', text: '', ack: true, imgs: [] }; render(); },
+  nimgDel: v => { keepNote(); ui.nd.imgs.splice(+v, 1); render(); },
+  zoom: v => { const [id, k] = v.split('|'), x = S.notes.find(n => n.id === id); if (x && x.images && x.images[+k]) { ui.zoom = x.images[+k]; render(); } },
+  zoomClose: () => { ui.zoom = null; render(); },
   postNotice: async () => {
-    const f = $('#ntf').elements, title = f.title.value.trim(), text = f.text.value.trim(); if (!title || !text) return toast('제목과 내용을 입력해 주세요');
-    const id = uid(); await put('notes', id, { kind: 'notice', to: [], toNames: [], from: me.email, fromName: me.name, title, text, ref: '', refName: '', at: Date.now(), acks: {} });
-    pushNotify(id); f.title.value = ''; f.text.value = ''; toast('공지를 올렸습니다');
+    keepNote(); const d = ui.nd, title = (d.title || '').trim(), text = (d.text || '').trim(); if (!title || !text) return toast('제목과 내용을 입력해 주세요');
+    const id = uid(); await put('notes', id, { kind: 'notice', type: d.type || '일반', ackReq: !!d.ack, images: d.imgs || [], to: [], toNames: [], from: me.email, fromName: me.name, title, text, ref: '', refName: '', at: Date.now(), acks: {} });
+    pushNotify(id); ui.nd = null; ui.nc = false; noKeep = true; render(); toast('공지를 올렸습니다');
   },
+  qEdit: () => { keepMsg(); ui.qedit = quickList().slice(); render(); },
+  qAdd: () => { keepQ(); ui.qedit.push(''); noKeep = true; render(); },
+  qDel: v => { keepQ(); ui.qedit.splice(+v, 1); noKeep = true; render(); },
+  qCancel: () => { ui.qedit = null; noKeep = true; render(); },
+  qSave: async () => { keepQ(); const list = ui.qedit.map(x => x.trim()).filter(Boolean); const main = S.config.find(c => c.id === 'main') || {}; await put('config', 'main', { ...main, quick: list }); ui.qedit = null; noKeep = true; render(); toast('문구를 저장했습니다'); },
   ack: async v => { const x = S.notes.find(n => n.id === v); if (!x || isAcked(x)) return; try { await B.ack(v, me.email, { name: me.name, animal: animal(me.email), at: Date.now() }); toast('확인했어요'); } catch (e) { toast('처리하지 못했습니다: ' + e.message); } },
   delNote: v => { const x = S.notes.find(n => n.id === v); if (!x) return; ask('삭제하시겠습니까?', (x.kind === 'notice' ? '이 공지를' : '이 알림을') + ' 모든 멤버 화면에서 지웁니다.', async () => { await B.del('notes', v); toast('삭제했습니다'); }); },
   openRef: v => { ui.tab = 'ads'; ui.selAd = v; ui.panel = 'detail'; ui.modal = true; render(); },
+  openLec: v => { ui.tab = 'lectures'; ui.selLec = v; ui.panel = 'detail'; ui.modal = true; render(); },
   openAuto: v => { ui.tab = 'ads'; ui.selAd = v; ui.panel = 'detail'; ui.modal = true; render(); },
-  msgAd: () => { const a = selAd(); if (!a) return; const o = S.members.find(m => m.name && m.name === a.owner && m.id !== me.email); ui.msg = { to: o ? [o.id] : [], ref: a.id, text: '' }; ui.modal = false; ui.tab = 'inbox'; ui.panel = 'detail'; render(); window.scrollTo(0, 0); },
+  msgAd: () => { const a = selAd(); if (!a) return; const o = S.members.find(m => m.name && m.name === a.owner && m.id !== me.email); ui.msg = { to: o ? [o.id] : [], ref: 'ad:' + a.id, text: '' }; ui.modal = false; ui.tab = 'inbox'; ui.panel = 'detail'; render(); window.scrollTo(0, 0); },
   pushOn: async () => {
     if (DEMO) { try { localStorage.setItem('cd_push', '1'); } catch (e) { } render(); return toast('체험 모드: 실제 서비스에서는 이 폰으로 알림이 옵니다'); }
     if (!pushSupported()) return toast('이 기기에서는 폰 알림을 켤 수 없습니다');
@@ -885,9 +941,10 @@ const H = {
     if (perm !== 'granted') { render(); return toast('알림이 허용되지 않았습니다'); }
     try { const reg = await navigator.serviceWorker.ready, t = await B.pushToken(reg); if (!t) throw new Error('토큰을 받지 못했습니다'); await B.saveToken(me.email, devId(), { t, at: Date.now(), ua: navigator.userAgent.slice(0, 90) }); try { localStorage.setItem('cd_push', '1'); } catch (e) { } render(); toast('이 기기로 알림을 받습니다'); } catch (e) { toast('알림을 켜지 못했습니다: ' + e.message); }
   },
+  pushTest: async () => { if (DEMO) return toast('체험 모드에서는 테스트할 수 없습니다'); toast('테스트 알림을 보냅니다…'); try { const t = await pushCall({ test: true }); toast(/^test/.test(t) ? (/ok=[1-9]/.test(t) ? '전송했습니다. 곧 폰 상단에 알림이 옵니다 (' + t + ')' : '전송 실패: ' + t) : '서버 응답: ' + t); } catch (e) { toast('알림 서버에 연결하지 못했습니다'); } },
   pushOff: async () => { try { await B.dropToken(me.email, devId()); } catch (e) { } try { localStorage.removeItem('cd_push'); } catch (e) { } render(); toast('이 기기 알림을 껐습니다'); },
   payQuick: async v => { const [id, k] = v.split('|'); await payTog(id, k); },
-  tab: v => { ui.modal = false; ui.tab = v; ui.panel = 'detail'; ui.draft = null; ui.prod = null; render(); window.scrollTo(0, 0); },
+  tab: v => { ui.modal = false; ui.hl = null; ui.tab = v; ui.panel = 'detail'; ui.draft = null; ui.prod = null; render(); window.scrollTo(0, 0); },
   login: () => B.login().catch(e => toast('로그인 실패: ' + e.message)),
   demo: v => B.login(v),
   logout: () => B.logout(),
@@ -929,14 +986,16 @@ const H = {
   invite: async () => { const f = $('#inv').elements, email = f.email.value.trim().toLowerCase(); if (!/^\S+@\S+\.\S+$/.test(email)) return toast('이메일을 확인해 주세요'); await put('members', email, { email, name: '', role: f.role.value, joined: false }); await log('멤버 초대 ' + email, '', '설정'); toast('초대했습니다. 앱 주소를 알려 주세요'); },
   shareNote: async v => {
     const x = S.notes.find(n => n.id === v); if (!x) return;
-    const url = location.href.split('?')[0].split('#')[0], text = '[공지] ' + x.title + '\n\n' + x.text + '\n\n- ' + x.fromName + ' · ㈜콜라브코리아\n' + url;
-    if (navigator.share) { try { await navigator.share({ text }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
-    try { await navigator.clipboard.writeText(text); toast('공지 내용을 복사했습니다. 카카오톡 채팅창에 붙여넣기 하세요'); } catch (e) { toast('복사하지 못했습니다'); }
+    const url = location.origin + location.pathname + '?n=' + x.id, touch = window.matchMedia && window.matchMedia('(max-width:700px), (pointer:coarse)').matches;
+    const body = String(x.text || '').replace(/\s+/g, ' ').trim(), part = body.length > 70 ? body.slice(0, 70) + '...' : body;
+    const text = '[공지] ' + x.title + '\n' + fmtD(x.at) + '\n\n' + part + '\n\n' + url;
+    if (touch && navigator.share) { try { await navigator.share({ text }); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+    try { await navigator.clipboard.writeText(touch ? text : url); toast(touch ? '공지 내용을 복사했습니다. 채팅창에 붙여넣기 하세요' : '이 공지의 URL을 복사했습니다'); } catch (e) { toast('복사하지 못했습니다'); }
   },
   copyLink: () => { navigator.clipboard.writeText(location.href.split('?')[0]).then(() => toast('앱 주소를 복사했습니다'), () => toast(location.href)); },
   addProd: () => { ui.prod = [...readProd(), { name: '', rate: 0 }]; render(); },
   delProd: v => { const p = readProd(); p.splice(+v, 1); ui.prod = p; render(); },
-  saveProd: async () => { const p = readProd().filter(x => x.name); await put('config', 'main', { products: p }); ui.prod = null; await log('광고상품·수수료율 변경', '', '설정'); render(); toast('저장했습니다'); },
+  saveProd: async () => { const p = readProd().filter(x => x.name); await put('config', 'main', { ...(S.config.find(c => c.id === 'main') || {}), products: p }); ui.prod = null; await log('광고상품·수수료율 변경', '', '설정'); render(); toast('저장했습니다'); },
   backupNow: async () => { const id = CUR + '-' + pad(NOW.getDate()); await put('backups', id, { at: Date.now(), data: JSON.stringify({ ads: S.ads, lectures: S.lectures, config: S.config, partners: S.partners }) }); toast('백업을 만들었습니다'); },
   dlBackup: v => { const b = S.backups.find(x => x.id === v); download('backup-' + v + '.json', b.data, 'application/json'); },
   csv: v => { const m = ($('#bkm') || {}).value || ui.bkM; ui.bkM = m;
@@ -949,12 +1008,14 @@ const readProd = () => { const n = [...document.querySelectorAll('[name=pn]')], 
 document.addEventListener('click', e => { const t = e.target.closest('[data-act]'); if (!t || !H[t.dataset.act]) return; ui.modalPending = false; H[t.dataset.act](t.dataset.v, t, e); });
 document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (ui.confirm) { confirmFn = null; ui.confirm = null; render(); } else if (ui.modal) closeModalNow(); });
 document.addEventListener('input', e => { if (e.target.closest('#form')) { const k = $('#form').dataset.kind; k === 'ad' ? calcAd() : calcLec(); } });
+const shrink = f => new Promise((ok, no) => { const r = new FileReader(); r.onerror = no; r.onload = () => { const im = new Image(); im.onerror = no; im.onload = () => { const k = Math.min(1, 1000 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .72)); }; im.src = r.result; }; r.readAsDataURL(f); });
 document.addEventListener('change', async e => {
   const t = e.target;
   if (t.name === 'product' && $('#form')) { const o = t.selectedOptions[0]; $('#form').elements.rate.value = o.dataset.rate; calcAd(); }
   if (t.name === 'status' && $('#form') && $('#form').dataset.kind === 'ad') calcAd();
   if (t.name === 'partnerId' && $('#form')) { const o = t.selectedOptions[0]; $('#form').elements.sharePct.value = o && o.dataset.pct !== undefined ? o.dataset.pct : ''; calcAd(); }
   if (t.dataset && t.dataset.chg === 'payDate') { const a = selAd(); if (!a) return; const k = t.dataset.k === 'in' ? 'inDate' : 'outDate', old = a[k] || ''; if (old === t.value) return; await put('ads', a.id, { ...a, [k]: t.value }); await log(`${t.dataset.k === 'in' ? '플랫폼 입금' : '파트너 정산'} 예정일 ${old || '없음'} → ${t.value || '없음'}`, a.id, a.name); toast('예정일을 바꿨습니다'); }
+  if (t.dataset && t.dataset.chg === 'nimg') { keepNote(); const imgs = ui.nd.imgs || (ui.nd.imgs = []); for (const f of [...t.files]) { if (imgs.length >= 3) break; try { imgs.push(await shrink(f)); } catch (e) { toast('이미지를 불러오지 못했습니다'); } } render(); }
   if (t.dataset && t.dataset.chg === 'role') { const m = S.members.find(x => x.id === t.dataset.email); await put('members', m.id, { ...m, role: t.value }); await log(`${m.email} 권한 → ${t.value === 'admin' ? '관리자' : '멤버'}`, '', '설정'); toast('권한을 바꿨습니다'); }
 });
 boot();
