@@ -33,7 +33,7 @@ nav button.on{background:var(--tint);color:var(--pd);font-weight:700}
 .icon{width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:#fff;color:var(--mut);display:flex;align-items:center;justify-content:center}
 .icon.on{background:var(--tint);color:var(--pd);border-color:#CFC8EE}
 .lnk{border:0;background:none;color:var(--mut);font-size:13px;text-decoration:underline}
-main{max-width:1216px;margin:0 auto;padding:32px;display:flex;flex-direction:column;gap:24px}
+main{max-width:1520px;margin:0 auto;padding:28px 20px;display:flex;flex-direction:column;gap:24px}
 .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px 28px;box-shadow:0 1px 3px rgba(23,20,43,.05);min-width:0}
 .card.sm{padding:20px 24px}
 button.card{display:flex;flex-direction:column;justify-content:flex-start;font-size:inherit;color:inherit;width:100%}
@@ -61,6 +61,8 @@ table.rt td.full{}
 .rt td,.rt th{white-space:normal;overflow-wrap:anywhere;word-break:keep-all}
 .rt td.r,.rt th.r{white-space:nowrap}
 .rt tr.tot td{border-top:2px solid var(--line)}
+.rt td.nw{white-space:nowrap}
+.mgrp+.mgrp{border-top:1px solid var(--line)}.mh{width:100%;display:flex;justify-content:space-between;gap:8px;align-items:baseline;background:none;border:0;padding:14px 4px;font:inherit;font-weight:700;color:var(--ink);cursor:pointer;text-align:left}.mh{flex-wrap:wrap}.mh span:first-child{white-space:nowrap}.mh span.muted{font-weight:500;font-size:13px}.mh:hover{background:var(--bg,#f6f6fa)}
 .card{overflow-wrap:break-word}
 .mbox.wide{width:min(640px,100%)}
 .lr{display:flex;gap:8px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:12px;background:#FBFAFF}
@@ -115,7 +117,7 @@ main{padding:12px 16px 24px}
 }
 /* ---- 2단 레이아웃 · 공지/알림 ---- */
 .cols2{display:grid;grid-template-columns:400px minmax(0,1fr);gap:20px;align-items:start}
-.cols2 .side{position:sticky;top:20px;min-width:0}
+.cols2 .side{position:sticky;top:20px;min-width:0}.cols2 .side.stack{display:flex;flex-direction:column}
 @media(min-width:961px){.cols2.rside{grid-template-columns:minmax(0,1fr) 400px}.cols2.rside .side{order:2}.cols2.one{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:960px){.cols2,.cols2.rside{grid-template-columns:minmax(0,1fr)}.cols2 .side{position:static}}
 .nimg{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}.nimg img{max-width:100%;max-height:320px;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;display:block}
@@ -125,10 +127,10 @@ main{padding:12px 16px 24px}
 /* 상단 고정 · 알림함 색 */
 .card.hl{box-shadow:0 0 0 3px #CFC8EE}
 .pins{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;-webkit-overflow-scrolling:touch}
-.pin{flex:0 0 auto;min-width:230px;max-width:82%;scroll-snap-align:start;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 16px;font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center;color:var(--ink)}
-.pin .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}.pin.on{border-color:#111;background:#F6F6F9}.pdot{width:8px;height:8px;border-radius:4px;background:#E5484D;flex:none}
+.pin{width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 16px;font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center;color:var(--ink)}
+.pin .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}.pin.on{border-color:#F2E3AE;background:#FFFAE6}.card.nt.pinned{background:#FFFCF0;border-color:#F2E3AE}.srt{width:auto;height:36px;font-size:14px;padding:0 10px}.pdot{width:8px;height:8px;border-radius:4px;background:#E5484D;flex:none}
 .card.nt{padding:26px 28px}
-.card.nt.done{background:#F7F7FA;border-color:#EDEDF3;color:#8F8CA3}.card.nt.done b{color:#6F6C85}.card.nt.done .ackb{background:#F1F1F6;border-color:#E8E8EF}.card.nt.done .uc.ok{background:#E6EDE8;color:#6C8A78}.card.nt.done .muted{color:#A3A1B3}
+.card.nt.done{background:#E6E6EB;border-color:#CFCFD8;color:#767680}.card.nt.done b{color:#5C5C67}.card.nt.done .ackb{background:#DCDCE3;border-color:#CACAD3}.card.nt.done .uc,.card.nt.done .uc.ok{background:#D2D2DA;color:#6A6A75;border-color:#C4C4CD}.card.nt.done .muted{color:#85858F}
 .nbox.auto{border:1.5px solid #E5484D;background:#FFF8F8}
 .sentbar{font-size:19px;font-weight:700;background:none;border:0;padding:0;display:flex;gap:8px;align-items:center;color:var(--ink)}
 .qe{display:flex;gap:6px;align-items:center}.qe input{flex:1;height:38px}
@@ -149,7 +151,7 @@ main{padding:12px 16px 24px}
 .ucs{display:flex;flex-wrap:wrap;gap:6px}
 .ackb{background:#FAFAFC;border:1px solid var(--line);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px}
 .okb{font-size:13px;color:#14693B;font-weight:700}
-.card.nt.un{border-color:#E5C5C8;background:#FFFCFC}
+.card.nt.un{background:#fff}
 .sb .bdg.r,.tabbar .bdg{background:#E5484D}
 @media(max-width:700px){
 .tabbar{border-radius:24px;border-color:var(--line)}
@@ -200,7 +202,7 @@ input,select,textarea{height:44px;border:1px solid #B9B4D6;border-radius:10px;pa
 td.mob,.mo{display:none}
 @media(max-width:700px){.grid.g4{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px}.card.sm{padding:12px 14px}.card.sm .big{font-size:19px;margin-top:2px}.card.sm .lbl{font-size:12px}main{padding:20px 16px;gap:20px}section>.row h2{font-size:18px!important}.card{padding:14px 16px}
 table.rt.cp tr{grid-template-columns:1fr auto;gap:4px 10px;padding:12px 0}table.rt.cp td{display:none}table.rt.cp td::before{display:none}
-table.rt.cp td.m1{display:block;grid-column:1;font-size:15px}table.rt.cp td.m2{display:block;grid-column:2;text-align:right!important;font-size:15px}
+table.rt.cp td.nw{white-space:normal}table.rt.cp td.m1{display:block;grid-column:1;font-size:15px}table.rt.cp td.m2{display:block;grid-column:2;text-align:right!important;font-size:15px}
 table.rt.cp td.mob{display:block;grid-column:1/-1;font-size:13px;color:var(--mut);line-height:1.7}table.rt.cp td[colspan]{display:block;grid-column:1/-1}
 .mo{display:inline;color:var(--mut);font-weight:400;font-size:12px}.mrow{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--ink)}.mrow b{font-weight:700}}
 @media(max-width:700px){.brand{flex:0 0 100%}header.top{gap:8px 8px;flex-wrap:wrap}nav{flex:1 1 auto;min-width:0;gap:0}nav button{padding:9px 10px;font-size:14px;white-space:nowrap}.userbox{gap:6px;flex:0 0 auto}.who{padding:4px 10px 4px 4px;gap:6px;font-size:13px}.wn{max-width:64px}.av{width:30px;height:30px}.icon{width:40px;height:40px}}
@@ -232,9 +234,10 @@ const shift = (ym, k) => { const [y, m] = ym.split('-').map(Number); const d = n
 const ymLabel = ym => ym.slice(0, 4) + '년 ' + Number(ym.slice(5)) + '월';
 const sum = (a, k) => (a || []).reduce((s, x) => s + num(x[k]), 0);
 
-const STATUS = ['문의', '미팅/상담', '계약완료', '진행중', '종료', '중단'];
+const STATUS = ['계약완료', '진행중', '종료', '중단'];
 const LSTATUS = ['진행중', '종료'];
 const COUNTED = ['계약완료', '진행중', '종료', '중단'];
+const ORDER = ['계약완료', '진행중', '종료', '중단', '문의', '미팅/상담'];
 const CH = { '문의': ['#FFF0C9', '#7A4B00'], '미팅/상담': ['#EFE3FB', '#5A2A8A'], '계약완료': ['#DCE8FF', '#1B3F9E'], '진행중': ['#D6F1E5', '#0B5A40'], '종료': ['#E7EBF0', '#3C4856'], '중단': ['#FBE0DC', '#8A2A1D'], '모집중': ['#FFF0C9', '#7A4B00'] };
 const chip = s => `<span class="chip" style="background:${CH[s][0]};color:${CH[s][1]}">${esc(s)}</span>`;
 const DEFAULT_PRODUCTS = [{ name: '샤오홍슈 광고', rate: 15 }, { name: '샤오홍슈 인플루언서', rate: 20 }, { name: '바이두 광고', rate: 12 }];
@@ -261,14 +264,19 @@ const today = () => { const d = new Date(); return d.getFullYear() + '-' + pad(d
 const payable = a => COUNTED.includes(a.status) && adRev(a) > 0;
 const payOutable = a => payable(a) && hasPartner(a) && adPartner(a) > 0;
 const mdOf = d => (d || '').slice(5).replace('-', '/');
-const payChip = (date, done, tracked) => {
+const payChip = (date, done, tracked, at) => {
+  if (done) return at ? `${mdOf(at)} 완료` : date ? `${mdOf(date)} 완료` : '완료';
+  if (!date) return '날짜 미정';
+  return date < today() ? `<b style="color:var(--red)">${mdOf(date)} 지연</b>` : `${mdOf(date)} 예정`;
+};
+const payChipOld = (date, done, tracked) => {
   if (done) return '<span class="chip" style="background:#D6F1E5;color:#0B5A40">완료</span>';
   if (!tracked && !date) return '<span class="muted">-</span>';
   if (!date) return '<span class="chip" style="background:#FFF0C9;color:#7A4B00">날짜 미정</span>';
   return date < today() ? `<span class="chip" style="background:#FBE0DB;color:#A4271A">지연 ${mdOf(date)}</span>` : `<span class="chip" style="background:#EFEBFF;color:#4A2FD6">예정 ${mdOf(date)}</span>`;
 };
-const inChip = a => payable(a) ? payChip(a.inDate, a.inDone, a.inDone !== undefined) : '<span class="muted">-</span>';
-const outChip = a => payOutable(a) ? payChip(a.outDate, a.outDone, a.inDone !== undefined) : '<span class="muted">-</span>';
+const inChip = a => payable(a) ? payChip(a.inDate, a.inDone, true, a.inAt) : '해당 없음';
+const outChip = a => !payable(a) ? '해당 없음' : payOutable(a) ? payChip(a.outDate, a.outDone, true, a.outAt) : '<span class="muted">(자체 영업)</span>';
 const refundsIn = p => liveAds().filter(a => num(a.refund) > 0 && (a.refundMonth || a.month).startsWith(p));
 const refundSum = p => refundsIn(p).reduce((s, a) => s + num(a.refund), 0);
 const lecC = l => {
@@ -297,7 +305,7 @@ function stats(p) {
 /* ---------- 백엔드 (Firebase / 체험모드) ---------- */
 function seed() {
   const ads = [], lectures = [], base = { contract: 0, refund: 0, memo: '', hist: [] };
-  const add = o => ads.push({ ...base, id: uid(), createdAt: Date.now(), ...o });
+  let dn = 0; const add = o => { dn++; ads.push({ ...base, id: uid(), createdAt: Date.now(), date: o.month + '-' + pad(1 + (dn * 7) % 27), ...o }); };
   const lec = o => lectures.push({ id: uid(), status: '종료', transfers: [], refunds: [], memo: '', costs: [{ name: '강사료', unit: 300000, qty: 1, note: '' }, { name: '장소비', unit: 100000, qty: 1, note: '' }], ...o });
   const grp = (name, price, names) => ({ name, price, students: names });
   for (let m = 1; m < CM; m++) {
@@ -306,16 +314,16 @@ function seed() {
     lec({ name: '강의 ' + 'AB'[m % 2], date: ymOf(CY, m) + '-10', groups: [grp('수강반', 300000, Array.from({ length: 8 + (m % 5) }, (_, k) => '수강생' + (k + 1)))] });
   }
   const mo = CUR;
-  add({ name: '여행담', biz: '관광', product: '샤오홍슈 인플루언서', rate: 20, contract: 9000000, status: '미팅/상담', month: shift(mo, -1), hist: [{ d: '지난달', t: '미팅/상담' }] });
-  add({ name: '리본의원', biz: '의료', product: '바이두 광고', rate: 12, contract: 18000000, status: '문의', month: shift(mo, -2), hist: [{ d: '2개월 전', t: '문의' }] });
+  add({ name: '여행담', biz: '관광', product: '샤오홍슈 인플루언서', rate: 20, contract: 9000000, status: '진행중', month: shift(mo, -1), hist: [{ d: '지난달', t: '미팅/상담' }] });
+  add({ name: '리본의원', biz: '의료', product: '바이두 광고', rate: 12, contract: 18000000, status: '계약완료', month: shift(mo, -2), hist: [{ d: '2개월 전', t: '문의' }] });
   add({ name: '로제뷰티', biz: '뷰티', product: '샤오홍슈 광고', rate: 15, contract: 20000000, status: '진행중', month: mo, memo: '월 2회 리포트 공유.', hist: [{ d: md(), t: '계약완료' }, { d: md(), t: '진행중' }] });
   add({ name: '한입식품', biz: '식품', product: '샤오홍슈 인플루언서', rate: 20, contract: 12000000, status: '계약완료', month: mo, hist: [{ d: md(), t: '계약완료' }] });
   add({ name: '서울메디클리닉', biz: '의료', product: '바이두 광고', rate: 12, contract: 30000000, status: '진행중', month: mo, hist: [{ d: md(), t: '진행중' }] });
   add({ name: '모던핏', biz: '패션', product: '샤오홍슈 광고', rate: 15, contract: 8000000, status: '종료', month: mo, hist: [{ d: md(), t: '종료' }] });
   add({ name: '제주트래블', biz: '관광', product: '샤오홍슈 인플루언서', rate: 20, contract: 5000000, status: '계약완료', month: mo, hist: [{ d: md(), t: '계약완료' }] });
   add({ name: '글로우스킨', biz: '뷰티', product: '샤오홍슈 광고', rate: 15, contract: 10000000, refund: 900000, refundMonth: mo, status: '중단', month: mo, memo: '광고주 사정으로 캠페인 조기 종료. 미집행분 환불.', hist: [{ d: md(), t: '계약완료' }, { d: md(), t: '중단 (환불 900,000원)' }] });
-  add({ name: '미식당', biz: '식품', product: '샤오홍슈 광고', rate: 15, contract: 15000000, status: '문의', month: mo, hist: [{ d: md(), t: '문의' }] });
-  add({ name: '청담덴탈', biz: '의료', product: '바이두 광고', rate: 12, contract: 25000000, status: '미팅/상담', month: mo, hist: [{ d: md(), t: '미팅/상담' }] });
+  add({ name: '미식당', biz: '식품', product: '샤오홍슈 광고', rate: 15, contract: 15000000, status: '계약완료', month: mo, hist: [{ d: md(), t: '계약완료' }] });
+  add({ name: '청담덴탈', biz: '의료', product: '바이두 광고', rate: 12, contract: 25000000, status: '진행중', month: mo, hist: [{ d: md(), t: '진행중' }] });
   add({ name: '에듀브릿지', biz: '교육', product: '샤오홍슈 광고', rate: 15, contract: 14000000, status: '진행중', month: shift(mo, -1), memo: '3개월 장기 계약.', hist: [{ d: '지난달', t: '진행중' }] });
   add({ name: '선우패션', biz: '패션', product: '샤오홍슈 인플루언서', rate: 20, contract: 18000000, status: '진행중', month: mo, memo: '왕홍 8명 섭외 완료. 2주차 리포트 예정.', hist: [{ d: md(), t: '계약완료' }, { d: md(), t: '진행중' }] });
   add({ name: '하나클리닉', biz: '의료', product: '바이두 광고', rate: 12, contract: 22000000, status: '계약완료', month: mo, hist: [{ d: md(), t: '계약완료' }] });
@@ -324,7 +332,7 @@ function seed() {
   ads.forEach((a, i) => { a.owner = ['김대표', '박서연', '이도윤', '최지아', '정민준'][i % 5]; });
   const partners = [{ id: uid(), name: '(주)차이나링크', type: 'company', defaultPct: 30, memo: '' }, { id: uid(), name: '김프리', type: 'freelancer', defaultPct: 20, memo: '' }];
   const dd = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
-  ads.forEach(a => { if (a.month < mo && COUNTED.includes(a.status)) { a.inDate = ''; a.inDone = true; a.outDate = ''; a.outDone = true; } });
+  ads.forEach(a => { if (a.month < mo && COUNTED.includes(a.status)) { a.inDate = ''; a.inDone = true; a.inAt = a.date; a.outDate = ''; a.outDone = true; a.outAt = a.date; } });
   const setPay = (nm, pi, pct, inD, inDone, outD, outDone) => { const a = ads.find(x => x.name === nm && x.month === mo); if (!a) return; if (pi >= 0) { a.partnerId = partners[pi].id; a.partnerName = partners[pi].name; a.sharePct = pct; } a.inDate = inD; a.inDone = inDone; a.outDate = outD; a.outDone = outDone; };
   setPay('로제뷰티', 0, 30, dd(10), false, dd(17), false);
   setPay('한입식품', 1, 20, dd(5), false, dd(12), false);
@@ -335,6 +343,7 @@ function seed() {
   setPay('하나클리닉', -1, 0, dd(12), false, '', false);
   setPay('다온푸드', 1, 20, dd(-6), true, dd(-1), false);
   setPay('루나코스메틱', 0, 30, dd(2), false, dd(9), false);
+  ads.forEach(a => { if (!COUNTED.includes(a.status)) return; if (!a.inDate && a.inDone !== true) a.inDate = dd(14); if (a.partnerName && !a.outDate && a.outDone !== true) a.outDate = dd(21); if (a.inDone && !a.inAt) a.inAt = a.inDate || a.date; if (a.outDone && !a.outAt) a.outAt = a.outDate || a.date; });
   lec({ name: '미래왕홍반 2기', date: mo + '-07', status: '진행중',
     groups: [grp('자유수강반', 1500000, ['서지혜']), grp('챌린지반', 1600000, ['백윤정', '박서아', '전사랑', '백선혜'])],
     transfers: [{ name: '최재경', from: '블로그', amt: 990000, group: '자유수강반', }, { name: '강재이', from: '광고영업반', amt: 1120000, group: '챌린지반', }],
@@ -361,7 +370,7 @@ function seedNotes(ads) {
   const N = (id, kind, from, to, title, text, h, acks, ref) => ({ id, kind, type: kind === 'notice' ? ({ nt1: '정산', nt2: '중요', nt3: '일정' }[id] || '일반') : undefined, ackReq: true, pinned: ['nt1', 'nt2'].includes(id), refKind: 'ad', from: M[from][0], fromName: M[from][1], to: em(to), toNames: nm(to), title, text, ref: (ref || {}).ref || '', refName: (ref || {}).refName || '', at: ago(h), acks });
   return [
     N('nt1', 'notice', 'A', [], '10월 정산 마감 안내', '플랫폼 입금 확인은 매월 25일까지 완료 처리해 주세요.\n지연된 건은 알림함에 자동으로 표시되니, 보이면 바로 확인 부탁드립니다.', 52, { [M.S[0]]: ack('S', 50), [M.D[0]]: ack('D', 47), [M.J[0]]: ack('J', 30) }),
-    N('nt2', 'notice', 'A', [], '신규 광고영업 건 등록 규칙', '문의 단계부터 바로 등록해 주세요. 업체명·광고상품·담당자는 필수이고, 영업자가 있는 건은 배분율과 입금·정산 예정일까지 입력합니다.', 170, { [M.S[0]]: ack('S', 168), [M.D[0]]: ack('D', 160), [M.J[0]]: ack('J', 150), [M.N[0]]: ack('N', 120) }),
+    N('nt2', 'notice', 'A', [], '신규 광고영업 건 등록 규칙', '계약이 확정되면 바로 등록해 주세요. 업체명·광고상품·담당자는 필수이고, 영업자가 있는 건은 배분율과 입금·정산 예정일까지 입력합니다.', 170, { [M.S[0]]: ack('S', 168), [M.D[0]]: ack('D', 160), [M.J[0]]: ack('J', 150), [M.N[0]]: ack('N', 120) }),
     N('nt3', 'notice', 'A', [], '국경절 연휴 이후 일정', '중국 플랫폼 담당자 연락이 10/8부터 정상화됩니다. 연휴 중 보류한 광고 건은 이번 주 안에 재개 여부를 확인해 주세요.', 8, {}),
     { ...N('nt4', 'notice', 'A', [], '11월 근무 일정표', '11월 주요 일정입니다. 참고만 해 주세요.', 3, {}), type: '일정', ackReq: false, images: ["data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='640' height='360'><rect width='640' height='360' fill='%23F0EEFF'/><rect x='40' y='40' width='560' height='60' rx='12' fill='%236E4AFF'/><text x='64' y='80' font-size='26' font-family='sans-serif' fill='white'>11월 휴무 및 근무 일정</text><g font-family='sans-serif' font-size='22' fill='%2333323F'><text x='64' y='160'>11/3(화)  전체 회의 10:00</text><text x='64' y='205'>11/11(수)  플랫폼 정산 마감</text><text x='64' y='250'>11/26(목)  외부 교육 (오후 반차)</text><text x='64' y='295'>11/30(월)  월말 결산</text></g></svg>"] },
     N('m1', 'msg', 'S', ['A'], '', '모던핏 입금 확인했어요. 완료 처리 부탁드립니다.', 2, {}, ad('모던핏')),
@@ -371,7 +380,7 @@ function seedNotes(ads) {
   ];
 }
 function demoBackend() {
-  const KEY = 'cd_demo_v7'; let db; try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { }
+  const KEY = 'cd_demo_v10'; let db; try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { }
   if (!db) db = seed();
   db.partners = db.partners || []; db.notes = db.notes || [];
   const L = {}; let cb = null;
@@ -515,6 +524,7 @@ window.addEventListener('popstate', e => {
 });
 function render() {
   const app = $('#app'); if (!app) return;
+  if (ui.tab !== 'ads') ui.adSort = null;
   const y = window.scrollY;
   if (ui.auth === 'in' && !noKeep) { try { if ($('#ntf')) keepNote(); if ($('#msgf')) keepMsg(); if ($('#qef')) keepQ(); } catch (e) { } }
   noKeep = false;
@@ -602,7 +612,7 @@ function notice() {
   const all = S.notes.filter(x => x.kind === 'notice').sort((a, b) => b.at - a.at), un = unreadOf('notice'), admin = me.role === 'admin';
   const pinned = all.filter(x => x.pinned), list = all.filter(x => !x.pinned), po = ui.pinOpen || {};
   const d = ui.nd || { type: '일반', title: '', text: '', ack: true, pin: false, imgs: [] }, editing = !!d.editId;
-  const compose = admin && ui.nc ? `<section class="card side"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h2 style="font-size:18px">${editing ? '공지 수정' : '공지 올리기'}</h2><button class="btn s" data-act="ncToggle">닫기</button></div><form id="ntf" class="stack" style="gap:14px;margin-top:14px" onsubmit="return false">
+  const compose = admin && ui.nc ? `<section class="card"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h2 style="font-size:18px">${editing ? '공지 수정' : '공지 올리기'}</h2><button class="btn s" data-act="ncToggle">닫기</button></div><form id="ntf" class="stack" style="gap:14px;margin-top:14px" onsubmit="return false">
 <label>공지 유형<select name="type">${Object.keys(NTYPES).map(t => `<option ${t === d.type ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
 <label>제목<input name="title" maxlength="60" value="${esc(d.title)}" placeholder="예: 10월 정산 마감 안내"></label>
 <label>내용<textarea name="text" maxlength="1000" style="min-height:140px" placeholder="공지 내용을 입력하세요">${esc(d.text)}</textarea></label>
@@ -611,11 +621,13 @@ function notice() {
 <div><div class="lbl" style="margin-bottom:6px">이미지 첨부 <span class="muted" style="font-size:12px">(최대 3장)</span></div><div class="thumbs">${(d.imgs || []).map((m, k) => `<div class="th"><img src="${m}" alt=""><button type="button" data-act="nimgDel" data-v="${k}" aria-label="삭제">✕</button></div>`).join('')}${(d.imgs || []).length < 3 ? `<label class="btn s" style="height:76px;width:76px;flex-direction:column;gap:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px"><span style="font-size:22px;line-height:1">＋</span>추가<input id="nimg" type="file" accept="image/*" multiple data-chg="nimg" style="display:none"></label>` : ''}</div></div>
 <button type="button" class="btn p" data-act="postNotice">${editing ? '수정 저장' : '공지 올리기'}</button></form></section>` : '';
   const card = x => { const t = NTYPES[x.type] || NTYPES['일반'], needs = x.ackReq !== false;
-    return `<article id="nt-${x.id}" class="card nt ${needAck(x) && !isAcked(x) ? 'un' : ''}"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-start"><div style="flex:1 1 230px;min-width:0"><div class="row" style="gap:6px">${x.pinned ? '<span class="chip" style="background:#111;color:#fff">📌 고정</span>' : ''}<span class="chip" style="background:${t[0]};color:${t[1]}">${esc(x.type || '일반')}</span>${needAck(x) && !isAcked(x) ? '<span class="chip" style="background:#E5484D;color:#fff">NEW</span>' : ''}</div><h3 style="font-size:19px;margin-top:12px;overflow-wrap:anywhere">${esc(x.title)}</h3><div class="muted" style="font-size:13px;margin-top:6px">${esc(x.fromName)} · ${fmtAt(x.at)}${x.editedAt ? ' · 수정됨' : ''}</div></div><div class="row" style="gap:6px;flex-wrap:nowrap;margin-left:auto"><button class="btn s" data-act="shareNote" data-v="${x.id}">공유</button>${admin || x.from === me.email ? `<button class="btn s" data-act="editNote" data-v="${x.id}">수정</button><button class="btn s d" data-act="delNote" data-v="${x.id}">삭제</button>` : ''}</div></div>
+    return `<article id="nt-${x.id}" class="card nt ${x.pinned ? 'pinned' : ''} ${needAck(x) && !isAcked(x) ? 'un' : ''}"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-start"><div style="flex:1 1 230px;min-width:0"><div class="row" style="gap:6px">${x.pinned ? '<span class="chip" style="background:#111;color:#fff">📌 고정</span>' : ''}<span class="chip" style="background:${t[0]};color:${t[1]}">${esc(x.type || '일반')}</span>${needAck(x) && !isAcked(x) ? '<span class="chip" style="background:#E5484D;color:#fff">NEW</span>' : ''}</div><h3 style="font-size:19px;margin-top:12px;overflow-wrap:anywhere">${esc(x.title)}</h3><div class="muted" style="font-size:13px;margin-top:6px">${esc(x.fromName)} · ${fmtAt(x.at)}${x.editedAt ? ' · 수정됨' : ''}</div></div><div class="row" style="gap:6px;flex-wrap:nowrap;margin-left:auto"><button class="btn s" data-act="shareNote" data-v="${x.id}">공유</button>${admin ? `<button class="btn s" data-act="editNote" data-v="${x.id}">수정</button><button class="btn s d" data-act="delNote" data-v="${x.id}">삭제</button>` : ''}</div></div>
 <div style="margin:22px 0 26px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere">${esc(x.text)}</div>${(x.images || []).length ? `<div class="nimg" style="margin-bottom:22px">${x.images.map((m, k) => `<img src="${m}" alt="첨부 이미지" data-act="zoom" data-v="${x.id}|${k}">`).join('')}</div>` : ''}${needs ? ackBlock(x) : ''}</article>`; };
-  const pinBar = pinned.length ? `<section><div class="pins">${pinned.map(x => `<button class="pin ${po[x.id] ? 'on' : ''}" data-act="pinTog" data-v="${x.id}"><span>📌</span><span class="t">[고정] ${esc(x.title)}</span>${needAck(x) && !isAcked(x) ? '<i class="pdot"></i>' : ''}<span class="muted">${po[x.id] ? '▲' : '▼'}</span></button>`).join('')}</div>${pinned.filter(x => po[x.id]).length ? `<div class="stack" style="gap:20px;margin-top:12px">${pinned.filter(x => po[x.id]).map(card).join('')}</div>` : ''}</section>` : '';
+  const pinBox = pinned.length ? `<section class="card"><h2 style="font-size:18px;margin-bottom:12px">📌 고정 공지</h2><div class="stack" style="gap:8px">${pinned.map(x => `<button class="pin ${po[x.id] ? 'on' : ''}" data-act="pinTog" data-v="${x.id}"><span class="t">${esc(x.title)}</span>${needAck(x) && !isAcked(x) ? '<i class="pdot"></i>' : ''}<span class="muted">${po[x.id] ? '▲' : '▼'}</span></button>`).join('')}</div></section>` : '';
+  const pinOpenCards = pinned.filter(x => po[x.id]).map(card).join('');
+  const rightCol = compose || pinBox ? `<aside class="side stack" style="gap:20px">${compose}${pinBox}</aside>` : '';
   return `<div class="row hd" style="flex-wrap:nowrap"><h1 class="ttl pc">공지사항</h1>${un ? `<span class="chip" style="background:#FDE8E8;color:#B42318">안 읽은 공지 ${un}</span>` : ''}<div class="grow"></div>${admin && !ui.nc ? '<button class="btn p" data-act="ncToggle">공지하기</button>' : ''}</div>
-<div class="cols2 rside ${compose ? '' : 'one'}">${compose}<div class="stack" style="gap:20px;min-width:0">${pinBar}${list.map(card).join('') || (pinned.length ? '' : '<div class="card muted">등록된 공지가 없습니다.</div>')}</div></div>`;
+<div class="cols2 rside ${rightCol ? '' : 'one'}">${rightCol}<div class="stack" style="gap:20px;min-width:0">${pinOpenCards}${list.map(card).join('') || (pinned.length ? '' : '<div class="card muted">등록된 공지가 없습니다.</div>')}</div></div>`;
 }
 function keepNote() { const f = $('#ntf'); if (!f) return; const e = f.elements; ui.nd = { ...(ui.nd || { imgs: [] }), type: e.type.value, title: e.title.value, text: e.text.value, ack: e.ack.checked, pin: e.pin.checked }; }
 function keepMsg() { const f = $('#msgf'); if (!f) return; ui.msg = { ...(ui.msg || { to: [] }), ref: f.elements.ref.value, text: f.elements.text.value }; }
@@ -699,41 +711,54 @@ function selAd() {
   return live.find(a => a.id === ui.selAd) || m[0] || aliveAds()[0] || null;
 }
 const aliveSt = ['문의', '미팅/상담', '계약완료', '진행중'];
-const sortAds = l => l.slice().sort((a, b) => (b.month || '').localeCompare(a.month || '') || STATUS.indexOf(a.status) - STATUS.indexOf(b.status) || (a.biz || '').localeCompare(b.biz || '', 'ko') || a.name.localeCompare(b.name, 'ko'));
-const aliveAds = () => sortAds(liveAds().filter(a => aliveSt.includes(a.status)));
+const pendDates = a => { const r = []; if (payable(a) && a.inDone !== true) r.push(a.inDate || '9999'); if (payOutable(a) && a.outDone !== true) r.push(a.outDate || '9999'); return r.sort(); };
+const isLate = a => pendDates(a).some(d => d !== '9999' && d < today());
+const adSorter = k => (a, b) => {
+  const dt = adDate(a).localeCompare(adDate(b)) || (a.createdAt || 0) - (b.createdAt || 0);
+  if (k === 'stage') return ORDER.indexOf(a.status) - ORDER.indexOf(b.status) || dt;
+  if (k === 'dateDesc') return -dt;
+  return dt;
+};
+const SORTS = [['date', '계약일 빠른 순'], ['dateDesc', '계약일 느린 순'], ['stage', '진행단계 순']];
+const adDate = a => a.date || ((a.month || '') + '-01');
+const dShort = d => (d || '').slice(2);
+const sortAds = l => l.slice().sort((a, b) => adDate(b).localeCompare(adDate(a)) || (b.createdAt || 0) - (a.createdAt || 0));
+const sortAdsOld = l => l.slice().sort((a, b) => (b.month || '').localeCompare(a.month || '') || STATUS.indexOf(a.status) - STATUS.indexOf(b.status) || (a.biz || '').localeCompare(b.biz || '', 'ko') || a.name.localeCompare(b.name, 'ko'));
+const aliveAds = () => liveAds().filter(a => aliveSt.includes(a.status));
 function ads() {
-  const list = sortAds(liveAds().filter(a => a.month === ui.adM && COUNTED.includes(a.status))), cur = selAd(), alive = aliveAds(), all = sortAds(liveAds().filter(a => ['계약완료', '진행중', '종료'].includes(a.status)));
+  const list = liveAds().filter(a => a.month === ui.adM && COUNTED.includes(a.status)).sort(adSorter((ui.adSort || {}).new)), cur = selAd(), alive = aliveAds().sort(adSorter((ui.adSort || {}).alive)), all = liveAds().filter(a => ['계약완료', '진행중', '종료'].includes(a.status)).sort(adSorter((ui.adSort || {}).all));
   const rf = refundsIn(ui.adM), tot = list.reduce((s, a) => s + adRev(a), 0) - refundSum(ui.adM), ptot = list.reduce((s, a) => s + adPartner(a), 0), bud = list.reduce((s, a) => s + adBudget(a), 0);
   const hf = ui.hlFn; ui.hlFn = null;
   const hit = (a, t) => hf && hf(a, t) ? 'hl' : '';
   const net = a => COUNTED.includes(a.status) ? adRev(a) - num(a.refund) : 0;
-  const rowNew = a => `<tr class="clk ${hit(a, 'new')}" data-act="selmodal" data-v="${a.id}"><td data-l="업체명" class="full m1"><b>${esc(a.name)}</b></td><td data-l="업종">${esc(a.biz)}</td><td data-l="광고상품">${esc(a.product)}</td><td data-l="광고예산" class="r">${fmt(adBudget(a))}</td><td data-l="수수료율" class="r">${num(a.rate)}%</td><td data-l="매출" class="r"><b>${fmt(adRev(a))}</b></td><td data-l="수익" class="r m2"><span class="mo">수익 </span><b>${fmt(adOurs(a))}</b></td><td class="mob">${esc(a.biz)} · ${esc(a.product)}<br>예산 ${fmt(adBudget(a))} · 매출 ${fmt(adRev(a))} · ${hasPartner(a) ? esc(a.partnerName) : '자체 영업'}</td></tr>`;
-  const rowAll = (a, t, withRev) => `<tr class="clk ${hit(a, t)}" data-act="selmodal" data-v="${a.id}"><td data-l="계약월">${esc(a.month)}</td><td data-l="업체명" class="m1"><b>${esc(a.name)}</b></td><td data-l="업종">${esc(a.biz)}</td><td data-l="담당자">${esc(a.owner || '-')}</td><td data-l="영업자">${hasPartner(a) ? esc(a.partnerName) : '<span class="muted">자체</span>'}</td><td data-l="광고상품">${esc(a.product)}</td><td data-l="광고예산" class="r">${fmt(adBudget(a))}</td><td data-l="수수료율" class="r">${num(a.rate)}%</td><td data-l="진행상태" class="m2">${chip(a.status)}</td><td data-l="1급대행사 정산">${inChip(a)}</td><td data-l="파트너 정산">${outChip(a)}</td>${withRev ? `<td data-l="누적 매출 (환불 반영)" class="r"><b>${fmt(net(a))}</b></td>` : ''}<td class="mob">${esc(a.month)} · ${esc(a.biz)} · ${hasPartner(a) ? esc(a.partnerName) : '자체 영업'}${withRev ? ` · 누적 매출 <b style="color:var(--ink)">${fmt(net(a))}원</b>` : ''}${payable(a) ? `<div style="margin-top:2px">대행사 ${inChip(a)}${hasPartner(a) ? ` &nbsp;파트너 ${outChip(a)}` : ''}</div>` : ''}</td></tr>`;
-  const head = withRev => `<thead><tr><th>계약월</th><th>업체명</th><th>업종</th><th>담당자</th><th>영업자</th><th>광고상품</th><th class="r">광고예산</th><th class="r">수수료율</th><th>진행상태</th><th>1급대행사 정산</th><th>파트너 정산</th>${withRev ? '<th class="r">누적 매출 (환불 반영)</th>' : ''}</tr></thead>`;
+  const adTr = (a, t) => `<tr class="clk ${hit(a, t)}" data-act="selmodal" data-v="${a.id}"><td data-l="계약일" class="nw">${dShort(adDate(a))}</td><td data-l="업체명" class="m1 nw"><b>${esc(a.name)}</b></td><td data-l="진행단계" class="nw">${chip(a.status)}</td><td data-l="업종" class="nw">${esc(a.biz)}</td><td data-l="광고상품">${esc(a.product)}</td><td data-l="광고예산" class="r">${fmt(adBudget(a))}</td><td data-l="매출" class="r">${fmt(adRev(a))}</td><td data-l="수익" class="r m2"><span class="mo">수익 </span><b>${fmt(adOurs(a))}</b></td><td data-l="수취정산">${inChip(a)}</td><td data-l="지급정산">${outChip(a)}</td><td class="mob">${dShort(adDate(a))} · ${chip(a.status)} · ${esc(a.biz)} · ${esc(a.product)} · ${hasPartner(a) ? esc(a.partnerName) : '자체 영업'}<br>예산 ${fmt(adBudget(a))} · 매출 ${fmt(adRev(a))}${payable(a) ? `<div style="margin-top:2px">수취 ${inChip(a)}${hasPartner(a) ? ` &nbsp;지급 ${outChip(a)}` : ''}</div>` : ''}</td></tr>`;
+  const adHead = '<thead><tr><th>계약일</th><th>업체명</th><th>진행단계</th><th>업종</th><th>광고상품</th><th class="r">광고예산</th><th class="r">매출</th><th class="r">수익</th><th>수취정산</th><th>지급정산</th></tr></thead>';
+  const adSum = rows => `${fmt(rows.reduce((s, a) => s + adRev(a), 0))}원 · 수익 ${fmt(rows.reduce((s, a) => s + adOurs(a), 0))}원`;
   const card = (l, v, c) => `<div class="card sm"><div class="lbl">${l}</div><div class="big" ${c ? `style="color:${c}"` : ''}>${v}</div></div>`;
-  const cnt = ['계약완료', '진행중', '종료'].map(st => st + ' ' + all.filter(a => a.status === st).length).join(' · ');
-  const allSum = all.reduce((s, a) => s + net(a), 0);
+  const allSum = 0;
   const sh = (t, sub) => `<div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:6px"><h2 style="font-size:22px">${t}</h2>${sub ? `<span class="muted">${sub}</span>` : ''}</div>`;
-  const needIn = a => payable(a) && a.inDone === false, needOut = a => payOutable(a) && a.outDone === false;
-  const pend = liveAds().filter(a => needIn(a) || needOut(a)).map(a => ({ a, k: [needIn(a) ? (a.inDate || '9999') : '9999', needOut(a) ? (a.outDate || '9999') : '9999'].sort()[0] })).sort((x, y) => x.k.localeCompare(y.k)).map(x => x.a);
-  const inSum = pend.filter(needIn).reduce((s, a) => s + adRev(a), 0), outSum = pend.filter(needOut).reduce((s, a) => s + adPartner(a), 0);
-  const late = pend.filter(a => (needIn(a) && a.inDate && a.inDate < today()) || (needOut(a) && a.outDate && a.outDate < today())).length;
-  const payRow = a => `<tr class="clk" data-act="selmodal" data-v="${a.id}"><td data-l="업체명" class="full m1"><b>${esc(a.name)}</b></td><td data-l="영업자" class="m2">${hasPartner(a) ? esc(a.partnerName) : '<span class="muted">자체</span>'}</td><td data-l="1급대행사 → 콜라브코리아" class="r">${needIn(a) ? fmt(adRev(a)) + '원' : '<span class="muted">-</span>'}</td><td data-l="대행사 정산 상태">${needIn(a) ? inChip(a) + ` <button class="btn s" data-act="payQuick" data-v="${a.id}|in">완료</button>` : (payable(a) ? inChip(a) : '-')}</td><td data-l="콜라브코리아 → 파트너" class="r">${needOut(a) ? fmt(adPartner(a)) + '원' : '<span class="muted">-</span>'}</td><td data-l="파트너 정산 상태">${needOut(a) ? outChip(a) + (a.inDone ? ` <button class="btn s" data-act="payQuick" data-v="${a.id}|out">완료</button>` : '') : (payOutable(a) ? outChip(a) : '-')}</td><td class="mob">${needIn(a) ? `<div class="mrow"><span>대행사 <b>${fmt(adRev(a))}원</b></span><span>${inChip(a)} <button class="btn s" data-act="payQuick" data-v="${a.id}|in">완료</button></span></div>` : ''}${needOut(a) ? `<div class="mrow"><span>파트너 <b>${fmt(adPartner(a))}원</b></span><span>${outChip(a)}${a.inDone ? ` <button class="btn s" data-act="payQuick" data-v="${a.id}|out">완료</button>` : ''}</span></div>` : ''}</td></tr>`;
+  const srt = key => `<select class="srt" data-chg="adSort" data-k="${key}" aria-label="정렬">${SORTS.map(([v, l]) => `<option value="${v}" ${((ui.adSort || {})[key] || 'date') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
+  const shs = (t, sub, key) => `<div class="row" style="gap:6px 12px;align-items:center;margin-bottom:6px"><h2 style="font-size:22px">${t}</h2><span class="muted">${sub}</span><span style="margin-left:auto">${srt(key)}</span></div>`;
   const modal = ui.modal ? `<div class="modal" data-act="closeModal"><div class="mbox"><button class="nav mx" data-act="closeModal" aria-label="닫기">×</button>${adPanel(cur)}</div></div>` : '';
   return `<div class="row hd" style="flex-wrap:nowrap"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="adprev" aria-label="이전 달">‹</button><h1 class="ttl">${ymLabel(ui.adM)}</h1><button class="nav" data-act="adnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto;flex:none;white-space:nowrap" data-act="openAdd">+ 광고영업 추가</button></div>
 <section class="grid g4">${card('이번 달 계약', list.length + '건')}${card('이번 달 광고예산', fmt(bud) + '원')}${card('이번 달 매출', fmt(tot) + '원' + (rf.length ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">환불 -${fmt(refundSum(ui.adM))} 반영</div>` : ''), 'var(--lvt)')}${card('이번 달 수익', fmt(tot - ptot) + '원' + (ptot ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">파트너 지급 -${fmt(ptot)} 반영</div>` : ''), 'var(--pd)')}</section>
-<section>${sh('이번 달 신규 계약 건', '행을 누르면 세부 내역이 팝업으로 열립니다')}<div class="card">
-<table class="rt cp"><thead><tr><th>업체명</th><th>업종</th><th>광고상품</th><th class="r">광고예산</th><th class="r">수수료율</th><th class="r">매출</th><th class="r">수익</th></tr></thead><tbody>${list.map(rowNew).join('') || '<tr><td colspan="7" class="muted">이 달에 계약된 건이 없습니다.</td></tr>'}</tbody></table>
+<section>${shs('이번 달 신규 계약 건', `총 ${list.length}건 · 행을 누르면 세부 내역이 열립니다.`, 'new')}<div class="card">
+<table class="rt cp">${adHead}<tbody>${list.map(a => adTr(a, 'new')).join('') || '<tr><td colspan="10" class="muted">이 달에 계약된 건이 없습니다.</td></tr>'}
+${list.length ? `<tr class="tot"><td data-l="합계" class="m1"><b>합계</b></td><td></td><td></td><td></td><td></td><td data-l="광고예산" class="r"><b>${fmt(bud)}</b></td><td data-l="매출" class="r"><b>${fmt(list.reduce((s, a) => s + adRev(a), 0))}</b></td><td data-l="수익" class="r m2"><span class="mo">수익 </span><b style="color:var(--pd)">${fmt(list.reduce((s, a) => s + adOurs(a), 0))}</b></td><td></td><td></td><td class="mob">예산 ${fmt(bud)} · 매출 ${fmt(list.reduce((s, a) => s + adRev(a), 0))}</td></tr>` : ''}</tbody></table>
 ${rf.length ? `<div class="note" style="margin-top:12px"><b>이번 달 환불 (매출에서 차감)</b><br>${rf.map(a => `${esc(a.name)} -${fmt(a.refund)}원 · 계약월 ${esc(a.month)}`).join('<br>')}</div>` : ''}</div></section>
-<section>${sh('정산 일정', `1급대행사 정산 대기 ${pend.filter(needIn).length}건 ${fmt(inSum)}원 · 파트너 정산 대기 ${pend.filter(needOut).length}건 ${fmt(outSum)}원${late ? ` · <b style="color:var(--red)">지연 ${late}건</b>` : ''}`)}<div class="muted" style="margin-bottom:12px">아직 완료되지 않은 건만 날짜 순으로 보입니다. ‘완료’ 버튼으로 바로 처리하고, 행을 누르면 예정일도 바꿀 수 있습니다.</div><div class="card">
-<table class="rt cp"><thead><tr><th>업체명</th><th>영업자</th><th class="r">1급대행사 → 콜라브코리아</th><th>상태</th><th class="r">콜라브코리아 → 파트너</th><th>상태</th></tr></thead><tbody>${pend.map(payRow).join('') || '<tr><td colspan="6" class="muted">대기 중인 정산이 없습니다.</td></tr>'}</tbody></table></div></section>
 <hr style="margin:4px 0">
-<section>${sh('현재 집행중인 광고영업 건', alive.length + '건')}<div class="muted" style="margin-bottom:12px">행을 누르면 세부 내역이 팝업으로 열립니다.</div><div class="card">
-<table class="rt cp">${head(false)}<tbody>${alive.map(a => rowAll(a, 'alive', false)).join('') || '<tr><td colspan="11" class="muted">집행중인 건이 없습니다.</td></tr>'}</tbody></table></div></section>
-<section>${sh('전체 누적 현황', all.length + '건 · 누적 매출 ' + fmt(allSum) + '원 (환불 반영)')}<div class="muted" style="margin-bottom:12px">실제 계약이 성사된 건(계약완료 · 진행중 · 종료)의 누적입니다. (${cnt})</div><div class="card">
-<table class="rt cp">${head(true)}<tbody>${all.map(a => rowAll(a, 'all', true)).join('') || '<tr><td colspan="12" class="muted">계약이 성사된 건이 없습니다.</td></tr>'}</tbody></table></div></section>${modal}`;
+<section>${shs('현재 집행중인 광고영업 건', `총 ${alive.length}건 · 행을 누르면 세부 내역이 열립니다.`, 'alive')}<div class="card">
+<table class="rt cp">${adHead}<tbody>${alive.map(a => adTr(a, 'alive')).join('') || '<tr><td colspan="10" class="muted">집행중인 건이 없습니다.</td></tr>'}</tbody></table></div></section>
+<section>${shs('전체 누적 현황', `총 ${all.length}건 · 행을 누르면 세부 내역이 열립니다.`, 'all')}<div class="card">${monthGroups('ad', all, a => a.month || '-', a => adTr(a, 'all'), adHead, adSum, '계약이 성사된 건이 없습니다.')}</div></section>${modal}`;
 }
-function blankAd() { return { name: '', biz: '', owner: me.name, items: [{ product: '', budget: '', rate: '' }], month: ui.adM, status: '', memo: '', partnerId: '', partnerName: '', sharePct: '', inDate: '', inDone: false, outDate: '', outDone: false }; }
+function monthGroups(kind, items, monthOf, rowFn, head, sumFn, empty) {
+  ui.openM = ui.openM || {};
+  const ms = [...new Set(items.map(monthOf))].sort().reverse();
+  if (!ms.length) return `<div class="muted">${empty}</div>`;
+  return ms.map(m => { const rows = items.filter(x => monthOf(x) === m), k = kind + '|' + m, op = !!ui.openM[k];
+    return `<div class="mgrp"><button class="mh" data-act="togM" data-v="${k}"><span>${op ? '▾' : '▸'} ${esc(m)}</span><span class="muted">총 ${rows.length}건 · 매출 ${sumFn(rows)}</span></button>${op ? `<table class="rt${kind === 'ad' ? ' cp' : ''}">${head}<tbody>${rows.map(rowFn).join('')}</tbody></table>` : ''}</div>`; }).join('');
+}
+function blankAd() { return { name: '', biz: '', owner: me.name, items: [{ product: '', budget: '', rate: '' }], date: '', month: ui.adM, status: '', memo: '', partnerId: '', partnerName: '', sharePct: '', inDate: '', inDone: false, outDate: '', outDone: false }; }
 async function payTog(id, v) {
   const a = S.ads.find(x => x.id === id); if (!a) return;
   if (v === 'out' && !a.inDone && !a.outDone) return toast('1급대행사 정산을 먼저 완료 처리해 주세요');
@@ -745,9 +770,9 @@ async function payTog(id, v) {
 const pctB = (a, v) => +(num(a.rate) * v / 100).toFixed(2);
 function payBlock(a, ro) {
   const sp = num(a.sharePct), has = hasPartner(a), counted = COUNTED.includes(a.status);
-  const step = (k, label, amt, date, done, t1) => `<div class="step"><div class="sh"><div><div class="lbl">${label}</div><div class="amt">${fmt(amt)}원</div></div>${payChip(date, done, true)}</div>${ro ? (date ? `<div class="muted">예정일 ${esc(date)}</div>` : '') : `<label class="muted" style="font-size:13px;flex-direction:row;align-items:center;gap:8px">예정일<input class="pd" type="date" data-chg="payDate" data-k="${k}" value="${esc(date || '')}" style="flex:1;min-width:0"></label>`}${ro ? '' : `<button class="btn wide ${done ? '' : 'p'}" data-act="payToggle" data-v="${k}">${done ? '완료 취소' : t1}</button>`}</div>`;
+  const step = (k, label, amt, date, done, t1) => `<div class="step"><div class="sh"><div><div class="lbl">${label}</div><div class="amt">${fmt(amt)}원</div></div>${payChip(date, done, true, k === 'in' ? a.inAt : a.outAt)}</div>${ro ? (date ? `<div class="muted">예정일 ${esc(date)}</div>` : '') : `<label class="muted" style="font-size:13px;flex-direction:row;align-items:center;gap:8px">예정일<input class="pd" type="date" data-chg="payDate" data-k="${k}" value="${esc(date || '')}" style="flex:1;min-width:0"></label>`}${ro ? '' : `<button class="btn wide ${done ? '' : 'p'}" data-act="payToggle" data-v="${k}">${done ? '완료 취소' : t1}</button>`}</div>`;
   const ln = (l, v, c) => `<div class="line"><span class="muted">${l}</span><b ${c ? `style="color:${c}"` : ''}>${v}</b></div>`;
-  const steps = counted ? `<div class="stack" style="gap:10px"><b style="font-size:15px">정산 일정</b>${step('in', '1급대행사 → 콜라브코리아', adRev(a), a.inDate, a.inDone, '정산 완료 처리')}${has ? step('out', '콜라브코리아 → ' + esc(a.partnerName), adPartner(a), a.outDate, a.outDone, '정산 완료 처리') : ''}</div>` : '<div class="note">계약완료 이후부터 정산 일정을 관리합니다.</div>';
+  const steps = counted ? `<div class="stack" style="gap:10px"><b style="font-size:15px">정산 일정</b>${step('in', '1급대행사 → 콜라브코리아', adRev(a), a.inDate, a.inDone, '수취정산 완료')}${has ? step('out', '콜라브코리아 → ' + esc(a.partnerName), adPartner(a), a.outDate, a.outDone, '지급정산 완료') : ''}</div>` : '<div class="note">계약완료 이후부터 정산 일정을 관리합니다.</div>';
   return `${steps}<div style="border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px"><b style="font-size:15px">수익 배분 · ${has ? esc(a.partnerName) : '자체 영업'}</b>
 ${ln('매출 (수수료율 ' + num(a.rate) + '%)', fmt(adRev(a)) + '원', 'var(--lvt)')}${has ? ln('파트너 정산 ' + sp + '%', '-' + fmt(adPartner(a)) + '원') : ''}${ln('우리 수익 ' + (has ? 100 - sp : 100) + '%', fmt(adOurs(a)) + '원', 'var(--pd)')}</div>`;
 }
@@ -757,7 +782,7 @@ function adPanel(sel, ro) {
   const edits = S.logs.filter(l => l.ref === sel.id).sort((a, b) => b.at - a.at).slice(0, 6);
   return `<div class="stack"><div class="row" style="justify-content:space-between"><h2 style="font-size:20px">${esc(sel.name)}</h2>${chip(sel.status)}</div>
 ${payBlock(sel, ro)}
-<div class="kv"><span>업종</span><span>${esc(sel.biz)}</span><span>담당자</span><span>${esc(sel.owner || '-')}</span><span>광고상품</span><span>${adItems(sel).map(i => `${esc(i.product)} · ${fmt(i.budget)}원 x ${num(i.rate)}%`).join('<br>')}</span>${adItems(sel).length > 1 ? `<span>광고 예산 합계</span><span>${fmt(adBudget(sel))}원</span>` : ''}${num(sel.refund) ? `<span>환불 금액</span><span>-${fmt(sel.refund)}원 (${esc(sel.refundMonth || sel.month)} 매출에서 차감)</span>` : ''}<span>계약월</span><span>${esc(sel.month)}</span></div>
+<div class="kv"><span>업종</span><span>${esc(sel.biz)}</span><span>담당자</span><span>${esc(sel.owner || '-')}</span><span>광고상품</span><span>${adItems(sel).map(i => `${esc(i.product)} · ${fmt(i.budget)}원 x ${num(i.rate)}%`).join('<br>')}</span>${adItems(sel).length > 1 ? `<span>광고 예산 합계</span><span>${fmt(adBudget(sel))}원</span>` : ''}${num(sel.refund) ? `<span>환불 금액</span><span>-${fmt(sel.refund)}원 (${esc(sel.refundMonth || sel.month)} 매출에서 차감)</span>` : ''}<span>계약일</span><span>${esc(adDate(sel))}</span></div>
 ${!COUNTED.includes(sel.status) ? '<div class="note">계약완료 전 단계라 아직 매출에 합산되지 않습니다.</div>' : ''}
 <div><b style="font-size:14px">진행 이력</b><div class="hist" style="margin-top:10px">${(sel.hist || []).map(h => `<div><span>${esc(h.d)}</span><span>${esc(h.t)}</span></div>`).join('')}</div></div>
 <div><b style="font-size:14px">수정 이력</b><div class="logs" style="margin-top:8px">${edits.map(l => `${dt(l.at)} ${esc(l.by)} · ${esc(l.text)}`).join('<br>') || '-'}</div></div>
@@ -774,13 +799,13 @@ function adForm(edit) {
 <label>업체명<input name="name" value="${esc(d.name)}" placeholder="업체명"></label>
 <div class="grid g2" style="gap:12px"><label>업종<select name="biz"><option value="">선택</option>${bl.map(b => `<option ${b === d.biz ? 'selected' : ''}>${esc(b)}</option>`).join('')}${d.biz && !bl.includes(d.biz) ? `<option selected>${esc(d.biz)}</option>` : ''}<option value="__new">+ 업종 추가</option></select></label><label>담당자<input name="owner" value="${esc(d.owner || '')}" list="owners" placeholder="이름"><datalist id="owners">${[...new Set([me.name, ...S.members.map(m => m.name).filter(Boolean)])].map(n => `<option value="${esc(n)}">`).join('')}</datalist></label></div>
 <div class="stack" style="gap:10px"><div class="lbl">광고상품 <span class="muted" style="font-size:12px">여러 개를 함께 진행하면 추가해 주세요</span></div>${items.map(row).join('')}<button type="button" class="btn s" style="align-self:flex-start" data-act="itemAdd">+ 광고상품 추가</button></div>
-<div class="grid g2" style="gap:12px"><label>계약월<input type="month" name="month" value="${esc(d.month)}"></label><label>진행상태<select name="status"><option value="">선택</option>${STATUS.map(s => `<option ${s === d.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
+<div class="grid g2" style="gap:12px"><label>계약일<input type="date" name="date" value="${esc(d.date || '')}"></label><label>진행상태<select name="status"><option value="">선택</option>${STATUS.map(s => `<option ${s === d.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
 <div class="stack" style="gap:12px;border-top:1px solid var(--line);padding-top:16px"><b style="font-size:15px">영업자</b>
 <select name="partnerId"><option value="">자체 영업</option>${partners.map(p => `<option value="${esc(p.id)}" data-pct="${esc(p.defaultPct)}" ${p.id === d.partnerId ? 'selected' : ''}>${esc(p.name)} (${p.type === 'company' ? '회사' : '개인'} · 기본 ${esc(p.defaultPct)}%)</option>`).join('')}${d.partnerId && !S.partners.find(p => p.id === d.partnerId) ? `<option value="${esc(d.partnerId)}" selected>${esc(d.partnerName)} (삭제된 파트너)</option>` : ''}<option value="__new">+ 파트너 추가</option></select>
 <div id="shareBox"><label>파트너 배분율 (매출의 %)<input name="sharePct" inputmode="decimal" value="${esc(d.sharePct)}" placeholder="예: 30"></label></div>
 <b style="font-size:15px;margin-top:4px">정산 일정</b>
-<label>1급대행사 → 콜라브코리아 예정일<input type="date" name="inDate" value="${esc(d.inDate || '')}"></label>
-<label id="outBox">콜라브코리아 → 파트너 예정일<input type="date" name="outDate" value="${esc(d.outDate || '')}"></label></div>
+<label>수취정산 일정 (1급대행사 → 콜라브코리아)<input type="date" name="inDate" value="${esc(d.inDate || '')}"></label>
+<label id="outBox">지급정산 일정 (콜라브코리아 → 파트너)<input type="date" name="outDate" value="${esc(d.outDate || '')}"></label></div>
 <label>메모<input name="memo" value="${esc(d.memo)}" placeholder="특이사항"></label>
 <div class="calc" id="calc"></div>
 <div class="row" style="gap:8px"><button type="button" class="btn grow" data-act="closeForm">취소</button><button type="button" class="btn p grow" data-act="saveAd">저장</button></div></form>`;
@@ -788,12 +813,12 @@ function adForm(edit) {
 function syncDraft() {
   const form = $('#form'); if (!form || form.dataset.kind !== 'ad') return; const f = form.elements, g = n => f[n] ? f[n].value : '', items = [];
   for (let i = 0; f['product' + i]; i++) items.push({ product: g('product' + i), budget: g('budget' + i), rate: g('rate' + i) });
-  ui.draft = { ...ui.draft, name: g('name'), biz: g('biz'), owner: g('owner'), items, month: g('month'), status: g('status'), memo: g('memo'), partnerId: g('partnerId'), sharePct: g('sharePct'), inDate: g('inDate'), outDate: g('outDate') };
+  ui.draft = { ...ui.draft, name: g('name'), biz: g('biz'), owner: g('owner'), items, date: g('date'), month: g('date').slice(0, 7), status: g('status'), memo: g('memo'), partnerId: g('partnerId'), sharePct: g('sharePct'), inDate: g('inDate'), outDate: g('outDate') };
 }
 function readAd() {
   syncDraft(); const d = ui.draft, items = d.items.map(i => ({ product: i.product, budget: num(i.budget), rate: num(i.rate) }));
   const bud = items.reduce((t, i) => t + i.budget, 0), rev = items.reduce((t, i) => t + Math.round(i.budget * i.rate / 100), 0);
-  return { name: d.name.trim(), biz: d.biz, owner: d.owner.trim(), items, product: items.map(i => i.product).filter(Boolean).join(', '), contract: bud, rate: bud ? +(rev / bud * 100).toFixed(2) : 0, month: d.month || ui.adM, status: d.status, memo: d.memo.trim(), ...readPay() };
+  return { name: d.name.trim(), biz: d.biz, owner: d.owner.trim(), items, product: items.map(i => i.product).filter(Boolean).join(', '), contract: bud, rate: bud ? +(rev / bud * 100).toFixed(2) : 0, date: d.date || '', month: (d.date || '').slice(0, 7) || ui.adM, status: d.status, memo: d.memo.trim(), ...readPay() };
 }
 function readPay() {
   const f = $('#form').elements, pid = f.partnerId.value, p = S.partners.find(x => x.id === pid);
@@ -818,14 +843,15 @@ function checkReq(list) {
   const first = form.elements[miss[0][0]]; if (first) { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); try { first.focus({ preventScroll: true }); } catch (e) { } }
   toast('입력이 필요한 항목: ' + [...new Set(miss.map(x => x[1]))].join(', ')); return false;
 }
+function closeForm() { if (formDirty()) ask('등록을 취소하시겠습니까?', '입력한 내용은 저장되지 않습니다.', closeFormNow); else closeFormNow(); }
 async function saveAd() {
   const f = readAd(), req = [['name', '업체명', !!f.name], ['biz', '업종', !!f.biz], ['owner', '담당자', !!f.owner]];
   f.items.forEach((it, i) => { req.push(['product' + i, '광고상품', !!it.product], ['budget' + i, '광고 예산', it.budget > 0]); });
-  req.push(['status', '진행상태', !!f.status]); if (f.partnerName) req.push(['sharePct', '파트너 배분율', $('#form').elements.sharePct.value.trim() !== '']);
+  req.push(['status', '진행상태', !!f.status], ['inDate', '수취정산 일정', !!f.inDate]); if (f.partnerName) req.push(['outDate', '지급정산 일정', !!f.outDate]); if (f.partnerName) req.push(['sharePct', '파트너 배분율', $('#form').elements.sharePct.value.trim() !== '']);
   if (!checkReq(req)) return;
   if (ui.panel === 'edit') {
     const old = S.ads.find(a => a.id === ui.selAd), hist = [...(old.hist || [])];
-    const L = { name: '업체명', biz: '업종', owner: '담당자', product: '광고상품', contract: '광고 예산', rate: '수수료율', month: '계약월', status: '진행상태', memo: '메모', partnerName: '영업자', sharePct: '배분율(%)', inDate: '1급대행사 정산 예정일', outDate: '파트너 정산 예정일' };
+    const L = { name: '업체명', biz: '업종', owner: '담당자', product: '광고상품', contract: '광고 예산', rate: '수수료율', date: '계약일', status: '진행상태', memo: '메모', partnerName: '영업자', sharePct: '배분율(%)', inDate: '1급대행사 정산 예정일', outDate: '파트너 정산 예정일' };
     const ch = Object.keys(L).filter(k => String(old[k] ?? '') !== String(f[k] ?? '')).map(k => `${L[k]} ${old[k] === '' || old[k] == null ? '없음' : old[k]} → ${f[k] === '' ? '없음' : f[k]}`);
     if (old.status !== f.status) hist.push({ d: md(), t: f.status });
     await put('ads', old.id, { ...old, ...f, hist }); if (ch.length) await log(ch.join(', '), old.id, f.name);
@@ -840,21 +866,23 @@ const ongoingLec = () => liveLec().filter(l => l.status !== '종료').sort((a, b
 const selLec = () => liveLec().find(l => l.id === ui.selLec) || null;
 const dstr = d => (d || '').slice(5).replace('-', '/');
 function lectures() {
-  const lm = lecMonth(ui.lecM), list = lm.rows.slice().sort((a, b) => a.date.localeCompare(b.date)), ong = ongoingLec(), cur = selLec(), allL = liveLec().sort((a, b) => b.date.localeCompare(a.date)), allRev = allL.reduce((s, l) => { const c = lecC(l); return s + c.rev - c.refund; }, 0), allProfit = allL.reduce((s, l) => s + lecC(l).profit, 0), lcnt = LSTATUS.map(st => st + ' ' + allL.filter(l => l.status === st).length).join(' · ');
+  const lm = lecMonth(ui.lecM), list = lm.rows.slice().sort((a, b) => a.date.localeCompare(b.date)), ong = ongoingLec().slice().sort((a, b) => a.date.localeCompare(b.date)), cur = selLec(), allL = liveLec().sort((a, b) => a.date.localeCompare(b.date)), allRev = allL.reduce((s, l) => { const c = lecC(l); return s + c.rev - c.refund; }, 0), allProfit = allL.reduce((s, l) => s + lecC(l).profit, 0), lcnt = LSTATUS.map(st => st + ' ' + allL.filter(l => l.status === st).length).join(' · ');
   const card = (l, v, c) => `<div class="card sm"><div class="lbl">${l}</div><div class="big" ${c ? `style="color:${c}"` : ''}>${v}</div></div>`;
   const sh = (t, sub) => `<div class="row" style="gap:6px 12px;align-items:baseline;margin-bottom:6px"><h2 style="font-size:22px">${t}</h2>${sub ? `<span class="muted">${sub}</span>` : ''}</div>`;
-  const rows = list.map(l => { const c = lecC(l); return `<tr class="clk" data-act="sellec" data-v="${l.id}"><td data-l="강의명" class="full"><b>${esc(l.name)}</b></td><td data-l="시작일">${esc(dstr(l.date))}</td><td data-l="수강생" class="r">${c.n}명</td><td data-l="매출 (환불 전)" class="r">${fmt(c.rev)}</td><td data-l="환불" class="r">${c.refund ? '-' + fmt(c.refund) : '0'}</td><td data-l="지출" class="r">${fmt(c.cost)}</td><td data-l="수익" class="r"><b>${fmt(c.profit)}</b></td></tr>`; }).join('');
+  const lrow = l => { const c = lecC(l); return `<tr class="clk" data-act="sellec" data-v="${l.id}"><td data-l="강의명" class="full"><b>${esc(l.name)}</b></td><td data-l="개강일(OT)">${esc(l.date)}</td><td data-l="수강생" class="r">${c.n}명</td><td data-l="매출" class="r">${fmt(c.rev)}</td><td data-l="환불" class="r">${c.refund ? '-' + fmt(c.refund) : '0'}</td><td data-l="지출" class="r">${fmt(c.cost)}</td><td data-l="수익" class="r"><b>${fmt(c.profit)}</b></td></tr>`; };
+  const lhead = '<thead><tr><th>강의명</th><th>개강일(OT)</th><th class="r">수강생</th><th class="r">매출</th><th class="r">환불</th><th class="r">지출</th><th class="r">수익</th></tr></thead>';
+  const ltot = rows => { const t = rows.reduce((o, l) => { const c = lecC(l); o.n += c.n; o.rev += c.rev; o.refund += c.refund; o.cost += c.cost; o.profit += c.profit; return o; }, { n: 0, rev: 0, refund: 0, cost: 0, profit: 0 }); return rows.length ? `<tr class="tot"><td data-l="합계" class="full"><b>합계</b></td><td></td><td data-l="수강생" class="r"><b>${t.n}명</b></td><td data-l="매출" class="r"><b>${fmt(t.rev)}</b></td><td data-l="환불" class="r"><b>${t.refund ? '-' + fmt(t.refund) : '0'}</b></td><td data-l="지출" class="r"><b>${fmt(t.cost)}</b></td><td data-l="수익" class="r"><b style="color:var(--pd)">${fmt(t.profit)}</b></td></tr>` : ''; };
+  const lsum = rows => `${fmt(rows.reduce((s, l) => s + lecC(l).rev, 0))}원 · 수익 ${fmt(rows.reduce((s, l) => s + lecC(l).profit, 0))}원`;
+  const lsub = n => `총 ${n}건 · 행을 누르면 세부 내역이 열립니다.`;
   const modal = ui.modal ? `<div class="modal" data-act="closeModal"><div class="mbox wide"><button class="nav mx" data-act="closeModal" aria-label="닫기">×</button>${lecPanel(cur)}</div></div>` : '';
   return `<div class="row hd" style="flex-wrap:nowrap"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="lecprev" aria-label="이전 달">‹</button><h1 class="ttl">${ymLabel(ui.lecM)}</h1><button class="nav" data-act="lecnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto;flex:none;white-space:nowrap" data-act="openAdd">+ 강의 추가</button></div>
 <section class="grid g3">${card('이번 달 강의 / 수강생', list.length + '건 · ' + lm.n + '명')}${card('이번 달 매출', fmt(lm.net) + '원' + (lm.refund ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">환불 -${fmt(lm.refund)} 반영</div>` : ''), 'var(--lvt)')}${card('이번 달 수익', fmt(lm.profit) + '원', 'var(--pd)')}</section>
-<section>${sh('이번 달 신규 강의 건', '행을 누르면 세부 내역이 팝업으로 열립니다')}<div class="card">
-<table class="rt"><thead><tr><th>강의명</th><th>시작일</th><th class="r">수강생</th><th class="r">매출 (환불 전)</th><th class="r">환불</th><th class="r">지출</th><th class="r">수익</th></tr></thead><tbody>${rows || '<tr><td colspan="7" class="muted">이 달 강의가 없습니다.</td></tr>'}
-${list.length ? `<tr class="tot"><td data-l="합계" class="full"><b>합계</b></td><td></td><td data-l="수강생" class="r"><b>${lm.n}명</b></td><td data-l="매출" class="r"><b>${fmt(lm.rev)}</b></td><td data-l="환불" class="r"><b>${lm.refund ? '-' + fmt(lm.refund) : '0'}</b></td><td data-l="지출" class="r"><b>${fmt(lm.cost)}</b></td><td data-l="수익" class="r"><b style="color:var(--pd)">${fmt(lm.profit)}</b></td></tr>` : ''}</tbody></table></div></section>
+<section>${sh('이번 달 신규 강의 건', lsub(list.length))}<div class="card">
+<table class="rt">${lhead}<tbody>${list.map(lrow).join('') || '<tr><td colspan="7" class="muted">이 달 강의가 없습니다.</td></tr>'}</tbody></table></div></section>
 <hr style="margin:4px 0">
-<section>${sh('현재 진행 중인 강의 건', ong.length + '건')}<div class="muted" style="margin-bottom:12px">행을 누르면 세부 내역이 팝업으로 열립니다.</div><div class="card">
-<table class="rt"><thead><tr><th>강의명</th><th>시작일</th><th class="r">수강생</th><th class="r">매출 (환불 전)</th><th>진행상태</th></tr></thead><tbody>${ong.map(l => { const c = lecC(l); return `<tr class="clk" data-act="sellec" data-v="${l.id}"><td data-l="강의명" class="full"><b>${esc(l.name)}</b></td><td data-l="시작일">${esc(l.date)}</td><td data-l="수강생" class="r">${c.n}명</td><td data-l="매출 (환불 전)" class="r">${fmt(c.rev)}</td><td data-l="진행상태">${chip(l.status)}</td></tr>`; }).join('') || '<tr><td colspan="5" class="muted">진행 중인 강의가 없습니다.</td></tr>'}</tbody></table></div></section>
-<section>${sh('전체 누적 현황', allL.length + '건 · 누적 매출 ' + fmt(allRev) + '원 (환불 반영) · 누적 수익 ' + fmt(allProfit) + '원')}<div class="muted" style="margin-bottom:12px">등록된 모든 강의의 누적입니다. (${lcnt})</div><div class="card">
-<table class="rt"><thead><tr><th>시작일</th><th>강의명</th><th class="r">수강생</th><th class="r">매출 (환불 반영)</th><th class="r">지출</th><th class="r">수익</th><th>진행상태</th></tr></thead><tbody>${allL.map(l => { const c = lecC(l); return `<tr class="clk" data-act="sellec" data-v="${l.id}"><td data-l="시작일">${esc(dstr(l.date))}</td><td data-l="강의명"><b>${esc(l.name)}</b></td><td data-l="수강생" class="r">${c.n}명</td><td data-l="매출 (환불 반영)" class="r">${fmt(c.rev - c.refund)}</td><td data-l="지출" class="r">${fmt(c.cost)}</td><td data-l="수익" class="r"><b>${fmt(c.profit)}</b></td><td data-l="진행상태">${chip(l.status)}</td></tr>`; }).join('') || '<tr><td colspan="7" class="muted">등록된 강의가 없습니다.</td></tr>'}</tbody></table></div></section>${modal}`;
+<section>${sh('현재 진행 중인 강의 건', lsub(ong.length))}<div class="card">
+<table class="rt">${lhead}<tbody>${ong.map(lrow).join('') || '<tr><td colspan="7" class="muted">진행 중인 강의가 없습니다.</td></tr>'}${ltot(ong)}</tbody></table></div></section>
+<section>${sh('전체 누적 현황', lsub(allL.length))}<div class="card">${monthGroups('lec', allL, l => (l.date || '').slice(0, 7) || '-', lrow, lhead, lsum, '등록된 강의가 없습니다.')}</div></section>${modal}`;
 }
 function lecPanel(sel) {
   if (ui.panel === 'add' || ui.panel === 'edit') return lecForm(ui.panel === 'edit');
@@ -886,7 +914,7 @@ function lecForm(edit) {
   const rfs = d.refunds.map((r, i) => lr('refunds', i, `<div class="r2">${inp('name', r.name, '수강생')}${inp('amt', mv(r.amt), '환불 금액', 'inputmode="numeric"')}</div><div class="r2"><input type="month" data-f="month" value="${esc(r.month || d.date.slice(0, 7))}">${inp('memo', r.memo, '메모 (예: 2/3 수강 후 환불)')}</div>`)).join('');
   const cs = d.costs.map((c, i) => lr('costs', i, `<div class="r3">${inp('name', c.name, '항목 (예: 후기왕)')}${inp('unit', mv(c.unit), '단가', 'inputmode="numeric"')}${inp('qty', c.qty, '수량(명)', 'inputmode="numeric"')}</div>${inp('note', c.note, '메모 (예: 로지텍 마우스)')}`)).join('');
   return `<form id="form" data-kind="lec" class="stack" style="gap:18px" onsubmit="return false"><h2 style="font-size:20px">${edit ? '강의 수정 · ' + esc(d.name) : '강의 추가'}</h2>
-<div class="grid g2" style="gap:12px"><label style="grid-column:1/-1">강의명<input name="name" value="${esc(d.name)}" placeholder="예: 미래왕홍반 2기"></label><label>시작일<input type="date" name="date" value="${esc(d.date)}"></label><label>진행상태<select name="status">${LSTATUS.map(s => `<option ${s === d.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
+<div class="grid g2" style="gap:12px"><label style="grid-column:1/-1">강의명<input name="name" value="${esc(d.name)}" placeholder="예: 미래왕홍반 2기"></label><label>개강일(OT)<input type="date" name="date" value="${esc(d.date)}"></label><label>진행상태<select name="status">${LSTATUS.map(s => `<option ${s === d.status ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
 ${block('수강반별 매출', '반마다 1인당 금액과 수강생 이름을 적으면 금액 × 인원이 자동 계산됩니다.', 'groups', groups, '+ 수강반 추가')}
 ${block('기존 타 수강생 (할인 적용)', '다른 강의에서 넘어온 수강생입니다. 이 강의 매출에 넣을지 행마다 고를 수 있습니다.', 'transfers', trs, '+ 기존 수강생 추가')}
 ${block('환불', '환불한 달의 매출에서 차감됩니다.', 'refunds', rfs, '+ 환불 추가')}
@@ -908,9 +936,9 @@ function readLec() {
 }
 function calcLec() { const l = readLec(), c = lecC(l); $('#calc').innerHTML = `<div class="lbl">자동 계산</div><div>매출 합계 <b>${fmt(c.rev)}원</b> <span class="muted">(총 ${c.n}명)</span></div><div>환불 -${fmt(c.refund)}원 · 지출 -${fmt(c.cost)}원</div><b>수익 ${fmt(c.profit)}원</b>`; }
 async function saveLec() {
-  const f = readLec(); if (!checkReq([['name', '강의명', !!f.name], ['date', '시작일', !!f.date]])) return;
+  const f = readLec(); if (!checkReq([['name', '강의명', !!f.name], ['date', '개강일(OT)', !!f.date]])) return;
   if (ui.panel === 'edit') {
-    const old = normLec(S.lectures.find(l => l.id === ui.selLec)), L = { name: '강의명', date: '시작일', status: '진행상태', memo: '메모' };
+    const old = normLec(S.lectures.find(l => l.id === ui.selLec)), L = { name: '강의명', date: '개강일(OT)', status: '진행상태', memo: '메모' };
     const ch = Object.keys(L).filter(k => String(old[k] ?? '') !== String(f[k] ?? '')).map(k => `${L[k]} ${old[k] || '없음'} → ${f[k] || '없음'}`);
     [['groups', '수강반'], ['transfers', '기존 수강생'], ['refunds', '환불'], ['costs', '지출']].forEach(([k, n]) => { if (JSON.stringify(old[k] || []) !== JSON.stringify(f[k])) ch.push(n + ' 변경'); });
     const { price, n, ...rest } = old; await put('lectures', old.id, { ...rest, ...f }); if (ch.length) await log(ch.join(', '), old.id, f.name);
@@ -948,10 +976,16 @@ ${sec('진행상태', '', `<table><thead><tr><th>상태</th><th>매출 합산</t
 }
 
 /* ---------- 동작 ---------- */
+const ndSig = d => JSON.stringify([d.type, d.title, d.text, !!d.ack, !!d.pin, (d.imgs || []).length]);
+function noticeDirty() { if (!ui.nc || !ui.nd) return false; try { keepNote(); } catch (e) { } const d = ui.nd; return d.editId ? !!ui.ndSnap && ndSig(d) !== ui.ndSnap : !!(d.title || d.text || (d.imgs || []).length); }
+function msgDirty() { try { keepMsg(); } catch (e) { } const m = ui.msg; return !!(m && ((m.text || '').trim() || (m.to || []).length || m.ref)); }
+const formSnap = f => JSON.stringify([...f.elements].filter(e => e.name).map(e => e.name + '=' + (e.type === 'checkbox' ? e.checked : e.value)));
+const formDirty = () => { const f = $('#form'); return !!(f && ui.panel === 'add' && ui.snap && formSnap(f) !== ui.snap); };
+function tryClose() { if (formDirty()) ask('등록을 취소하시겠습니까?', '입력한 내용은 저장되지 않습니다.', closeModalNow); else closeModalNow(); }
 function closeModalNow() { ui.modal = false; ui.panel = 'detail'; ui.draft = null; ui.dirty = false; render(); }
 let confirmFn = null;
 function ask(msg, sub, fn) { confirmFn = fn; ui.confirm = { msg, sub }; render(); }
-function closeForm() { if (ui.panel === 'add') { ui.modal = false; } ui.panel = 'detail'; ui.draft = null; ui.dirty = false; render(); }
+function closeFormNow() { if (ui.panel === 'add') { ui.modal = false; } ui.panel = 'detail'; ui.draft = null; ui.dirty = false; render(); }
 const mon = (k, d) => { ui[k] = shift(ui[k], d); if (ui[k] > CUR) ui[k] = CUR; ui.selAd = null; ui.selLec = null; };
 const H = {
   sbToggle: () => { ui.sbc = !ui.sbc; try { localStorage.setItem('cd_sbc', ui.sbc ? '1' : '0'); } catch (e) { } render(); },
@@ -965,8 +999,8 @@ const H = {
     await put('notes', id, { kind: 'msg', to: tos.map(m => m.id), toNames: tos.map(m => m.name), from: me.email, fromName: me.name, title: '', text, ref: it ? it.id : '', refKind: kind, refName: it ? it.name : '', at: Date.now(), acks: {} });
     pushNotify(id); ui.msg = null; noKeep = true; render(); toast(tos.map(m => m.name).join(', ') + ' 님에게 보냈습니다');
   },
-  ncToggle: () => { if (ui.nc) { ui.nc = false; ui.nd = null; } else { ui.nc = true; ui.nd = { type: '일반', title: '', text: '', ack: true, pin: false, imgs: [] }; } noKeep = true; render(); },
-  editNote: v => { const x = S.notes.find(n => n.id === v); if (!x) return; ui.nd = { editId: x.id, type: x.type || '일반', title: x.title, text: x.text, ack: x.ackReq !== false, pin: !!x.pinned, imgs: (x.images || []).slice() }; ui.nc = true; noKeep = true; render(); window.scrollTo(0, 0); },
+  ncToggle: () => { if (ui.nc && noticeDirty() && !ui.confirm) { ask('등록을 취소하시겠습니까?', '입력한 내용은 저장되지 않습니다.', () => { ui.nc = false; ui.nd = null; noKeep = true; render(); }); return; } if (ui.nc) { ui.nc = false; ui.nd = null; } else { ui.nc = true; ui.nd = { type: '일반', title: '', text: '', ack: true, pin: false, imgs: [] }; } noKeep = true; render(); },
+  editNote: v => { const x = S.notes.find(n => n.id === v); if (!x) return; ui.nd = { editId: x.id, type: x.type || '일반', title: x.title, text: x.text, ack: x.ackReq !== false, pin: !!x.pinned, imgs: (x.images || []).slice() }; ui.ndSnap = ndSig(ui.nd); ui.nc = true; noKeep = true; render(); window.scrollTo(0, 0); },
   pinTog: v => { ui.pinOpen = { ...(ui.pinOpen || {}), [v]: !(ui.pinOpen || {})[v] }; render(); },
   inMore: () => { ui.inMore = (ui.inMore || 0) + 5; render(); },
   outMore: () => { ui.outMore = (ui.outMore || 0) + 5; render(); },
@@ -1016,7 +1050,9 @@ const H = {
   pushTest: async () => { if (DEMO) return toast('체험 모드에서는 테스트할 수 없습니다'); toast('테스트 알림을 보냅니다…'); try { const t = await pushCall({ test: true }); toast(/^test/.test(t) ? (/ok=[1-9]/.test(t) ? '전송했습니다. 곧 폰 상단에 알림이 옵니다 (' + t + ')' : '전송 실패: ' + t) : '서버 응답: ' + t); } catch (e) { toast('알림 서버에 연결하지 못했습니다'); } },
   pushOff: async () => { try { await B.dropToken(me.email, devId()); } catch (e) { } try { localStorage.removeItem('cd_push'); } catch (e) { } render(); toast('이 기기 알림을 껐습니다'); },
   payQuick: async v => { const [id, k] = v.split('|'); await payTog(id, k); },
-  tab: v => { ui.modal = false; ui.hl = null; ui.tab = v; ui.panel = 'detail'; ui.draft = null; ui.prod = null; render(); window.scrollTo(0, 0); },
+  tab: v => {
+    if (v !== ui.tab && !ui.confirm && ((ui.tab === 'notice' && noticeDirty()) || (ui.tab === 'inbox' && msgDirty()))) { ask('등록을 취소하시겠습니까?', '입력한 내용은 저장되지 않습니다.', () => { ui.nc = false; ui.nd = null; ui.msg = null; H.tab(v); }); return; }
+    ui.modal = false; ui.hl = null; ui.tab = v; ui.panel = 'detail'; ui.draft = null; ui.prod = null; render(); window.scrollTo(0, 0); },
   login: () => B.login().catch(e => toast('로그인 실패: ' + e.message)),
   demo: v => B.login(v),
   logout: () => B.logout(),
@@ -1036,10 +1072,11 @@ const H = {
   goAdsNew: () => { ui.modal = false; ui.tab = 'ads'; ui.adM = CUR; ui.selAd = null; ui.panel = 'detail'; ui.hlFn = (a, t) => t === 'new'; render(); window.scrollTo(0, 0); },
   goSrc: v => { ui.vm = 'month'; ui.selM = CM; ui.hlSrc = v; render(); const el = $('#srcSec'); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 16, behavior: 'smooth' }); },
   goStage: v => { const m = ui.vm === 'month', p = m ? ymOf(CY, ui.selM) : String(ui.selY); ui.modal = false; ui.tab = 'ads'; ui.panel = 'detail'; ui.adM = m ? p : CUR; ui.hlFn = a => a.status === v && (a.month || '').startsWith(p); render(); const el = $('tr.hl'); if (el) el.scrollIntoView({ block: 'center' }); else window.scrollTo(0, 0); },
+  togM: v => { ui.openM = ui.openM || {}; ui.openM[v] = !ui.openM[v]; render(); },
   selmodal: v => { ui.selAd = v; ui.panel = 'detail'; ui.modal = true; render(); },
   sellec: v => { ui.selLec = v; ui.panel = 'detail'; ui.modal = true; render(); },
-  closeModal: (v, el, e) => { if (e && e.target !== el) return; closeModalNow(); },
-  openAdd: () => { ui.modal = true; ui.panel = 'add'; ui.draft = ui.tab === 'ads' ? blankAd() : blankLec(); render(); ui.tab === 'ads' ? calcAd() : calcLec(); },
+  closeModal: (v, el, e) => { if (e && e.target !== el) return; tryClose(); },
+  openAdd: () => { ui.modal = true; ui.panel = 'add'; ui.draft = ui.tab === 'ads' ? blankAd() : blankLec(); ui.snap = null; render(); ui.tab === 'ads' ? calcAd() : calcLec(); try { ui.snap = formSnap($('#form')); } catch (e) { } },
   openEdit: () => { const s = ui.tab === 'ads' ? selAd() : selLec(); if (!s) return; ui.panel = 'edit'; ui.draft = JSON.parse(JSON.stringify(s)); if (ui.tab === 'ads') { ui.draft.items = adItems(s).map(i => ({ product: i.product, budget: i.budget, rate: i.rate })); } if (ui.tab === 'lectures') { ui.draft.groups = ui.draft.groups.map(g => ({ ...g })); } render(); ui.tab === 'ads' ? calcAd() : calcLec(); },
   addRow: (v, el) => { const k = el.dataset.k; ui.draft = { ...ui.draft, ...readLec() }; const b = { ...BLANK[k] }; if (k === 'refunds') b.month = ui.draft.date.slice(0, 7); ui.draft[k].push(b); render(); calcLec(); },
   delRow: (v, el) => { ui.draft = { ...ui.draft, ...readLec() }; ui.draft[el.dataset.k].splice(+el.dataset.i, 1); render(); calcLec(); },
@@ -1072,13 +1109,13 @@ const H = {
   dlBackup: v => { const b = S.backups.find(x => x.id === v); download('backup-' + v + '.json', b.data, 'application/json'); },
   csv: v => { const m = ($('#bkm') || {}).value || ui.bkM; ui.bkM = m;
     if (v === 'ads') download(`광고영업_${m}.csv`, csv([['업체명', '업종', '담당자', '영업자', '광고상품', '광고예산', '환불금액(환불월에 차감)', '수수료율(%)', '매출(플랫폼 수수료)', '파트너 배분율(%)', '파트너 지급액', '우리 수익', '플랫폼 입금 예정일', '플랫폼 입금 완료', '파트너 정산 예정일', '파트너 정산 완료', '진행상태', '계약월', '메모'], ...adsIn(m).map(a => { const c = COUNTED.includes(a.status); return [a.name, a.biz, a.owner, a.partnerName || '자체', a.product, a.contract, a.refund, a.rate, c ? adRev(a) : 0, hasPartner(a) ? a.sharePct : '', c ? adPartner(a) : 0, c ? adOurs(a) : 0, a.inDate || '', a.inDone ? '완료' : (a.inDone === false ? '미완료' : ''), a.outDate || '', hasPartner(a) ? (a.outDone ? '완료' : (a.outDone === false ? '미완료' : '')) : '', a.status, a.month, a.memo]; })]));
-    else download(`강의_${m}.csv`, csv([['강의명', '시작일', '수강생', '매출(환불 전)', '환불', '지출', '수익', '수강반', '진행상태'], ...lecMonth(m).rows.map(l => { const c = lecC(l); return [l.name, l.date, c.n, c.rev, c.refund, c.cost, c.profit, c.groups.map(g => g.name + ' ' + g.n + '명').join(' / '), l.status]; })])); }
+    else download(`강의_${m}.csv`, csv([['강의명', '개강일(OT)', '수강생', '매출(환불 전)', '환불', '지출', '수익', '수강반', '진행상태'], ...lecMonth(m).rows.map(l => { const c = lecC(l); return [l.name, l.date, c.n, c.rev, c.refund, c.cost, c.profit, c.groups.map(g => g.name + ' ' + g.n + '명').join(' / '), l.status]; })])); }
 };
 const csv = rows => '﻿' + rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')).join('\r\n');
 function download(name, text, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: (type || 'text/csv') + ';charset=utf-8' })); a.download = name; a.click(); }
 const readProd = () => { const n = [...document.querySelectorAll('[name=pn]')], r = [...document.querySelectorAll('[name=pr]')]; return n.map((el, i) => ({ name: el.value.trim(), rate: num(r[i].value) })); };
 document.addEventListener('click', e => { const t = e.target.closest('[data-act]'); if (!t || !H[t.dataset.act]) return; ui.modalPending = false; H[t.dataset.act](t.dataset.v, t, e); });
-document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (ui.confirm) { confirmFn = null; ui.confirm = null; render(); } else if (ui.modal) closeModalNow(); });
+document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; if (ui.confirm) { confirmFn = null; ui.confirm = null; render(); } else if (ui.modal) tryClose(); });
 document.addEventListener('input', e => { const t = e.target; if (t.classList && t.classList.contains('err')) { t.classList.remove('err'); const n = t.nextElementSibling; if (n && n.classList.contains('ermsg')) n.remove(); } if (e.target.closest('#form')) { const k = $('#form').dataset.kind; k === 'ad' ? calcAd() : calcLec(); } });
 const shrink = f => new Promise((ok, no) => { const r = new FileReader(); r.onerror = no; r.onload = () => { const im = new Image(); im.onerror = no; im.onload = () => { const k = Math.min(1, 1000 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .72)); }; im.src = r.result; }; r.readAsDataURL(f); });
 document.addEventListener('change', async e => {
@@ -1088,6 +1125,7 @@ document.addEventListener('change', async e => {
   { const pm = /^product(\d+)$/.exec(t.name || ''); if (pm && $('#form')) { const o = t.selectedOptions[0], r = $('#form').elements['rate' + pm[1]]; if (r) r.value = o && o.dataset.rate !== undefined ? o.dataset.rate : ''; calcAd(); } }
   if (t.name === 'status' && $('#form') && $('#form').dataset.kind === 'ad') calcAd();
   if (t.name === 'partnerId' && $('#form')) { const o = t.selectedOptions[0]; $('#form').elements.sharePct.value = o && o.dataset.pct !== undefined ? o.dataset.pct : ''; calcAd(); }
+  if (t.dataset && t.dataset.chg === 'adSort') { ui.adSort = { ...(ui.adSort || {}), [t.dataset.k]: t.value }; render(); return; }
   if (t.dataset && t.dataset.chg === 'payDate') { const a = selAd(); if (!a) return; const k = t.dataset.k === 'in' ? 'inDate' : 'outDate', old = a[k] || ''; if (old === t.value) return; await put('ads', a.id, { ...a, [k]: t.value }); await log(`${t.dataset.k === 'in' ? '1급대행사 정산' : '파트너 정산'} 예정일 ${old || '없음'} → ${t.value || '없음'}`, a.id, a.name); toast('예정일을 바꿨습니다'); }
   if (t.dataset && t.dataset.chg === 'nimg') { keepNote(); const imgs = ui.nd.imgs || (ui.nd.imgs = []); for (const f of [...t.files]) { if (imgs.length >= 3) break; try { imgs.push(await shrink(f)); } catch (e) { toast('이미지를 불러오지 못했습니다'); } } render(); }
   if (t.dataset && t.dataset.chg === 'role') { const m = S.members.find(x => x.id === t.dataset.email); await put('members', m.id, { ...m, role: t.value }); await log(`${m.email} 권한 → ${t.value === 'admin' ? '관리자' : '멤버'}`, '', '설정'); toast('권한을 바꿨습니다'); }
