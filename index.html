@@ -126,6 +126,16 @@ main{padding:12px 16px 24px}
 .chk{display:flex!important;flex-direction:row!important;align-items:center;gap:10px;font-size:15px;cursor:pointer}.chk input{width:20px;height:20px;flex:none;accent-color:#111}
 /* 상단 고정 · 알림함 색 */
 .card.hl{box-shadow:0 0 0 3px #CFC8EE}
+.y2,.mcbtn,.mcx{display:none}.tots .tv{margin-left:auto;display:flex;align-items:baseline;gap:2px;white-space:nowrap}.tots .tv b{margin-left:0}
+@media(max-width:700px){
+body{overflow-x:clip}main{min-width:0}
+.y4{display:none}.y2{display:inline}.hd .ttl{font-size:17px;white-space:nowrap}.hd .nav{width:30px;height:30px}.hd .btn{height:38px;padding:0 11px;font-size:13px}
+.hero{padding:14px 14px 14px}.hero .row{margin-bottom:10px!important}.hero .row h2{font-size:19px!important}.hero .grid.g3{gap:8px}.hero .grid.g3>button{padding:9px 14px!important;border-radius:14px!important}.hero .grid.g3>button>div:last-child{font-size:19px!important;margin-top:1px!important}
+.tots{gap:8px;margin-top:14px}.tots .tt{display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:6px;row-gap:2px;padding:10px 12px;height:auto;min-width:0}.tots .tl{font-size:12.5px}.tots .tv{grid-column:1/-1;margin-left:0}.tots b{font-size:17px;letter-spacing:-.4px}.tots small{font-size:12px}
+.mcbtn,.mcx{display:inline-flex;align-items:center;justify-content:center;line-height:1}.cols2 .side.msgside:not(.mco){display:none}
+.bar .nm{white-space:nowrap;font-size:12px;letter-spacing:-.3px}.lecTop{grid-template-columns:1fr 1fr!important}.lecTop>:first-child{grid-column:1/-1}
+.mh{flex-wrap:nowrap;padding:12px 2px}.mh span:first-child{font-size:14px}.mh span.muted{font-size:11px;white-space:nowrap}
+}
 .pins{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;-webkit-overflow-scrolling:touch}
 .pin{width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 16px;font-weight:700;font-size:15px;display:flex;gap:8px;align-items:center;color:var(--ink)}
 .pin .t{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}.pin.on{border-color:#F2E3AE;background:#FFFAE6}.card.nt.pinned{background:#FFFCF0;border-color:#F2E3AE}.srt{width:auto;height:36px;font-size:14px;padding:0 10px}.pdot{width:8px;height:8px;border-radius:4px;background:#E5484D;flex:none}
@@ -239,6 +249,7 @@ const ymOf = (y, m) => y + '-' + pad(m), CUR = ymOf(CY, CM);
 const md = () => pad(CM) + '/' + pad(NOW.getDate());
 const shift = (ym, k) => { const [y, m] = ym.split('-').map(Number); const d = new Date(y, m - 1 + k, 1); return ymOf(d.getFullYear(), d.getMonth() + 1); };
 const ymLabel = ym => ym.slice(0, 4) + '년 ' + Number(ym.slice(5)) + '월';
+const ymHd = ym => `<span class="y4">${ym.slice(0, 4)}</span><span class="y2">${ym.slice(2, 4)}</span>년 ${Number(ym.slice(5))}월`;
 const sum = (a, k) => (a || []).reduce((s, x) => s + num(x[k]), 0);
 
 const STATUS = ['계약완료', '진행중', '종료', '중단'];
@@ -668,8 +679,8 @@ function inbox() {
   const ql = quickList();
   const quick = ui.qedit ? `<div id="qef" class="stack" style="gap:8px">${ui.qedit.map((q, i) => `<div class="qe"><input name="qk" maxlength="40" value="${esc(q)}"><button type="button" class="btn s d" data-act="qDel" data-v="${i}">삭제</button></div>`).join('')}<div class="row" style="gap:8px"><button type="button" class="btn s" data-act="qAdd">+ 문구 추가</button><div class="grow"></div><button type="button" class="btn s" data-act="qCancel">취소</button><button type="button" class="btn p s" data-act="qSave">저장</button></div></div>`
     : `<div class="qk">${ql.map((q, i) => `<button type="button" data-act="quick" data-v="${i}">${esc(q)}</button>`).join('')}${admin ? '<button type="button" class="lnk" style="height:36px" data-act="qEdit">문구 편집</button>' : ''}</div>`;
-  return `<div class="row hd" style="flex-wrap:nowrap"><h1 class="ttl pc">알림함</h1></div>
-<div class="cols2 rside"><section class="card side"><h2 style="font-size:18px">알림 보내기</h2><div class="muted" style="margin:4px 0 14px">할 일을 알리면 받는 사람 화면에 빨간 숫자가 뜨고, 확인 버튼을 누르면 누가 확인했는지 여기서 보입니다.</div>
+  return `<div class="row hd" style="flex-wrap:nowrap"><h1 class="ttl pc">알림함</h1><div class="grow"></div>${ui.mc ? '' : '<button class="btn p mcbtn" data-act="mcToggle">알림 보내기</button>'}</div>
+<div class="cols2 rside"><section class="card side msgside ${ui.mc ? 'mco' : ''}"><div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h2 style="font-size:18px">알림 보내기</h2><button class="btn s mcx" data-act="mcToggle">닫기</button></div><div class="muted" style="margin:4px 0 14px">할 일을 알리면 받는 사람 화면에 빨간 숫자가 뜨고, 확인 버튼을 누르면 누가 확인했는지 여기서 보입니다.</div>
 <form id="msgf" class="stack" style="gap:14px" onsubmit="return false">
 <div><div class="lbl" style="margin-bottom:6px">받는 사람</div><div class="ucs">${pick}${others.length ? '' : '<span class="muted">보낼 수 있는 멤버가 없습니다</span>'}</div></div>
 <label>확인이 필요한 건<select name="ref"><option value="">건을 선택하세요</option><optgroup label="광고영업 (진행 중)">${ads.map(a => `<option value="ad:${a.id}" ${'ad:' + a.id === d.ref ? 'selected' : ''}>${esc(a.name)} · ${esc(a.month)} · ${esc(a.status)}</option>`).join('')}</optgroup><optgroup label="강의 (진행 중)">${lecs.map(l => `<option value="lec:${l.id}" ${'lec:' + l.id === d.ref ? 'selected' : ''}>${esc(l.name)} · ${esc(l.date)} · ${esc(l.status)}</option>`).join('')}</optgroup></select></label>
@@ -709,7 +720,7 @@ function home() {
 <div class="hcols"><section><div class="row" style="gap:12px;margin-bottom:14px;align-items:baseline"><h2 style="font-size:22px">${isM ? '월별' : '연별'} 현황</h2><span class="muted">단위 : 만 원</span></div><div class="card"><div class="row" style="gap:12px"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="hprev" aria-label="이전">‹</button><h1 style="font-size:24px;padding:0 8px;white-space:nowrap">${heading}</h1><button class="nav" data-act="hnext" aria-label="다음">›</button></div><div class="grow"></div>
 <div class="seg">${sg('filter', ['all', '전체'], ui.filter === 'all')}${sg('filter', ['ad', '광고영업'], ui.filter === 'ad')}${sg('filter', ['lec', '강의'], ui.filter === 'lec')}</div>
 <div class="seg">${sg('vm', ['month', '월별'], isM)}${sg('vm', ['year', '연별'], !isM)}</div></div>
-<div class="tots"><div class="tt"><span class="sw" style="background:var(--lv)"></span><span class="tl">총 매출</span><b>${fmt(totRev)}</b><small>원</small></div><div class="tt"><span class="sw" style="background:#5B3BEA"></span><span class="tl">총 수익</span><b>${fmt(totProfit)}</b><small>원</small></div></div><div class="chartwrap">${ticks}<div class="bars">${bars}</div></div>
+<div class="tots"><div class="tt"><span class="sw" style="background:var(--lv)"></span><span class="tl">총 매출</span><span class="tv"><b>${fmt(totRev)}</b><small>원</small></span></div><div class="tt"><span class="sw" style="background:#5B3BEA"></span><span class="tl">총 수익</span><span class="tv"><b>${fmt(totProfit)}</b><small>원</small></span></div></div><div class="chartwrap">${ticks}<div class="bars">${bars}</div></div>
 </div></section>
 <section id="srcSec" class="hside"><div class="row" style="gap:12px;margin-bottom:14px;align-items:center"><h2 style="font-size:22px">${isM ? '월별' : '연별'} 매출원별 현황</h2><span class="muted">${heading.replace(' 현황', '')}</span><div class="grow"></div>${me.role === 'admin' ? '' : ''}</div><div class="gs" style="display:flex;flex-direction:column;gap:16px">
 <div class="card" data-act="tab" data-v="ads" style="text-align:left;cursor:pointer"><div class="row" style="justify-content:space-between"><b style="font-size:18px">${isM ? ui.selM + '월' : ui.selY + '년'} 광고영업</b><span style="font-size:14px;color:var(--pd);font-weight:700">이동 →</span></div>
@@ -757,7 +768,7 @@ function ads() {
   const srt = key => `<select class="srt" data-chg="adSort" data-k="${key}" aria-label="정렬">${SORTS.map(([v, l]) => `<option value="${v}" ${((ui.adSort || {})[key] || 'date') === v ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
   const shs = (t, sub, key) => `<div class="row" style="gap:6px 12px;align-items:center;margin-bottom:6px"><h2 style="font-size:22px">${t}</h2><span class="muted">${sub}</span><span style="margin-left:auto">${srt(key)}</span></div>`;
   const modal = ui.modal ? `<div class="modal" data-act="closeModal"><div class="mbox wide"><button class="nav mx" data-act="closeModal" aria-label="닫기">×</button>${adPanel(cur)}</div></div>` : '';
-  return `<div class="row hd" style="flex-wrap:nowrap"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="adprev" aria-label="이전 달">‹</button><h1 class="ttl">${ymLabel(ui.adM)} · 광고영업</h1><button class="nav" data-act="adnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto;flex:none;white-space:nowrap" data-act="openAdd">+ 광고영업 추가</button></div>
+  return `<div class="row hd" style="flex-wrap:nowrap"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="adprev" aria-label="이전 달">‹</button><h1 class="ttl">${ymHd(ui.adM)} · 광고영업</h1><button class="nav" data-act="adnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto;flex:none;white-space:nowrap" data-act="openAdd">+ 광고영업 추가</button></div>
 <section class="grid g4">${card('이번 달 계약', list.length + '건')}${card('이번 달 광고예산', fmt(bud) + '원')}${card('이번 달 매출', fmt(tot) + '원' + (rf.length ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">환불 -${fmt(refundSum(ui.adM))} 반영</div>` : ''), 'var(--ink)')}${card('이번 달 수익', fmt(tot - ptot) + '원' + (ptot ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">파트너 지급 -${fmt(ptot)} 반영</div>` : ''), 'var(--pd)')}</section>
 <section>${shs('이번 달 신규 계약 건', `총 ${list.length}건 · 행을 누르면 세부 내역이 열립니다.`, 'new')}<div class="card">
 <table class="rt cp">${adHead}<tbody>${list.map(a => adTr(a, 'new')).join('') || '<tr><td colspan="10" class="muted">이 달에 계약된 건이 없습니다.</td></tr>'}
@@ -910,10 +921,10 @@ function lectures() {
   const lsum = rows => `${fmt(rows.reduce((s, l) => s + lecC(l).rev, 0))}원 · 수익 ${fmt(rows.reduce((s, l) => s + lecC(l).profit, 0))}원`;
   const lsub = n => `총 ${n}건 · 행을 누르면 세부 내역이 열립니다.`;
   const modal = ui.modal ? `<div class="modal" data-act="closeModal"><div class="mbox wide"><button class="nav mx" data-act="closeModal" aria-label="닫기">×</button>${lecPanel(cur)}</div></div>` : '';
-  return `<div class="row hd" style="flex-wrap:nowrap"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="lecprev" aria-label="이전 달">‹</button><h1 class="ttl">${ymLabel(ui.lecM)} · 강의</h1><button class="nav" data-act="lecnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto;flex:none;white-space:nowrap" data-act="openAdd">+ 강의 추가</button></div>
-<section class="grid g3">${card('이번 달 강의 / 수강생', list.length + '건 · ' + lm.n + '명')}${card('이번 달 매출', fmt(lm.net) + '원' + (lm.refund ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">환불 -${fmt(lm.refund)} 반영</div>` : ''), 'var(--ink)')}${card('이번 달 수익', fmt(lm.profit) + '원', 'var(--pd)')}</section>
+  return `<div class="row hd" style="flex-wrap:nowrap"><div class="row" style="gap:8px;flex-wrap:nowrap"><button class="nav" data-act="lecprev" aria-label="이전 달">‹</button><h1 class="ttl">${ymHd(ui.lecM)} · 강의</h1><button class="nav" data-act="lecnext" aria-label="다음 달">›</button></div><button class="btn p" style="margin-left:auto;flex:none;white-space:nowrap" data-act="openAdd">+ 강의 추가</button></div>
+<section class="grid g3 lecTop">${card('이번 달 강의 / 수강생', list.length + '건 · ' + lm.n + '명')}${card('이번 달 매출', fmt(lm.net) + '원' + (lm.refund ? `<div class="lbl" style="font-size:12px;font-weight:400;margin-top:2px">환불 -${fmt(lm.refund)} 반영</div>` : ''), 'var(--ink)')}${card('이번 달 수익', fmt(lm.profit) + '원', 'var(--pd)')}</section>
 <section>${sh('이번 달 신규 강의 건', lsub(list.length))}<div class="card">
-<table class="rt">${lhead}<tbody>${list.map(lrow).join('') || '<tr><td colspan="7" class="muted">이 달 강의가 없습니다.</td></tr>'}</tbody></table></div></section>
+<table class="rt">${lhead}<tbody>${list.map(lrow).join('') || '<tr><td colspan="7" class="muted">이 달 강의가 없습니다.</td></tr>'}${ltot(list)}</tbody></table></div></section>
 <hr style="margin:4px 0">
 <section>${sh('현재 진행 중인 강의 건', lsub(ong.length))}<div class="card">
 <table class="rt">${lhead}<tbody>${ong.map(lrow).join('') || '<tr><td colspan="7" class="muted">진행 중인 강의가 없습니다.</td></tr>'}${ltot(ong)}</tbody></table></div></section>
@@ -1051,8 +1062,9 @@ const H = {
     { const mf = $('#msgf'); if (mf) { mf.querySelectorAll('.pk.err').forEach(x => x.classList.remove('err')); if (!d.to.length) mf.querySelectorAll('.ucs .pk').forEach(x => x.classList.add('err')); } if (!checkReq([['ref', '확인이 필요한 건', !!d.ref], ['text', '내용', !!text]], mf) || !d.to.length) { if (!d.to.length) toast('입력이 필요한 항목: 받는 사람' + (!d.ref ? ', 확인이 필요한 건' : '') + (!text ? ', 내용' : '')); return; } }
     const [kind, rid] = d.ref.split(':'), it = kind === 'lec' ? S.lectures.find(a => a.id === rid) : S.ads.find(a => a.id === rid), id = uid(), tos = d.to.map(e => S.members.find(m => m.id === e)).filter(Boolean);
     await put('notes', id, { kind: 'msg', to: tos.map(m => m.id), toNames: tos.map(m => m.name), from: me.email, fromName: me.name, title: '', text, ref: it ? it.id : '', refKind: kind, refName: it ? it.name : '', at: Date.now(), acks: {} });
-    pushNotify(id); ui.msg = null; noKeep = true; render(); toast(tos.map(m => m.name).join(', ') + ' 님에게 보냈습니다');
+    pushNotify(id); ui.msg = null; ui.mc = false; noKeep = true; render(); toast(tos.map(m => m.name).join(', ') + ' 님에게 보냈습니다');
   },
+  mcToggle: () => { ui.mc = !ui.mc; noKeep = false; render(); window.scrollTo(0, 0); },
   ncToggle: () => { if (ui.nc && noticeDirty() && !ui.confirm) { ask('등록을 취소하시겠습니까?', '입력한 내용은 저장되지 않습니다.', () => { ui.nc = false; ui.nd = null; noKeep = true; render(); }); return; } if (ui.nc) { ui.nc = false; ui.nd = null; } else { ui.nc = true; ui.nd = { type: '일반', title: '', text: '', ack: true, pin: false, imgs: [] }; } noKeep = true; render(); },
   editNote: v => { const x = S.notes.find(n => n.id === v); if (!x) return; ui.nd = { editId: x.id, type: x.type || '일반', title: x.title, text: x.text, ack: x.ackReq !== false, pin: !!x.pinned, imgs: (x.images || []).slice() }; ui.ndSnap = ndSig(ui.nd); ui.nc = true; noKeep = true; render(); window.scrollTo(0, 0); },
   pinTog: v => { ui.pinOpen = { ...(ui.pinOpen || {}), [v]: !(ui.pinOpen || {})[v] }; render(); },
@@ -1093,7 +1105,7 @@ const H = {
   addBiz: async () => { const f = $('#bzf').elements, n = f.b.value.trim(); if (!checkReq([['b', '업종 이름', !!n]], $('#bzf'))) return; const list = bizList().slice(); if (list.includes(n)) return toast('이미 있는 업종입니다'); list.push(n); await put('config', 'biz', { id: 'biz', list }); f.b.value = ''; toast('업종을 추가했습니다'); },
   delBiz: v => { const list = bizList().slice(), n = list[+v]; ask('삭제하시겠습니까?', `"${n}" 업종을 목록에서 뺍니다. 이미 등록된 건의 업종은 그대로 유지됩니다.`, async () => { list.splice(+v, 1); await put('config', 'biz', { id: 'biz', list }); toast('삭제했습니다'); }); },
   openAuto: v => { const [id, k] = String(v).split('|'); ui.autoFor = { id, k }; ui.tab = 'ads'; ui.selAd = id; ui.panel = 'detail'; ui.modal = true; render(); },
-  msgAd: () => { const a = selAd(); if (!a) return; const o = S.members.find(m => m.name && m.name === a.owner && m.id !== me.email); ui.msg = { to: o ? [o.id] : [], ref: 'ad:' + a.id, text: '' }; ui.modal = false; ui.tab = 'inbox'; ui.panel = 'detail'; render(); window.scrollTo(0, 0); },
+  msgAd: () => { const a = selAd(); if (!a) return; const o = S.members.find(m => m.name && m.name === a.owner && m.id !== me.email); ui.msg = { to: o ? [o.id] : [], ref: 'ad:' + a.id, text: '' }; ui.modal = false; ui.mc = true; ui.tab = 'inbox'; ui.panel = 'detail'; render(); window.scrollTo(0, 0); },
   pushOn: async () => {
     if (DEMO) { try { localStorage.setItem('cd_push', '1'); } catch (e) { } render(); return toast('체험 모드: 실제 서비스에서는 이 폰으로 알림이 옵니다'); }
     if (!pushSupported()) return toast('이 기기에서는 폰 알림을 켤 수 없습니다');
